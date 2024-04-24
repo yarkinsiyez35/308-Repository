@@ -85,6 +85,7 @@ CREATE TABLE pilot_assignments
   	pilot_id INT NOT NULL,
   	flight_number VARCHAR(6) NOT NULL,
 	assignment_role VARCHAR(8) NOT NULL,
+	seat_ number VARCHAR(255) NOT NULL, 
 	FOREIGN KEY (pilot_id) REFERENCES pilots(pilot_id),
 	FOREIGN KEY (flight_number) REFERENCES flights (flight_number),
 	PRIMARY KEY (pilot_id, flight_number)
