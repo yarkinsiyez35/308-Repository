@@ -85,7 +85,7 @@ CREATE TABLE pilot_assignments
   	pilot_id INT NOT NULL,
   	flight_number VARCHAR(6) NOT NULL,
 	assignment_role VARCHAR(8) NOT NULL,
-	seat_ number VARCHAR(255) NOT NULL, 
+	seat_number VARCHAR(255) NOT NULL, 
 	FOREIGN KEY (pilot_id) REFERENCES pilots(pilot_id),
 	FOREIGN KEY (flight_number) REFERENCES flights (flight_number),
 	PRIMARY KEY (pilot_id, flight_number)
@@ -156,5 +156,35 @@ CREATE TABLE passenger_flights(
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number),
     PRIMARY KEY (passenger_id, flight_number)
 );
+
+CREATE INDEX airport_city_index on airports (city); 
+CREATE INDEX airport_country_index on airports (country);
+
+CREATE INDEX plane_vehicle_type_index on planes (vehicle_type);
+
+CREATE INDEX flight_info_index on flights (flight_info);
+CREATE INDEX flight_source_airport_index on flights (source_airport_code);
+CREATE INDEX flight_destination_airport_index on flights (destination_airport_code); 
+CREATE INDEX flight_plane_id_index on flights (plane_id);
+CREATE INDEX flight_departure_datetime_index on flights (departure_datetime);
+CREATE INDEX flight_landing_datetime_index on flights (landing_datetime);
+
+CREATE INDEX pilot_email_index on pilots (email);
+CREATE INDEX pilot_allowed_range_index on pilots (allowed_range);
+CREATE INDEX pilot_seniority_index on pilots (seniority);
+
+CREATE INDEX crew_member_seniority_index on crew_members (seniority);
+CREATE INDEX crew_member_email_index on crew_members (email);
+
+CREATE INDEX passengers_email_index on passengers (email);
+
+CREATE INDEX passenger_flights_booking_id_index on passenger_flights (booking_id);
+
+CREATE INDEX admin_email_index on admins (email);
+
+
+
+
+
 
 
