@@ -2,21 +2,28 @@ package com.su.FlightScheduler.Entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "pilot_languages")
-public class PilotLanguageEntity {
+public class PilotLanguageEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-
-    @ManyToOne
-    @JoinColumn(name = "pilot_id", referencedColumnName = "pilot_id")
-    private PilotEntity pilot;
-
-    @Column(name = "language")
-    private String language;
+    @EmbeddedId
+    private PilotLanguagePK pilotLanguagePK;
 
 
+    public PilotLanguageEntity() {
+    }
+
+    public PilotLanguageEntity(PilotLanguagePK pilotLanguagePK) {
+        this.pilotLanguagePK = pilotLanguagePK;
+    }
+
+    public PilotLanguagePK getPilotLanguagePK() {
+        return pilotLanguagePK;
+    }
+
+    public void setPilotLanguagePK(PilotLanguagePK pilotLanguagePK) {
+        this.pilotLanguagePK = pilotLanguagePK;
+    }
 }
