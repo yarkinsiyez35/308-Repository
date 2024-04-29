@@ -1,10 +1,12 @@
 package com.su.FlightScheduler.Entity;
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "pilots")
-public class PilotEntity {
+public class PilotEntity  implements Serializable {
 
     @Id
     @Column(name = "pilot_id")
@@ -37,10 +39,11 @@ public class PilotEntity {
     @Column(name = "seniority", nullable = false)
     private String seniority;
 
-    @ElementCollection
-    @CollectionTable(name = "pilot_languages", joinColumns = @JoinColumn(name = "pilot_id"))
-    @Column(name = "language")
-    private List<String> languages;
+    //@ElementCollection
+    //@CollectionTable(name = "pilot_languages", joinColumns = @JoinColumn(name = "pilot_id"))
+    //@Column(name = "language")
+    @OneToMany(mappedBy = "pilotLanguagePK.pilotId", cascade = CascadeType.PERSIST)
+    private List<PilotLanguageEntity> languages;
 
     public PilotEntity() {}
 
@@ -55,6 +58,20 @@ public class PilotEntity {
         this.allowedRange = allowedRange;
         this.nationality = nationality;
         this.seniority = seniority;
+    }
+
+    public PilotEntity(PilotEntity pilotEntity)
+    {
+        this.pilotId = pilotEntity.pilotId;
+        this.email = pilotEntity.email;
+        this.password = pilotEntity.password;
+        this.firstName = pilotEntity.firstName;
+        this.surname = pilotEntity.surname;
+        this.age = pilotEntity.age;
+        this.gender = pilotEntity.gender;
+        this.allowedRange = pilotEntity.allowedRange;
+        this.nationality = pilotEntity.nationality;
+        this.seniority = pilotEntity.seniority;
     }
 
     public int getPilotId() {
@@ -97,10 +114,9 @@ public class PilotEntity {
         return seniority;
     }
 
-    public List<String> getLanguages() {
+    public List<PilotLanguageEntity> getLanguages() {
         return languages;
     }
-
 
     public void setPilotId(int pilotId) {
         this.pilotId = pilotId;
@@ -142,7 +158,7 @@ public class PilotEntity {
         this.seniority = seniority;
     }
 
-    public void setLanguages(List<String> languages) {
+    public void setLanguages(List<PilotLanguageEntity> languages) {
         this.languages = languages;
     }
 }
