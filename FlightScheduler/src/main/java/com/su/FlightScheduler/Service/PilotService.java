@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.LoginRequest;
 import com.su.FlightScheduler.Entity.PilotEntity;
 
 import java.util.List;
@@ -21,5 +22,7 @@ public interface PilotService {
 
     // Method to delete a pilot by ID
     public void deletePilotById(int id);
+
+    public boolean authenticate(LoginRequest loginRequest);
 
 }

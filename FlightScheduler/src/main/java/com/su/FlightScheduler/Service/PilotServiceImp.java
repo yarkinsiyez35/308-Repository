@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.LoginRequest;
 import com.su.FlightScheduler.Entity.PilotLanguageEntity;
 import com.su.FlightScheduler.Entity.PilotLanguagePK;
 import com.su.FlightScheduler.Repository.PilotLanguageRepository;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PilotServiceImp implements PilotService{
+public class PilotServiceImp implements PilotService {
 
 
     private final PilotRepository pilotRepository;
@@ -58,5 +59,11 @@ public class PilotServiceImp implements PilotService{
 
     public void deletePilotById(int id) {
         pilotRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean authenticate(LoginRequest loginRequest) {
+        Optional<PilotEntity> pilotEntity = pilotRepository.findPilotEntityByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        return pilotEntity.isPresent();
     }
 }
