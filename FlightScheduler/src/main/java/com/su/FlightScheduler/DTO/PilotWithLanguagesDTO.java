@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.Model;
+package com.su.FlightScheduler.DTO;
 
 
 
@@ -9,11 +9,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PilotWithLanguages implements Serializable {
+//DTO will be used for showing general purpose pilot information
+public class PilotWithLanguagesDTO implements Serializable {
 
     private int pilotId;
-    private String email;
-    private String password;
     private String firstName;
     private String surname;
     private int age;
@@ -23,13 +22,12 @@ public class PilotWithLanguages implements Serializable {
     private String seniority;
     private List<String> languages;
 
-    public PilotWithLanguages() {
+    public PilotWithLanguagesDTO() {
     }
 
-    public PilotWithLanguages(PilotEntity pilotEntity)
+    public PilotWithLanguagesDTO(PilotEntity pilotEntity)
     {
         this.pilotId = pilotEntity.getPilotId();
-        this.email = pilotEntity.getEmail();
         this.firstName = pilotEntity.getFirstName();
         this.surname = pilotEntity.getSurname();
         this.age = pilotEntity.getAge();
@@ -50,14 +48,6 @@ public class PilotWithLanguages implements Serializable {
 
     public int getPilotId() {
         return pilotId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getFirstName() {
@@ -94,10 +84,8 @@ public class PilotWithLanguages implements Serializable {
 
     @Override
     public String toString() {
-        return "PilotWithLanguages{" +
+        return "PilotWithLanguagesDTO{" +
                 "pilotId=" + pilotId +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", surname='" + surname + '\'' +
                 ", age=" + age +
