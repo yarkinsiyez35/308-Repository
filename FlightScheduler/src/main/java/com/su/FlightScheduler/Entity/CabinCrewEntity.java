@@ -36,8 +36,12 @@ public class CabinCrewEntity implements Serializable {
     private String seniority;
 
     // Constructor
-    @OneToMany(mappedBy = "attendantLanguagePK.attendat_id", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "attendantLanguagePK.attendantId", cascade = CascadeType.PERSIST)
     private List<AttendantLanguageEntity> languages;
+
+    public CabinCrewEntity() {
+    }
+
     public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority) {
         this.attendantId = attendantId;
         this.email = email;

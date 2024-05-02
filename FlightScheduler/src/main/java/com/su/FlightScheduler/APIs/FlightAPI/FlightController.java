@@ -48,7 +48,7 @@ public class FlightController {
 
     private AirportEntity getAirportFromRequest(Map<String, Object> request, String key) {
     String airportCode = (String) request.get(key);
-    return airportRepository.findByCode(airportCode)
+    return airportRepository.findAirportEntityByAirportCode(airportCode)
             .orElseThrow(() -> new RuntimeException("Airport not found"));
     }
 
