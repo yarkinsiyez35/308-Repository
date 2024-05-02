@@ -4,5 +4,7 @@
     <file url="file://$PROJECT_DIR$/CabinCrewScheduler/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/CabinCrewScheduler/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/FlightScheduler/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/FlightScheduler/src/main/java/com/su/FlightScheduler/APIs/CabinCrewAPI/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/FlightScheduler/src/main/resources" charset="UTF-8" />
   </component>
 </project>
