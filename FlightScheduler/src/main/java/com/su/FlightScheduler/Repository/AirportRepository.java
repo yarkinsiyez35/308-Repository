@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AirportRepository extends JpaRepository<AirportEntity, String> {
-    public Optional<AirportEntity> findByCode(String code);
+    public Optional<AirportEntity> findAirportEntityByAirportCode(String code);
 }

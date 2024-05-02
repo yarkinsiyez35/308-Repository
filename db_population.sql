@@ -21,3 +21,13 @@ INSERT INTO pilot_languages (pilot_id, language) VALUES
     (4, "turkish"),
     (4, "german"),
     (5, "english");
+
+-- insert values to passengers
+
+INSERT INTO passengers(passenger_id, first_name, surname, email, password, age, gender, nationality) VALUES 
+	(1, "John", "Doe", "john.doe@gmail.com", "password1", 40, "male", "American"), 
+    (2, "Jane", "Done", "jane.done@gmail.com", "password2", 35, "female", "American"), 
+    (3, "Jason", "Martin", "jason.martin@gmail.com", "password3", 30, "male", "Portuguese"),
+    (4, "Ricardo", "James", "ricardo.james@gmail.com", "password4", 25, "male", "Spanish"),
+    (5, "Camilla", "Caso", "camilla.caso@gmail.com", "password5", 20, "female", "American");
+

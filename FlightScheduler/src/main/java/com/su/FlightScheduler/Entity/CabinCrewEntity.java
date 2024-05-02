@@ -36,11 +36,11 @@ public class CabinCrewEntity implements Serializable {
     private String seniority;
 
     // Constructor
-    @OneToMany(mappedBy = "attendantLanguagePK.attendant_id", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "attendantLanguagePK.attendantId", cascade = CascadeType.PERSIST)
     private List<AttendantLanguageEntity> languages;
 
-    @OneToMany(mappedBy = "cabinCrewEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<DishRecipe> recipes;  // List to hold multiple recipes
+    public CabinCrewEntity() {
+    }
 
     public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority) {
         this.attendantId = attendantId;
@@ -77,9 +77,6 @@ public class CabinCrewEntity implements Serializable {
 
     public List<AttendantLanguageEntity> getLanguages() {
         return languages;
-    }
-    public List<DishRecipe> getRecipes() {
-        return recipes;
     }
 
     public int getAge() {
@@ -136,8 +133,5 @@ public class CabinCrewEntity implements Serializable {
     }
     public void setLanguages(List<AttendantLanguageEntity> languages) {
         this.languages = languages;
-    }
-    public void setRecipes(List<DishRecipe> recipes) {
-        this.recipes = recipes;
     }
 }

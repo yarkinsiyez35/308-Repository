@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PlaneRepository extends JpaRepository<PlaneEntity, String> {
-    public Optional<PlaneEntity> findByCode(String code);
+
 }

@@ -24,6 +24,16 @@ public class AirportEntity implements Serializable {
     @Column(name = "airport_name")
     private String airportName;
 
+    public AirportEntity() {
+    }
+
+    public AirportEntity(String airportCode, String city, String country, String airportName) {
+        this.airportCode = airportCode;
+        this.city = city;
+        this.country = country;
+        this.airportName = airportName;
+    }
+
     // getters and setters
     public String getAirportCode() {
         return airportCode;
