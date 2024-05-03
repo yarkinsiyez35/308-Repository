@@ -35,14 +35,18 @@ public class CabinCrewEntity implements Serializable {
     @Column(name = "seniority", nullable = false)
     private String seniority;
 
-    // Constructor
+
     @OneToMany(mappedBy = "attendantLanguagePK.attendantId", cascade = CascadeType.PERSIST)
     private List<AttendantLanguageEntity> languages;
 
+    @OneToMany(mappedBy = "dishRecipePK.attendantId", cascade = CascadeType.PERSIST)
+    private List<DishRecipeEntity> recipes;
+
+    // Constructor
     public CabinCrewEntity() {
     }
 
-    public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority) {
+    public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority, List<AttendantLanguageEntity> languages, List<DishRecipeEntity> recipes) {
         this.attendantId = attendantId;
         this.email = email;
         this.password = password;
@@ -52,6 +56,8 @@ public class CabinCrewEntity implements Serializable {
         this.gender = gender;
         this.nationality = nationality;
         this.seniority = seniority;
+        this.languages = languages;
+        this.recipes = recipes;
     }
 
     // Getters
@@ -95,6 +101,10 @@ public class CabinCrewEntity implements Serializable {
         return seniority;
     }
 
+    public List<DishRecipeEntity> getRecipes() {
+        return recipes;
+    }
+
     // Setters
     public void setAttendantId(int attendantId) {
         this.attendantId = attendantId;
@@ -133,5 +143,9 @@ public class CabinCrewEntity implements Serializable {
     }
     public void setLanguages(List<AttendantLanguageEntity> languages) {
         this.languages = languages;
+    }
+
+    public void setRecipes(List<DishRecipeEntity> recipes) {
+        this.recipes = recipes;
     }
 }
