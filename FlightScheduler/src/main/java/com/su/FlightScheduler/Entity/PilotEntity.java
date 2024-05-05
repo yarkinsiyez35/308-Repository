@@ -1,7 +1,9 @@
 package com.su.FlightScheduler.Entity;
+import com.su.FlightScheduler.DTO.PilotWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,10 +41,7 @@ public class PilotEntity  implements Serializable {
     @Column(name = "seniority", nullable = false)
     private String seniority;
 
-    //@ElementCollection
-    //@CollectionTable(name = "pilot_languages", joinColumns = @JoinColumn(name = "pilot_id"))
-    //@Column(name = "language")
-    @OneToMany(mappedBy = "pilotLanguagePK.pilotId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "pilotLanguagePK.pilotId", cascade = CascadeType.REMOVE)
     private List<PilotLanguageEntity> languages;
 
     public PilotEntity() {}
@@ -72,6 +71,28 @@ public class PilotEntity  implements Serializable {
         this.allowedRange = pilotEntity.allowedRange;
         this.nationality = pilotEntity.nationality;
         this.seniority = pilotEntity.seniority;
+    }
+
+    public PilotEntity(PilotWithLanguagesDTO pilotWithLanguagesDTO) //this constructor will be used to save a pilotEntity
+    {
+        this.pilotId = pilotWithLanguagesDTO.getPilotId();
+        this.email = pilotWithLanguagesDTO.getEmail();
+        this.password = pilotWithLanguagesDTO.getPassword();
+        this.firstName = pilotWithLanguagesDTO.getFirstName();
+        this.surname = pilotWithLanguagesDTO.getSurname();
+        this.age = pilotWithLanguagesDTO.getAge();
+        this.gender = pilotWithLanguagesDTO.getGender();
+        this.allowedRange = pilotWithLanguagesDTO.getAllowedRange();
+        this.nationality = pilotWithLanguagesDTO.getNationality();
+        this.seniority = pilotWithLanguagesDTO.getSeniority();
+        List<PilotLanguageEntity> languageEntities = new ArrayList<>();
+        for ( String language : pilotWithLanguagesDTO.getLanguages())
+        {
+            PilotLanguagePK pilotLanguagePK = new PilotLanguagePK(this.pilotId, language);
+            PilotLanguageEntity pilotLanguageEntity = new PilotLanguageEntity(pilotLanguagePK);
+            languageEntities.add(pilotLanguageEntity);
+        }
+        this.languages = languageEntities;
     }
 
     public int getPilotId() {
