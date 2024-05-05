@@ -20,9 +20,11 @@ import java.util.Optional;
 @RequestMapping("/api/pilots")
 public class PilotController {
     //this controller is responsible for
+    //<METHOD> <RETURN TYPE> --> <DESCRIPTION>
     //GET List<PilotWithLanguagesDTO> --> returns every pilot in the database
     //GET PilotWithLanguagesDTO --> returns pilot with given id
-
+    //POST PilotWithLanguagesDTO --> creates a new Pilot and returns it
+    //DELETE PilotWithLanguagesDTO --> deletes a pilot with the given id
 
 
 
@@ -31,15 +33,6 @@ public class PilotController {
     public PilotController(PilotService pilotService) {
         this.pilotService = pilotService;
     }
-
-    @PostConstruct
-    private void addPilot()
-    {
-        //PilotEntity randomPilot = generateRandomPilot();
-        // Save the random pilot using the PilotServiceImp
-        //PilotEntity savedPilot = pilotService.savePilot(randomPilot);
-    }
-
 
     @GetMapping()
     public ResponseEntity<List<PilotWithLanguagesDTO>> getPilots()
@@ -59,12 +52,42 @@ public class PilotController {
     {
         Optional<PilotEntity> pilot = pilotService.findPilotById(pilotId);
         if (pilot.isPresent()) {
-            // Return ResponseEntity with status code 200 (OK) and the found pilot entity
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilot.get());
             return ResponseEntity.ok(pilotWithLanguagesDTO);
         } else {
-            // Return ResponseEntity with status code 404 (Not Found) if pilot is not found
             String message = "Pilot with pilotId: " + pilotId + " not found!";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+    }
+
+    @PostMapping("/{pilotId}")
+    public ResponseEntity<Object> postPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
+    {
+        if (pilotService.findPilotById(pilotId).isPresent())
+        {
+            String message = "Pilot with pilotId: " + pilotId + " already exists!";
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(message);
+        }
+        pilotWithLanguagesDTO.setPilotId(pilotId);  //prevention against giving different pilotId in the dto
+        PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+        PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
+        PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
+        return ResponseEntity.ok(savedPilotDTO);
+    }
+
+    @DeleteMapping("/{pilotId}")
+    public ResponseEntity<Object> deletePilotWithId(@PathVariable int pilotId)
+    {
+        Optional<PilotEntity> pilotEntity = pilotService.findPilotById(pilotId);
+        if (pilotEntity.isPresent())
+        {
+            pilotService.deletePilotById(pilotId);
+            PilotWithLanguagesDTO deletedPilot = new PilotWithLanguagesDTO(pilotEntity.get());
+            return ResponseEntity.ok(deletedPilot);
+        }
+        else
+        {
+            String message = "Pilot with pilotId: " + pilotId + " cannot be deleted!";
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }

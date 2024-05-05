@@ -13,6 +13,8 @@ import java.util.List;
 public class PilotWithLanguagesDTO implements Serializable {
 
     private int pilotId;
+    private String email;
+    private String password;
     private String firstName;
     private String surname;
     private int age;
@@ -28,6 +30,8 @@ public class PilotWithLanguagesDTO implements Serializable {
     public PilotWithLanguagesDTO(PilotEntity pilotEntity)
     {
         this.pilotId = pilotEntity.getPilotId();
+        this.email = pilotEntity.getEmail();
+        this.password = pilotEntity.getPassword();
         this.firstName = pilotEntity.getFirstName();
         this.surname = pilotEntity.getSurname();
         this.age = pilotEntity.getAge();
@@ -36,7 +40,7 @@ public class PilotWithLanguagesDTO implements Serializable {
         this.nationality = pilotEntity.getNationality();
         this.seniority = pilotEntity.getSeniority();
         this.languages = new ArrayList<>();
-        if (!pilotEntity.getLanguages().isEmpty())  //if there are languages
+        if (pilotEntity.getLanguages() != null)  //if there are languages
         {
             List<PilotLanguageEntity> pilotLanguageEntities =  pilotEntity.getLanguages();
             for (PilotLanguageEntity pilotLanguageEntity :  pilotLanguageEntities)  //add each language
@@ -48,6 +52,14 @@ public class PilotWithLanguagesDTO implements Serializable {
 
     public int getPilotId() {
         return pilotId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getFirstName() {
@@ -80,6 +92,51 @@ public class PilotWithLanguagesDTO implements Serializable {
 
     public List<String> getLanguages() {
         return languages;
+    }
+
+
+    public void setPilotId(int pilotId) {
+        this.pilotId = pilotId;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setAllowedRange(int allowedRange) {
+        this.allowedRange = allowedRange;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public void setSeniority(String seniority) {
+        this.seniority = seniority;
+    }
+
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
     }
 
     @Override
