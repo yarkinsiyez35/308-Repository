@@ -36,7 +36,8 @@ public class PilotServiceImp implements PilotService {
             List<PilotLanguageEntity> pilotLanguageEntities = pilot.getLanguages();
             PilotEntity newPilot = new PilotEntity(pilot);
             savedPilot = pilotRepository.save(newPilot);
-            pilotLanguageRepository.saveAll(pilot.getLanguages());
+            List<PilotLanguageEntity> savedPilotLanguageEntities = pilotLanguageRepository.saveAll(pilot.getLanguages());
+            savedPilot.setLanguages(savedPilotLanguageEntities);  //add the languages to the returned object
         }
         else
         {

@@ -40,3 +40,13 @@ VALUES
 (4, 'Brad.brown@gmail.com', 'password7455', 'Brad', 'Brown', 35, 'Male', 'Australia', 'Senior'),
 (5, 'carol.pitt@gmail.com', 'password432', 'Carol', 'Pitt', 26, 'Female', 'New Zealand', 'Junior');
 
+INSERT INTO attendant_languages (attendant_id, language) VALUES
+	(1,"english"),
+    (1, "german"),
+    (2, "english"),
+    (2, "french"),
+    (3, "english"),
+    (4, "english"),
+    (4, "turkish"),
+    (4, "german"),
+    (5, "english");
