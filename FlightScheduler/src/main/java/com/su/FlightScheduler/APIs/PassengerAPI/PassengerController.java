@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +30,7 @@ public class PassengerController {
         return ResponseEntity.ok(passengerEntityList);
     }
 
-    @GetMapping("/{passengerId}")
+    @GetMapping("/get/{passengerId}")
     public ResponseEntity<Object> getPassengerWithId(@PathVariable int passengerId)
     {
         Optional<PassengerEntity> passenger = passengerService.findPassengerById(passengerId);
@@ -40,6 +39,48 @@ public class PassengerController {
         }
         String message = "Passenger with ID: " + passengerId + " not found!";
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<Object> postPassengerWithId(@RequestBody PassengerEntity passengerEntity)
+    {
+        if (passengerService.findPassengerById(passengerEntity.getPassengerId()).isPresent())
+        {
+            String message = "Passenger with ID: " + passengerEntity.getPassengerId() + " already exists!";
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(message);
+        }
+
+        PassengerEntity savedPassenger = passengerService.savePassenger(passengerEntity);
+
+        return ResponseEntity.ok(savedPassenger);
+    }
+
+    @PutMapping("/update/{passengerId}")
+    public ResponseEntity<PassengerEntity> updatePassengerWithId(@PathVariable int passengerId, @RequestBody PassengerEntity updatedPassenger) {
+        Optional<PassengerEntity> passengerEntity = passengerService.findPassengerById(passengerId);
+        if (passengerEntity.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        updatedPassenger.setPassengerId(passengerId); // Ensure the ID is set correctly
+        PassengerEntity updatedPassengerEntity = passengerService.updatePassenger(updatedPassenger);
+        return ResponseEntity.ok(updatedPassengerEntity);
+    }
+
+    @DeleteMapping("/delete/{passengerId}")
+    public ResponseEntity<Object> deletePassengerWithId(@PathVariable int passengerId)
+    {
+        Optional<PassengerEntity> passengerEntity = passengerService.findPassengerById(passengerId);
+        if (passengerEntity.isPresent())
+        {
+            passengerService.deletePassengerById(passengerId);
+            return ResponseEntity.ok(passengerEntity);
+        }
+        else
+        {
+            String message = "Passenger with ID: " + passengerId + " cannot be deleted!";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
     }
 
     @PostMapping("/login")
