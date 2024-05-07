@@ -44,6 +44,24 @@ public class PilotEntity  implements Serializable {
     @OneToMany(mappedBy = "pilotLanguagePK.pilotId", cascade = CascadeType.REMOVE)
     private List<PilotLanguageEntity> languages;
 
+    @OneToMany(mappedBy = "pilotAssignmentPK.pilotId", cascade = CascadeType.REMOVE)
+    private List<PilotAssignmentEntity> assignments;
+
+
+    @PreRemove
+    private void preRemove()    //THIS IS NOT TESTED
+    {
+        if (assignments != null)    //pilot is assigned to flights
+        {
+            for (PilotAssignmentEntity pilotAssignmentEntity : assignments) //for each flight assignment
+            {
+                //set the pilotId to null
+                PilotAssignmentPK pilotAssignmentPK = new PilotAssignmentPK(null, pilotAssignmentEntity.getPilotAssignmentPK().getFlightNumber());
+                //update the PilotAssignmentEntity
+                pilotAssignmentEntity.setPilotAssignmentPK(pilotAssignmentPK);
+            }
+        }
+    }
     public PilotEntity() {}
 
     public PilotEntity(int pilotId, String email, String password, String firstName, String surname, int age, String gender, int allowedRange, String nationality, String seniority) {
