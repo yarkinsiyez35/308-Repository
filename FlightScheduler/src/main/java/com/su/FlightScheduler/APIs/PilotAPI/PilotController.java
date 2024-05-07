@@ -24,9 +24,8 @@ public class PilotController {
     //GET List<PilotWithLanguagesDTO> --> returns every pilot in the database
     //GET PilotWithLanguagesDTO --> returns pilot with given id
     //POST PilotWithLanguagesDTO --> creates a new Pilot and returns it
+    //PUT PilotWithLanguagesDTO --> updates an existing Pilot and returns it
     //DELETE PilotWithLanguagesDTO --> deletes a pilot with the given id
-
-
 
     private final PilotService pilotService;
     @Autowired
@@ -37,25 +36,38 @@ public class PilotController {
     @GetMapping()
     public ResponseEntity<List<PilotWithLanguagesDTO>> getPilots()
     {
-        List<PilotEntity> pilotEntityList = pilotService.findAllPilots();   //find all pilots
-        List<PilotWithLanguagesDTO> pilotWithLanguagesDTOList = new ArrayList<>();    //create an empty list to hold the pilots
+        //find all pilots
+        List<PilotEntity> pilotEntityList = pilotService.findAllPilots();
+        //create an empty list to hold the pilot DTOs
+        List<PilotWithLanguagesDTO> pilotWithLanguagesDTOList = new ArrayList<>();
         for (PilotEntity pilotEntity: pilotEntityList)  //for each PilotEntity
         {
+            //convert the entity to DTO
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
+            //add the DTO to the list
             pilotWithLanguagesDTOList.add(pilotWithLanguagesDTO);
         }
+        //return the DTO list
         return ResponseEntity.ok(pilotWithLanguagesDTOList);
     }
 
     @GetMapping("/{pilotId}")
     public ResponseEntity<Object> getPilotWithId(@PathVariable int pilotId)
     {
+        //find the PilotEntity by id
         Optional<PilotEntity> pilot = pilotService.findPilotById(pilotId);
-        if (pilot.isPresent()) {
+        if (pilot.isPresent())  //an entity exists with given id
+        {
+            //convert the entity to DTO
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilot.get());
+            //return the DTO
             return ResponseEntity.ok(pilotWithLanguagesDTO);
-        } else {
+        }
+        else
+        {
+            //create error message
             String message = "Pilot with pilotId: " + pilotId + " not found!";
+            //return error message
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
@@ -63,31 +75,69 @@ public class PilotController {
     @PostMapping("/{pilotId}")
     public ResponseEntity<Object> postPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
     {
-        if (pilotService.findPilotById(pilotId).isPresent())
+        if (pilotService.findPilotById(pilotId).isPresent())    //an entity exists with given id
         {
+            //create error message
             String message = "Pilot with pilotId: " + pilotId + " already exists!";
+            //return error message
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(message);
         }
-        pilotWithLanguagesDTO.setPilotId(pilotId);  //prevention against giving different pilotId in the dto
+        //make sure the id's match
+        pilotWithLanguagesDTO.setPilotId(pilotId);
+        //create PilotEntity from the input DTO
         PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+        //save the PilotEntity
         PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
+        //convert the saved PilotEntity to DTO
         PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
+        //return the DTO
         return ResponseEntity.ok(savedPilotDTO);
+    }
+
+    @PutMapping("/{pilotId}")
+    public ResponseEntity<Object> updatePilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
+    {
+        if (pilotService.findPilotById(pilotId).isEmpty())  //pilot with given id does not exist
+        {
+            //create error message
+            String message = "Pilot with pilotId: " + pilotId + " not found!";
+            //return error message
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+        else    //pilot with given id exists
+        {
+            //make sure the id's match
+            pilotWithLanguagesDTO.setPilotId(pilotId);
+            //create PilotEntity from the input DTO
+            PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+            //update the PilotEntity
+            PilotEntity updatedPilot = pilotService.updatePilot(pilotEntity);
+            //convert the updated PilotEntity to DTO
+            PilotWithLanguagesDTO updatedPilotDTO = new PilotWithLanguagesDTO(updatedPilot);
+            //return the DTO
+            return ResponseEntity.ok(updatedPilotDTO);
+        }
     }
 
     @DeleteMapping("/{pilotId}")
     public ResponseEntity<Object> deletePilotWithId(@PathVariable int pilotId)
     {
+        //find PilotEntity by given id
         Optional<PilotEntity> pilotEntity = pilotService.findPilotById(pilotId);
-        if (pilotEntity.isPresent())
+        if (pilotEntity.isPresent())    //entity exists
         {
+            //delete the entity
             pilotService.deletePilotById(pilotId);
-            PilotWithLanguagesDTO deletedPilot = new PilotWithLanguagesDTO(pilotEntity.get());
-            return ResponseEntity.ok(deletedPilot);
+            //convert the deleted entity to DTO
+            PilotWithLanguagesDTO deletedPilotDTO = new PilotWithLanguagesDTO(pilotEntity.get());
+            //return the deleted entity as DTO
+            return ResponseEntity.ok(deletedPilotDTO);
         }
-        else
+        else    //entity does not exist
         {
+            //create error message
             String message = "Pilot with pilotId: " + pilotId + " cannot be deleted!";
+            //return error message
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
@@ -106,8 +156,4 @@ public class PilotController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
-
-
-
 }
