@@ -24,8 +24,14 @@ public class PilotServiceImp implements PilotService {
         this.pilotLanguageRepository = pilotLanguageRepository;
     }
 
-    public PilotEntity savePilot(PilotEntity pilot)     //there must be a better way
+    @Override
+    public PilotEntity savePilot(PilotEntity pilot)
     {
+        if (pilotExistsById(pilot.getPilotId()))    //cannot create a pilot with an existing id
+        {
+            throw new RuntimeException("Pilot with id " + pilot.getPilotId() + " cannot be created!");
+        }
+
         PilotEntity savedPilot;
         if (pilot.getLanguages() != null)   //if pilot has languages
         {
@@ -46,15 +52,34 @@ public class PilotServiceImp implements PilotService {
         //return saved entity
         return savedPilot;
     }
-    public Optional<PilotEntity> findPilotById(int id) {
-        return pilotRepository.findById(id);
+
+    @Override
+    public PilotEntity findPilotById(int id)
+    {
+        //get pilotEntity from the repository
+        PilotEntity pilotEntity = pilotRepository.findById(id).orElseThrow(() -> new RuntimeException("Pilot with id: " + id + " does not exist!"));
+        return pilotEntity;
     }
 
-    public List<PilotEntity> findAllPilots() {
+    @Override
+    public boolean pilotExistsById(int id)
+    {
+        return pilotRepository.findById(id).isPresent();
+    }
+
+    @Override
+    public List<PilotEntity> findAllPilots()
+    {
         return pilotRepository.findAll();
     }
 
-    public PilotEntity updatePilot(PilotEntity pilot) {
+    @Override
+    public PilotEntity updatePilot(PilotEntity pilot)
+    {
+        if (!pilotExistsById(pilot.getPilotId()))   //a nonexistent pilot cannot be updated
+        {
+            throw new RuntimeException("Pilot with id: " + pilot.getPilotId() + " cannot be updated!");
+        }
         PilotEntity updatedPilot;
         if (pilot.getLanguages() != null)
         {
@@ -79,12 +104,28 @@ public class PilotServiceImp implements PilotService {
         return updatedPilot;
     }
 
-    public void deletePilotById(int id) {
-        pilotRepository.deleteById(id);
+    @Override
+    public PilotEntity deletePilotById(int id)
+    {
+        try //findPilotById() throws exception
+        {
+            //find the pilotEntity to delete
+            PilotEntity pilotEntity = findPilotById(id);
+            //delete the pilotEntity
+            pilotRepository.deleteById(id);
+            //return the deleted pilotEntity
+            return pilotEntity;
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException("Pilot with id: " + id + " cannot be deleted!");
+        }
+
     }
 
     @Override
-    public boolean authenticate(LoginRequest loginRequest) {
+    public boolean authenticate(LoginRequest loginRequest)
+    {
         //check if a pilot exists with given email and password
         Optional<PilotEntity> pilotEntity = pilotRepository.findPilotEntityByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         //return true if it exists
