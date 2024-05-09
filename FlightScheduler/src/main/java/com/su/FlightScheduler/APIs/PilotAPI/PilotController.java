@@ -54,58 +54,57 @@ public class PilotController {
     @GetMapping("/{pilotId}")
     public ResponseEntity<Object> getPilotWithId(@PathVariable int pilotId)
     {
-        //find the PilotEntity by id
-        Optional<PilotEntity> pilot = pilotService.findPilotById(pilotId);
-        if (pilot.isPresent())  //an entity exists with given id
+        try
         {
+            //find the PilotEntity by id
+            PilotEntity pilotEntity = pilotService.findPilotById(pilotId);
             //convert the entity to DTO
-            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilot.get());
+            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
             //return the DTO
             return ResponseEntity.ok(pilotWithLanguagesDTO);
         }
-        else
+        catch (RuntimeException e)  //this exception is expected
         {
-            //create error message
-            String message = "Pilot with pilotId: " + pilotId + " not found!";
-            //return error message
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PostMapping("/{pilotId}")
-    public ResponseEntity<Object> postPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
+    public ResponseEntity<Object> createPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
     {
-        if (pilotService.findPilotById(pilotId).isPresent())    //an entity exists with given id
+        try
         {
-            //create error message
-            String message = "Pilot with pilotId: " + pilotId + " already exists!";
-            //return error message
-            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(message);
+            //make sure the id's match
+            pilotWithLanguagesDTO.setPilotId(pilotId);
+            //create PilotEntity from the input DTO
+            PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+            //save the PilotEntity
+            PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
+            //convert the saved PilotEntity to DTO
+            PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
+            //return the DTO
+            return ResponseEntity.ok(savedPilotDTO);
         }
-        //make sure the id's match
-        pilotWithLanguagesDTO.setPilotId(pilotId);
-        //create PilotEntity from the input DTO
-        PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
-        //save the PilotEntity
-        PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
-        //convert the saved PilotEntity to DTO
-        PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
-        //return the DTO
-        return ResponseEntity.ok(savedPilotDTO);
+        catch (RuntimeException e)  //this exception is expected
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
+
 
     @PutMapping("/{pilotId}")
     public ResponseEntity<Object> updatePilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
     {
-        if (pilotService.findPilotById(pilotId).isEmpty())  //pilot with given id does not exist
-        {
-            //create error message
-            String message = "Pilot with pilotId: " + pilotId + " not found!";
-            //return error message
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-        }
-        else    //pilot with given id exists
-        {
+       try
+       {
             //make sure the id's match
             pilotWithLanguagesDTO.setPilotId(pilotId);
             //create PilotEntity from the input DTO
@@ -116,30 +115,38 @@ public class PilotController {
             PilotWithLanguagesDTO updatedPilotDTO = new PilotWithLanguagesDTO(updatedPilot);
             //return the DTO
             return ResponseEntity.ok(updatedPilotDTO);
-        }
+       }
+       catch (RuntimeException e)   //this exception is expected
+       {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+       }
+       catch (Exception e) //this should not happen
+       {
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+       }
     }
 
     @DeleteMapping("/{pilotId}")
     public ResponseEntity<Object> deletePilotWithId(@PathVariable int pilotId)
     {
-        //find PilotEntity by given id
-        Optional<PilotEntity> pilotEntity = pilotService.findPilotById(pilotId);
-        if (pilotEntity.isPresent())    //entity exists
+        try
         {
             //delete the entity
-            pilotService.deletePilotById(pilotId);
+            PilotEntity pilotEntity = pilotService.deletePilotById(pilotId);
             //convert the deleted entity to DTO
-            PilotWithLanguagesDTO deletedPilotDTO = new PilotWithLanguagesDTO(pilotEntity.get());
+            PilotWithLanguagesDTO deletedPilotDTO = new PilotWithLanguagesDTO(pilotEntity);
             //return the deleted entity as DTO
             return ResponseEntity.ok(deletedPilotDTO);
         }
-        else    //entity does not exist
+        catch (RuntimeException e)   //this exception is expected
         {
-            //create error message
-            String message = "Pilot with pilotId: " + pilotId + " cannot be deleted!";
-            //return error message
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
     @PostMapping("/login")
