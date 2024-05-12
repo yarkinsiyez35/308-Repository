@@ -1,4 +1,5 @@
 package com.su.FlightScheduler.Entity;
+import com.su.FlightScheduler.DTO.AttendantWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -58,6 +59,13 @@ public class CabinCrewEntity implements Serializable {
         this.seniority = seniority;
         this.languages = languages;
         this.recipes = recipes;
+    }
+
+    public CabinCrewEntity(CabinCrewEntity cabin) { // ata created this for controller error
+
+    }
+
+    public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) { // ata created this for controller error
     }
 
     // Getters
