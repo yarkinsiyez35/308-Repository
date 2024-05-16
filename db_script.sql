@@ -82,14 +82,14 @@ CREATE TABLE pilot_languages (
 
 CREATE TABLE pilot_assignments
 (
-  	pilot_id INT NOT NULL,
-  	flight_number VARCHAR(6) NOT NULL,
-	assignment_role VARCHAR(8) NOT NULL,
-	seat_number VARCHAR(255) NOT NULL, 
-	accepted_assignment INT NOT NULL,
-	FOREIGN KEY (pilot_id) REFERENCES pilots(pilot_id),
-	FOREIGN KEY (flight_number) REFERENCES flights (flight_number),
-	PRIMARY KEY (pilot_id, flight_number)
+    pilot_id INT NOT NULL,
+    flight_number VARCHAR(6) NOT NULL,
+    assignment_role VARCHAR(8) NOT NULL,
+    seat_number VARCHAR(255) NOT NULL, 
+    accepted_assignment INT NOT NULL,
+    FOREIGN KEY (pilot_id) REFERENCES pilots(pilot_id),
+    FOREIGN KEY (flight_number) REFERENCES flights (flight_number),
+    PRIMARY KEY (pilot_id, flight_number)
 );
 
 CREATE TABLE crew_members (
@@ -156,6 +156,21 @@ CREATE TABLE passenger_flights(
     FOREIGN KEY (passenger_id) REFERENCES passengers(passenger_id),
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number),
     PRIMARY KEY (passenger_id, flight_number)
+);
+
+
+CREATE TABLE users(
+
+    user_id INT,
+    username VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    PRIMARY KEY (user_id)
+    );
+
+CREATE TABLE roles(
+    role_id INT,
+    authority VARCHAR(255),
+    PRIMARY KEY (role_id)
 );
 
 CREATE INDEX airport_city_index on airports (city); 

@@ -10,5 +10,6 @@ public interface PilotRepository extends JpaRepository<PilotEntity, Integer> {
 
     public Optional<PilotEntity> findPilotEntityByEmailAndPassword(String email, String password);
 
+    public Optional<PilotEntity> findPilotEntityByEmail(String email);
 
 }
