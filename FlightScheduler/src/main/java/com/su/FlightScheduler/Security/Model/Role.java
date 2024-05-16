@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.Security.Entity;
+package com.su.FlightScheduler.Security.Model;
 
 
 import jakarta.persistence.*;

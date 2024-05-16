@@ -1,9 +1,15 @@
 package com.su.FlightScheduler.Security.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
-import com.su.FlightScheduler.Security.Repository.UserRepository;
+import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.PassengerEntity;
+import com.su.FlightScheduler.Entity.PilotEntity;
+import com.su.FlightScheduler.Repository.AdminRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepository;
+import com.su.FlightScheduler.Repository.PassengerRepository;
+import com.su.FlightScheduler.Repository.PilotRepository;
+import com.su.FlightScheduler.Security.Model.ApplicationUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,20 +24,46 @@ public class UserService implements UserDetailsService {
 
     private PasswordEncoder encoder;
 
-    private UserRepository userRepository;
+    private PilotRepository pilotRepository;
+    private CabinCrewRepository cabinCrewRepository;
+    private PassengerRepository passengerRepository;
+    private AdminRepository adminRepository;
 
     @Autowired
-    public UserService(PasswordEncoder encoder, UserRepository userRepository) {
+    public UserService(PasswordEncoder encoder, PilotRepository pilotRepository, CabinCrewRepository cabinCrewRepository, PassengerRepository passengerRepository, AdminRepository adminRepository) {
         this.encoder = encoder;
-        this.userRepository = userRepository;
+        this.pilotRepository = pilotRepository;
+        this.cabinCrewRepository = cabinCrewRepository;
+        this.passengerRepository = passengerRepository;
+        this.adminRepository = adminRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        System.out.println("In the user details service");
+        Optional<PilotEntity> pilotEntity = pilotRepository.findPilotEntityByEmail(username);
+        if (pilotEntity.isPresent())
+        {
+            ApplicationUser applicationUser = new ApplicationUser(pilotEntity.get());
+            return applicationUser;
+        }
+        Optional<CabinCrewEntity> cabinCrewEntity = cabinCrewRepository.findCabinCrewEntityByEmail(username);
+        if (cabinCrewEntity.isPresent())
+        {
+            ApplicationUser applicationUser = new ApplicationUser(cabinCrewEntity.get());
+            return applicationUser;
+        }
+        Optional<PassengerEntity> passengerEntity = passengerRepository.findPassengerEntityByEmail(username);
+        if (passengerEntity.isPresent())
+        {
+            ApplicationUser applicationUser = new ApplicationUser(passengerEntity.get());
+            return applicationUser;
+        }
 
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
+
+
+        //edit later
+        throw new RuntimeException("User not found!");
     }
 
 }

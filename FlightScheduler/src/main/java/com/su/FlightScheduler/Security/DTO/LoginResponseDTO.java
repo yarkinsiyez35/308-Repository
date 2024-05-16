@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.Security.DTO;
 
-import com.su.FlightScheduler.Security.Entity.ApplicationUser;
+import com.su.FlightScheduler.Security.Model.ApplicationUser;
 
 public class LoginResponseDTO {
     private ApplicationUser user;

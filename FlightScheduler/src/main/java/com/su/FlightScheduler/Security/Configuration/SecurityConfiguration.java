@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -40,7 +41,7 @@ public class SecurityConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
@@ -58,7 +59,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/admin/**").hasRole("ADMIN");
-                    auth.requestMatchers("/api/pilot**").hasAnyRole("ADMIN", "PILOT");
+                    auth.requestMatchers("/api/pilots/**").hasAnyRole("ADMIN", "PILOT");
+                    auth.requestMatchers("/api/attendants/**").hasAnyRole("ADMIN", "ATTENDANT");
+                    auth.requestMatchers("/api/passengers/**").hasAnyRole("ADMIN", "PASSENGER");
                     auth.anyRequest().authenticated();
                 });
 

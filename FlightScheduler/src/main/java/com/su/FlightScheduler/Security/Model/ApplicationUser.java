@@ -1,6 +1,8 @@
-package com.su.FlightScheduler.Security.Entity;
+package com.su.FlightScheduler.Security.Model;
 
-import jakarta.persistence.*;
+import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.PassengerEntity;
+import com.su.FlightScheduler.Entity.PilotEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,49 +10,50 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "users")
+
 public class ApplicationUser implements UserDetails {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name= "user_id")
-    private Integer userId;
-    @Column(unique=true)
+
     private String username;
     private String password;
-
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(
-            name="user_role_junction",
-            joinColumns = {@JoinColumn(name="user_id")},
-            inverseJoinColumns = {@JoinColumn(name="role_id")}
-    )
-    private Set<Role> authorities;
+    private Set<ApplicationAuthority> authorities;
 
     public ApplicationUser() {
         super();
         authorities = new HashSet<>();
     }
 
-
-    public ApplicationUser(Integer userId, String username, String password, Set<Role> authorities) {
-        super();
-        this.userId = userId;
+    public ApplicationUser(String username, String password, Set<ApplicationAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
     }
 
-    public Integer getUserId() {
-        return this.userId;
+
+    public ApplicationUser(PilotEntity pilotEntity)
+    {
+        this.username = pilotEntity.getEmail();
+        this.password = pilotEntity.getPassword();
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("PILOT");
+        this.authorities = new HashSet<>();
+        this.authorities.add(applicationAuthority);
     }
 
-    public void setId(Integer userId) {
-        this.userId = userId;
+    public ApplicationUser(CabinCrewEntity cabinCrewEntity)
+    {
+        this.username = cabinCrewEntity.getEmail();
+        this.password = cabinCrewEntity.getPassword();
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("ATTENDANT");
+        this.authorities = new HashSet<>();
+        this.authorities.add(applicationAuthority);
     }
 
-    public void setAuthorities(Set<Role> authorities) {
-        this.authorities = authorities;
+    public ApplicationUser(PassengerEntity passengerEntity)
+    {
+        this.username = passengerEntity.getEmail();
+        this.password = passengerEntity.getPassword();
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("PASSENGER");
+        this.authorities = new HashSet<>();
+        this.authorities.add(applicationAuthority);
     }
 
     @Override
