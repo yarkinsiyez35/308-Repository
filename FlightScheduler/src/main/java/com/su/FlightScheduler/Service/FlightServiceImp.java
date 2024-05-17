@@ -5,12 +5,14 @@ import com.su.FlightScheduler.Repository.AdminRepository;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class FlightServiceImp implements FlightService {
 
     private final FlightRepository flightRepository;
