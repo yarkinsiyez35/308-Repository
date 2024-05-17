@@ -1,2 +1,4 @@
 # 308-Repository
- 
+This is the backend repository of the term project in CS308. 
+To run this application, first run db_script.sql in MySqlWorkbench then run db_population.sql to fill the database with dummy data. Flight Scheduler folder is a Springboot application. It can be run in any IDE of your choosing. 
+The folder structure in the project is based on the roles of the components. The folders are Repository, Entity, Service, Controller, DTO and Security. Repository folder has JPARepository interfaces to access the database. Service folder has the services that create the communication between the controller and the repository. Controller folder has the controllers that allows the front end to access our endpoints. In DTO folder, there are Data Transfer Objects that help us to communicate with front end. In the Security folder, there are similar folders like Service, Controller and DTO. However, there are also two different folders named Config and Utils, Config folder is used to update the configuration of the security, Utils folder is used for utilities like genereting RSA keys. 
