@@ -159,20 +159,6 @@ CREATE TABLE passenger_flights(
 );
 
 
-CREATE TABLE users(
-
-    user_id INT,
-    username VARCHAR(255) UNIQUE,
-    password VARCHAR(255),
-    PRIMARY KEY (user_id)
-    );
-
-CREATE TABLE roles(
-    role_id INT,
-    authority VARCHAR(255),
-    PRIMARY KEY (role_id)
-);
-
 CREATE INDEX airport_city_index on airports (city); 
 CREATE INDEX airport_country_index on airports (country);
 
