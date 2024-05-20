@@ -109,6 +109,7 @@ CREATE TABLE cabin_crew_assignments (
     attendant_id INT NOT NULL,
     assignment_role VARCHAR(7) NOT NULL,
     seat_number VARCHAR(255) NOT NULL, 
+    accepted_assignment INT NOT NULL,
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number),
     FOREIGN KEY (attendant_id) REFERENCES crew_members(attendant_id),
     PRIMARY KEY (attendant_id, flight_number)
