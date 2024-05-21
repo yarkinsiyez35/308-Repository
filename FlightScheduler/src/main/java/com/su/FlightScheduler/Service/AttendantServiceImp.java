@@ -6,8 +6,16 @@ import com.su.FlightScheduler.Entity.DishRecipeEntity;
 import com.su.FlightScheduler.Entity.AttendantLanguageEntity;
 import com.su.FlightScheduler.Entity.AttendantLanguagePK;
 import com.su.FlightScheduler.Entity.DishRecipePK;
+import com.su.FlightScheduler.Entity.CabinCrewAssignmentsEntity;
+import com.su.FlightScheduler.Entity.CabinCrewAssignmentsPK;
+import com.su.FlightScheduler.Entity.AttendantVehicleTypeEntity;
+import com.su.FlightScheduler.Entity.AttendantVehicleTypePK;
+
 import com.su.FlightScheduler.Repository.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.CabinLanguageRepository;
+import com.su.FlightScheduler.Repository.CabinVehicleTypeRepository;
+import com.su.FlightScheduler.Repository.CabinAssignmentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
