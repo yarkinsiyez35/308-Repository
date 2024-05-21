@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /*
 CREATE TABLE passengers(
@@ -50,6 +51,18 @@ public class PassengerEntity implements Serializable {
     private String nationality;
 
     public PassengerEntity() {
+    }
+
+    public PassengerEntity(String email, String password,
+                           String firstName, String surname, int age, String gender, String nationality) {
+
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.age = age;
+        this.gender = gender;
+        this.nationality = nationality;
     }
 
     public PassengerEntity(int passengerId, String email, String password,
@@ -138,5 +151,24 @@ public class PassengerEntity implements Serializable {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PassengerEntity that = (PassengerEntity) o;
+        return getPassengerId() == that.getPassengerId() && getAge() == that.getAge()
+                && Objects.equals(getEmail(), that.getEmail())
+                && Objects.equals(getPassword(), that.getPassword())
+                && Objects.equals(getFirstName(), that.getFirstName())
+                && Objects.equals(getSurname(), that.getSurname())
+                && Objects.equals(getGender(), that.getGender())
+                && Objects.equals(getNationality(), that.getNationality());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPassengerId(), getEmail(), getPassword(), getFirstName(), getSurname(), getAge(), getGender(), getNationality());
     }
 }
