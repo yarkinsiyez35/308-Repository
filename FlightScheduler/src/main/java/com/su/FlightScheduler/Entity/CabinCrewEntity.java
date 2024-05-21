@@ -56,7 +56,7 @@ public class CabinCrewEntity implements Serializable {
     public CabinCrewEntity() {
     }
 
-    public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority, List<AttendantLanguageEntity> languages, List<DishRecipeEntity> recipes) {
+    public CabinCrewEntity(int attendantId, String email, String password, String firstName, String surname, int age, String gender, String nationality, String seniority) {
         this.attendantId = attendantId;
         this.email = email;
         this.password = password;
@@ -66,10 +66,10 @@ public class CabinCrewEntity implements Serializable {
         this.gender = gender;
         this.nationality = nationality;
         this.seniority = seniority;
-        this.languages = languages;
-        this.recipes = recipes;
-        this.assignments = assignments; //ata added
-        this.vehicleTypes = vehicleTypes; //ata added
+       // this.languages = languages;
+        //this.recipes = recipes;
+        //this.assignments = assignments; //ata added
+        //this.vehicleTypes = vehicleTypes; //ata added
     }
 
     public CabinCrewEntity(CabinCrewEntity cabin) { // ata created this for controller error

@@ -46,7 +46,7 @@ public class AttendantServiceImp implements AttendantService {
 
         if (cabinCrewRepository.existsById(cabin.getAttendantId())){
 
-            throw new RuntimeException("Cabin Crew with id " + cabin.getAttendantId() + "cannot be created!");
+            throw new RuntimeException("Cabin Crew with id " + cabin.getAttendantId() + " cannot be created!");
         }
 
         CabinCrewEntity savedCabin;
@@ -71,7 +71,7 @@ public class AttendantServiceImp implements AttendantService {
     @Override
     public CabinCrewEntity findAttendantById(int id){
 
-        CabinCrewEntity cabinCrewEntity = cabinCrewRepository.findById(id).orElseThrow(()->new RuntimeException("Cabin Crew with id " + id + " does not exist!"));
+        CabinCrewEntity cabinCrewEntity = cabinCrewRepository.findById(id).orElseThrow(()->new RuntimeException("Attendant with id " + id + " does not exist!"));
         return cabinCrewEntity;
     }
 
@@ -80,8 +80,7 @@ public class AttendantServiceImp implements AttendantService {
     @Override
     public boolean cabinCrewExistsById(int id){
 
-        return cabinCrewRepository.findById(id).isPresent();
-
+      return cabinCrewRepository.existsById(id);
     }
 
     @Override

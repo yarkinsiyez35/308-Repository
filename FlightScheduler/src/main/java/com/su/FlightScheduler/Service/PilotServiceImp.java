@@ -122,6 +122,5 @@ public class PilotServiceImp implements PilotService {
         {
             throw new RuntimeException("Pilot with id: " + id + " cannot be deleted!");
         }
-
     }
 }
