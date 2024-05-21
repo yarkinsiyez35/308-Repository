@@ -5,16 +5,17 @@ import com.su.FlightScheduler.Entity.PilotLanguageEntity;
 import com.su.FlightScheduler.Entity.PilotLanguagePK;
 import com.su.FlightScheduler.Repository.PilotLanguageRepository;
 import com.su.FlightScheduler.Repository.PilotRepository;
+import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -23,6 +24,8 @@ public class PilotLanguageRepositoryTests {
     private PilotRepository pilotRepository;
     @Autowired
     private PilotLanguageRepository pilotLanguageRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     public void PilotLanguageRepository_SaveLanguage()
@@ -83,13 +86,13 @@ public class PilotLanguageRepositoryTests {
         PilotEntity pilotEntity = new PilotEntity(1,"email@gmail.com", "password","first name", "surname", 30, "male", 5000, "Alien", "Senior");
         PilotEntity savedPilotEntity = pilotRepository.save(pilotEntity);
 
-        PilotLanguageEntity pilotLanguageEntity1 = new PilotLanguageEntity((new PilotLanguagePK(1, "English")));
+        PilotLanguageEntity pilotLanguageEntity1 = new PilotLanguageEntity(new PilotLanguagePK(1, "English"));
 
         pilotLanguageRepository.save(pilotLanguageEntity1);
 
-        pilotRepository.deleteById(1);
+        entityManager.clear();  //forces reload on the database
 
-        pilotLanguageRepository.deleteById(new PilotLanguagePK(1, "English"));
+        pilotRepository.deleteById(1);
 
         List<PilotLanguageEntity> pilotLanguage = pilotLanguageRepository.findAll();
 
