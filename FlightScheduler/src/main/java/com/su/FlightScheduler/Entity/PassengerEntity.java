@@ -1,9 +1,6 @@
 package com.su.FlightScheduler.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -27,6 +24,7 @@ public class PassengerEntity implements Serializable {
 
     @Id
     @Column(name = "passenger_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int passengerId;
 
     @Column(name = "email", nullable = false)
