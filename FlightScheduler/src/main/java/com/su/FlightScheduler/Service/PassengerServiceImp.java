@@ -79,9 +79,7 @@ public class PassengerServiceImp implements PassengerService {
         {
             throw new RuntimeException("Passenger with id: " + id + " cannot be deleted!");
         }
-
     }
-
 
     @Override
     public boolean authenticate(LoginRequest loginRequest) {
