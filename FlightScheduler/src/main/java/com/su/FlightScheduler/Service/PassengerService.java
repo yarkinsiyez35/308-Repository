@@ -9,10 +9,11 @@ import java.util.Optional;
 public interface PassengerService {
 
     public PassengerEntity savePassenger(PassengerEntity passenger);
-    public Optional<PassengerEntity> findPassengerById(int id);
+    public PassengerEntity findPassengerById(int id);
+    public boolean passengerExistsById(int id);
     public List<PassengerEntity> findAllPassengers();
     public PassengerEntity updatePassenger(PassengerEntity passenger);
-    public void deletePassengerById(int id);
+    public PassengerEntity deletePassengerById(int id);
     public boolean authenticate(LoginRequest loginRequest);
 
 }
