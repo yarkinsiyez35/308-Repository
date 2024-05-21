@@ -31,7 +31,7 @@ INSERT INTO passengers(passenger_id, first_name, surname, email, password, age, 
     (4, "Ricardo", "James", "ricardo.james@gmail.com", "password4", 25, "male", "Spanish"),
     (5, "Camilla", "Caso", "camilla.caso@gmail.com", "password5", 20, "female", "American");
 
---insert valuues to cabincrew
+-- insert valuues to cabincrew
 INSERT INTO crew_members (attendant_id, email, password, first_name, surname, age, gender, nationality, seniority)
 VALUES
 (1, 'john.cena@gmail.com', 'password325', 'John', 'Cena', 32, 'Male', 'USA', 'Senior'),

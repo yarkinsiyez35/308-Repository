@@ -24,9 +24,8 @@ public class PilotController {
     //GET List<PilotWithLanguagesDTO> --> returns every pilot in the database
     //GET PilotWithLanguagesDTO --> returns pilot with given id
     //POST PilotWithLanguagesDTO --> creates a new Pilot and returns it
+    //PUT PilotWithLanguagesDTO --> updates an existing Pilot and returns it
     //DELETE PilotWithLanguagesDTO --> deletes a pilot with the given id
-
-
 
     private final PilotService pilotService;
     @Autowired
@@ -37,59 +36,117 @@ public class PilotController {
     @GetMapping()
     public ResponseEntity<List<PilotWithLanguagesDTO>> getPilots()
     {
-        List<PilotEntity> pilotEntityList = pilotService.findAllPilots();   //find all pilots
-        List<PilotWithLanguagesDTO> pilotWithLanguagesDTOList = new ArrayList<>();    //create an empty list to hold the pilots
+        //find all pilots
+        List<PilotEntity> pilotEntityList = pilotService.findAllPilots();
+        //create an empty list to hold the pilot DTOs
+        List<PilotWithLanguagesDTO> pilotWithLanguagesDTOList = new ArrayList<>();
         for (PilotEntity pilotEntity: pilotEntityList)  //for each PilotEntity
         {
+            //convert the entity to DTO
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
+            //add the DTO to the list
             pilotWithLanguagesDTOList.add(pilotWithLanguagesDTO);
         }
+        //return the DTO list
         return ResponseEntity.ok(pilotWithLanguagesDTOList);
     }
 
     @GetMapping("/{pilotId}")
     public ResponseEntity<Object> getPilotWithId(@PathVariable int pilotId)
     {
-        Optional<PilotEntity> pilot = pilotService.findPilotById(pilotId);
-        if (pilot.isPresent()) {
-            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilot.get());
+        try
+        {
+            //find the PilotEntity by id
+            PilotEntity pilotEntity = pilotService.findPilotById(pilotId);
+            //convert the entity to DTO
+            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
+            //return the DTO
             return ResponseEntity.ok(pilotWithLanguagesDTO);
-        } else {
-            String message = "Pilot with pilotId: " + pilotId + " not found!";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+        catch (RuntimeException e)  //this exception is expected
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PostMapping("/{pilotId}")
-    public ResponseEntity<Object> postPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
+    public ResponseEntity<Object> createPilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
     {
-        if (pilotService.findPilotById(pilotId).isPresent())
+        try
         {
-            String message = "Pilot with pilotId: " + pilotId + " already exists!";
-            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(message);
+            //make sure the id's match
+            pilotWithLanguagesDTO.setPilotId(pilotId);
+            //create PilotEntity from the input DTO
+            PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+            //save the PilotEntity
+            PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
+            //convert the saved PilotEntity to DTO
+            PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
+            //return the DTO
+            return ResponseEntity.ok(savedPilotDTO);
         }
-        pilotWithLanguagesDTO.setPilotId(pilotId);  //prevention against giving different pilotId in the dto
-        PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
-        PilotEntity savedPilot = pilotService.savePilot(pilotEntity);
-        PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
-        return ResponseEntity.ok(savedPilotDTO);
+        catch (RuntimeException e)  //this exception is expected
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/{pilotId}")
+    public ResponseEntity<Object> updatePilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesDTO pilotWithLanguagesDTO)
+    {
+       try
+       {
+            //make sure the id's match
+            pilotWithLanguagesDTO.setPilotId(pilotId);
+            //create PilotEntity from the input DTO
+            PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO);
+            //update the PilotEntity
+            PilotEntity updatedPilot = pilotService.updatePilot(pilotEntity);
+            //convert the updated PilotEntity to DTO
+            PilotWithLanguagesDTO updatedPilotDTO = new PilotWithLanguagesDTO(updatedPilot);
+            //return the DTO
+            return ResponseEntity.ok(updatedPilotDTO);
+       }
+       catch (RuntimeException e)   //this exception is expected
+       {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+       }
+       catch (Exception e) //this should not happen
+       {
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+       }
     }
 
     @DeleteMapping("/{pilotId}")
     public ResponseEntity<Object> deletePilotWithId(@PathVariable int pilotId)
     {
-        Optional<PilotEntity> pilotEntity = pilotService.findPilotById(pilotId);
-        if (pilotEntity.isPresent())
+        try
         {
-            pilotService.deletePilotById(pilotId);
-            PilotWithLanguagesDTO deletedPilot = new PilotWithLanguagesDTO(pilotEntity.get());
-            return ResponseEntity.ok(deletedPilot);
+            //delete the entity
+            PilotEntity pilotEntity = pilotService.deletePilotById(pilotId);
+            //convert the deleted entity to DTO
+            PilotWithLanguagesDTO deletedPilotDTO = new PilotWithLanguagesDTO(pilotEntity);
+            //return the deleted entity as DTO
+            return ResponseEntity.ok(deletedPilotDTO);
         }
-        else
+        catch (RuntimeException e)   //this exception is expected
         {
-            String message = "Pilot with pilotId: " + pilotId + " cannot be deleted!";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
     @PostMapping("/login")
@@ -106,8 +163,4 @@ public class PilotController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
-
-
-
 }

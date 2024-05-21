@@ -9,20 +9,22 @@ import java.util.Optional;
 public interface PilotService {
 
     // Method to save a pilot
-    public PilotEntity savePilot(PilotEntity pilot);
+    public PilotEntity savePilot(PilotEntity pilot) throws RuntimeException;
 
     // Method to find a pilot by ID
-    public Optional<PilotEntity> findPilotById(int id);
+    public PilotEntity findPilotById(int id) throws RuntimeException;
+    public boolean pilotExistsById(int id);
 
     // Method to find all pilots
     public List<PilotEntity> findAllPilots();
 
     // Method to update a pilot
-    public PilotEntity updatePilot(PilotEntity pilot);
+    public PilotEntity updatePilot(PilotEntity pilot) throws RuntimeException;
 
     // Method to delete a pilot by ID
-    public void deletePilotById(int id);
+    public PilotEntity deletePilotById(int id) throws RuntimeException;
 
     public boolean authenticate(LoginRequest loginRequest);
+
 
 }

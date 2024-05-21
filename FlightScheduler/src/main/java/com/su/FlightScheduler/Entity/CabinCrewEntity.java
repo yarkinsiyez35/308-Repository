@@ -1,4 +1,5 @@
 package com.su.FlightScheduler.Entity;
+import com.su.FlightScheduler.DTO.AttendantWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -42,6 +43,15 @@ public class CabinCrewEntity implements Serializable {
     @OneToMany(mappedBy = "dishRecipePK.attendantId", cascade = CascadeType.PERSIST)
     private List<DishRecipeEntity> recipes;
 
+
+    //attendant vehicle type ı aynı olcak
+    @OneToMany(mappedBy = "attendantVehicleTypePK.attendantId", cascade = CascadeType.PERSIST) //ata added here
+    private List<AttendantVehicleTypeEntity> vehicleTypes;
+
+    @OneToMany(mappedBy = "cabinCrewAssignmentsPK.attendantId", cascade = CascadeType.PERSIST)
+    private List<CabinCrewAssignmentsEntity> assignments;
+
+
     // Constructor
     public CabinCrewEntity() {
     }
@@ -58,6 +68,15 @@ public class CabinCrewEntity implements Serializable {
         this.seniority = seniority;
         this.languages = languages;
         this.recipes = recipes;
+        this.assignments = assignments; //ata added
+        this.vehicleTypes = vehicleTypes; //ata added
+    }
+
+    public CabinCrewEntity(CabinCrewEntity cabin) { // ata created this for controller error
+
+    }
+
+    public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) { // ata created this for controller error
     }
 
     // Getters
@@ -105,6 +124,14 @@ public class CabinCrewEntity implements Serializable {
         return recipes;
     }
 
+    public List<AttendantVehicleTypeEntity> getVehicleTypes() { //ata added
+        return vehicleTypes;
+    }
+
+    public List<CabinCrewAssignmentsEntity> getAssignments() { //ata added
+        return assignments;
+    }
+
     // Setters
     public void setAttendantId(int attendantId) {
         this.attendantId = attendantId;
@@ -147,5 +174,13 @@ public class CabinCrewEntity implements Serializable {
 
     public void setRecipes(List<DishRecipeEntity> recipes) {
         this.recipes = recipes;
+    }
+
+    public void setVehicleTypes(List<AttendantVehicleTypeEntity> vehicleTypes) { //ata added
+        this.vehicleTypes = vehicleTypes;
+    }
+
+    public void setAssignments(List<CabinCrewAssignmentsEntity> assignments) { //ata added
+        this.assignments = assignments;
     }
 }
