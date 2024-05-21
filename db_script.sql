@@ -150,13 +150,14 @@ CREATE TABLE passengers(
    
 CREATE TABLE passenger_flights( 
     passenger_id INT NOT NULL,
-    booking_id VARCHAR(255) UNIQUE AUTO_INCREMENT,
+    booking_id INT AUTO_INCREMENT,
     flight_number VARCHAR(6) NOT NULL,
     is_parent VARCHAR(1) NOT NULL,
     seat_number VARCHAR(255) NOT NULL,
     FOREIGN KEY (passenger_id) REFERENCES passengers(passenger_id),
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number),
-    PRIMARY KEY (passenger_id, flight_number)
+    PRIMARY KEY (passenger_id, booking_id), 
+    UNIQUE (booking_id)
 );
 
 
