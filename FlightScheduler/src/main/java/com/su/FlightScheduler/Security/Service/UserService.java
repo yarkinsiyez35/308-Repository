@@ -8,7 +8,7 @@ import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Repository.AdminRepository;
 import com.su.FlightScheduler.Repository.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.PassengerRepository;
-import com.su.FlightScheduler.Repository.PilotRepository;
+import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import com.su.FlightScheduler.Security.Model.ApplicationUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

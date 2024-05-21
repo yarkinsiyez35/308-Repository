@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.Repository;
+package com.su.FlightScheduler.Repository.PilotRepositories;
 
 import com.su.FlightScheduler.Entity.PilotLanguageEntity;
 import com.su.FlightScheduler.Entity.PilotLanguagePK;
