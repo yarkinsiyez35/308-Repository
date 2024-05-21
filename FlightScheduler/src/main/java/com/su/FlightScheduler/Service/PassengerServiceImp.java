@@ -46,9 +46,8 @@ public class PassengerServiceImp implements PassengerService {
     }
 
     @Override
-    public boolean passengerExistsById(int id)
-    {
-        return passengerRepository.findById(id).isPresent();
+    public boolean passengerExistsById(int id) {
+        return passengerRepository.existsById(id);
     }
 
     @Override
