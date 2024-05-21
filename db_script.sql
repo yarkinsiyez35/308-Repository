@@ -150,7 +150,7 @@ CREATE TABLE passengers(
    
 CREATE TABLE passenger_flights( 
     passenger_id INT NOT NULL,
-    booking_id VARCHAR(255) UNIQUE NOT NULL,
+    booking_id VARCHAR(255) UNIQUE AUTO_INCREMENT,
     flight_number VARCHAR(6) NOT NULL,
     is_parent VARCHAR(1) NOT NULL,
     seat_number VARCHAR(255) NOT NULL,
