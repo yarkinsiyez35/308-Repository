@@ -193,7 +193,7 @@ public class PilotServiceTests {
 
 
 
-    //TESTS FOR updatePilot(), not finished
+    //TESTS FOR updatePilot()
     @Test
     public void PilotService_UpdatePilot_WithLanguages()
     {
@@ -222,6 +222,72 @@ public class PilotServiceTests {
     @Test
     public void PilotService_UpdatePilot_WithoutLanguages()
     {
+        int pilotId = 1;
+        PilotEntity pilot = new PilotEntity();
+        pilot.setPilotId(pilotId);
 
+        when(pilotRepository.existsById(pilotId)).thenReturn(true);
+        when(pilotRepository.save(any(PilotEntity.class))).thenReturn(pilot);
+        PilotEntity updatedPilot = pilotService.updatePilot(pilot);
+
+        assertNotNull(updatedPilot);
+        assertEquals(pilotId, updatedPilot.getPilotId());
+
+        verify(pilotRepository, times(1)).existsById(pilotId);
+        verify(pilotRepository, times(1)).save(any(PilotEntity.class));
+    }
+
+    @Test
+    public void PilotService_UpdatePilot_NotExisting()
+    {
+        int pilotId = 1;
+        PilotEntity pilot = new PilotEntity();
+        pilot.setPilotId(pilotId);
+
+        when(pilotRepository.existsById(pilotId)).thenReturn(false);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            pilotService.updatePilot(pilot);
+        });
+
+        assertEquals("Pilot with id: " + pilotId + " cannot be updated!", exception.getMessage());
+
+        verify(pilotRepository, times(1)).existsById(pilotId);
+    }
+
+    @Test
+    public void PilotService_DeletePilot_ExistingPilot()
+    {
+        int pilotId = 1;
+        PilotEntity pilot = new PilotEntity();
+        pilot.setPilotId(pilotId);
+
+        when(pilotRepository.findById(pilotId)).thenReturn(Optional.of(pilot));
+
+        PilotEntity deletedPilot = pilotService.deletePilotById(1);
+
+        assertEquals(pilotId, deletedPilot.getPilotId());
+
+        verify(pilotRepository, times(1)).findById(pilotId);
+        verify(pilotRepository, times(1)).deleteById(pilotId);
+    }
+
+
+    @Test
+    public void PilotService_DeletePilot_NonExistingPilot()
+    {
+        int pilotId = 1;
+        PilotEntity pilot = new PilotEntity();
+        pilot.setPilotId(pilotId);
+
+        when(pilotRepository.findById(pilotId)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            pilotService.deletePilotById(pilotId);
+        });
+
+        assertEquals("Pilot with id: " + pilotId + " cannot be deleted!", exception.getMessage());
+
+        verify(pilotRepository, times(1)).findById(pilotId);
     }
 }

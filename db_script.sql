@@ -138,7 +138,7 @@ CREATE TABLE attendant_languages (
 );
 
 CREATE TABLE passengers(
-    passenger_id INT PRIMARY KEY,
+    passenger_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     surname VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,

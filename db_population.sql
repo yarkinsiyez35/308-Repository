@@ -8,19 +8,15 @@ INSERT INTO airports (airport_code, city, country, airport_name) VALUES
     ('ADB', 'Izmir', 'Turkey', 'Izmir Adnan Menderes Airport'),
     ('ESB', 'Ankara', 'Turkey', 'Esenboğa International Airport'),
     ('DLM', 'Muğla', 'Turkey', 'Dalaman Airport'),
-    ('BJV', 'Muğla', 'Turkey', 'Milas–Bodrum Airport'),
     ('GZT', 'Gaziantep', 'Turkey', 'Gaziantep Airport'),
     ('TZX', 'Trabzon', 'Turkey', 'Trabzon Airport'),
-    ('DLM', 'Muğla', 'Turkey', 'Dalaman Airport'),
     ('NAV', 'Nevşehir', 'Turkey', 'Nevşehir Kapadokya Airport'),
     ('ASR', 'Kayseri', 'Turkey', 'Kayseri Erkilet Airport'),
     ('VAS', 'Sivas', 'Turkey', 'Sivas Nuri Demirağ Airport'),
     ('SZF', 'Sakarya', 'Turkey', 'Sakarya Çukurova Regional Airport'),
     ('BZI', 'Bingöl', 'Turkey', 'Bingöl Airport'),
     ('HTY', 'Hatay', 'Turkey', 'Hatay Airport'),
-    ('ADB', 'Izmir', 'Turkey', 'Izmir Adnan Menderes Airport'),
     ('ADA', 'Adana', 'Turkey', 'Adana Airport'),
-    ('AYT', 'Antalya', 'Turkey', 'Antalya Airport'),
     ('BJV', 'Muğla', 'Turkey', 'Milas–Bodrum Airport');
 
 
