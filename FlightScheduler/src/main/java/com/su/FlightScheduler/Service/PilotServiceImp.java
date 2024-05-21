@@ -40,7 +40,7 @@ public class PilotServiceImp implements PilotService {
             //create the same entity without the languages
             PilotEntity newPilot = new PilotEntity(pilot);
             //save the entity without languages
-            savedPilot = pilotRepository.save(newPilot);
+            savedPilot = pilotRepository.save(new PilotEntity(pilot));
             //save the languages to the PilotLanguageEntity table
             List<PilotLanguageEntity> savedPilotLanguageEntityList = pilotLanguageRepository.saveAll(pilot.getLanguages());
             //add the saved languages to the saved PilotLanguageEntity
@@ -66,7 +66,7 @@ public class PilotServiceImp implements PilotService {
     @Override
     public boolean pilotExistsById(int id)
     {
-        return pilotRepository.findById(id).isPresent();
+        return pilotRepository.existsById(id);
     }
 
     @Override
