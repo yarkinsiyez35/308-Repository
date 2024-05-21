@@ -1,7 +1,7 @@
 package com.su.FlightScheduler.RepositoryTest;
 
 import com.su.FlightScheduler.Entity.PilotEntity;
-import com.su.FlightScheduler.Repository.PilotRepository;
+import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,6 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -33,7 +31,7 @@ public class PilotRepositoryTests {
     }
 
     @Test
-    public void PilotRepository_FindByEmailAndPassWord()
+    public void PilotRepository_FindByEmailAndPassword()
     {
         PilotEntity pilotEntity = new PilotEntity(1,"email@gmail.com", "password","first name", "surname", 30, "male", 5000, "Alien", "Senior");
 

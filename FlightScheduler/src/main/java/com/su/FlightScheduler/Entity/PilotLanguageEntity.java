@@ -10,6 +10,7 @@ public class PilotLanguageEntity implements Serializable {
 
     @EmbeddedId
     private PilotLanguagePK pilotLanguagePK;
+
     public PilotLanguageEntity() {
     }
 

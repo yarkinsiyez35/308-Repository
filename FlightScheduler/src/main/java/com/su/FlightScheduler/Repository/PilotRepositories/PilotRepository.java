@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.Repository;
+package com.su.FlightScheduler.Repository.PilotRepositories;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

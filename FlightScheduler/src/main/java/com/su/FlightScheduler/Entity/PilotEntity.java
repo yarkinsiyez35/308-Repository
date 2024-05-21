@@ -44,7 +44,7 @@ public class PilotEntity  implements Serializable {
     @OneToMany(mappedBy = "pilotLanguagePK.pilotId", cascade = CascadeType.REMOVE)
     private List<PilotLanguageEntity> languages;
 
-    @OneToMany(mappedBy = "pilotAssignmentPK.pilotId", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "pilotAssignmentPK.pilotId")
     private List<PilotAssignmentEntity> assignments;
 
 
