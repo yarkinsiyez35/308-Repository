@@ -8,11 +8,6 @@ import java.util.Set;
 
 public interface AttendantService {
 
-
-
-
-
-
     // Method to save a Cabin Crew member
     public CabinCrewEntity saveCabin(CabinCrewEntity cabin) throws RuntimeException;
 
