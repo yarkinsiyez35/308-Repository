@@ -1,9 +1,8 @@
 package com.su.FlightScheduler.APIs.PilotAPI;
 
-import com.su.FlightScheduler.DTO.LoginRequest;
-import com.su.FlightScheduler.DTO.PilotWithLanguagesDTO;
+import com.su.FlightScheduler.DTO.PilotDTOs.PilotFullDTO;
+import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesDTO;
 import com.su.FlightScheduler.Service.PilotService;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import com.su.FlightScheduler.Entity.PilotEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -21,8 +19,8 @@ import java.util.Optional;
 public class PilotController {
     //this controller is responsible for
     //<METHOD> <RETURN TYPE> --> <DESCRIPTION>
-    //GET List<PilotWithLanguagesDTO> --> returns every pilot in the database
-    //GET PilotWithLanguagesDTO --> returns pilot with given id
+    //GET List<PilotFullDto> --> returns every pilot in the database
+    //GET PilotFullDTO --> returns pilot with given id
     //POST PilotWithLanguagesDTO --> creates a new Pilot and returns it
     //PUT PilotWithLanguagesDTO --> updates an existing Pilot and returns it
     //DELETE PilotWithLanguagesDTO --> deletes a pilot with the given id
@@ -34,21 +32,21 @@ public class PilotController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PilotWithLanguagesDTO>> getPilots()
+    public ResponseEntity<List<PilotFullDTO>> getPilots()
     {
         //find all pilots
         List<PilotEntity> pilotEntityList = pilotService.findAllPilots();
         //create an empty list to hold the pilot DTOs
-        List<PilotWithLanguagesDTO> pilotWithLanguagesDTOList = new ArrayList<>();
+        List<PilotFullDTO> pilotFullDTOList = new ArrayList<>();
         for (PilotEntity pilotEntity: pilotEntityList)  //for each PilotEntity
         {
             //convert the entity to DTO
-            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
+            PilotFullDTO pilotFullDTO = new PilotFullDTO(pilotEntity);
             //add the DTO to the list
-            pilotWithLanguagesDTOList.add(pilotWithLanguagesDTO);
+            pilotFullDTOList.add(pilotFullDTO);
         }
         //return the DTO list
-        return ResponseEntity.ok(pilotWithLanguagesDTOList);
+        return ResponseEntity.ok(pilotFullDTOList);
     }
 
     @GetMapping("/{pilotId}")
@@ -59,9 +57,9 @@ public class PilotController {
             //find the PilotEntity by id
             PilotEntity pilotEntity = pilotService.findPilotById(pilotId);
             //convert the entity to DTO
-            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
+            PilotFullDTO pilotFullDTO = new PilotFullDTO(pilotEntity);
             //return the DTO
-            return ResponseEntity.ok(pilotWithLanguagesDTO);
+            return ResponseEntity.ok(pilotFullDTO);
         }
         catch (RuntimeException e)  //this exception is expected
         {
@@ -145,22 +143,6 @@ public class PilotController {
         catch (Exception e) //this should not happen
         {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Object> pilotLogin(@RequestBody LoginRequest loginRequest)
-    {   //not working
-        boolean pilotExists = pilotService.authenticate(loginRequest);
-        if (pilotExists)
-        {
-            //add stuff in future
-            return ResponseEntity.ok(loginRequest);
-        }
-        else
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }

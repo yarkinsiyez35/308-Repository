@@ -1,5 +1,5 @@
 package com.su.FlightScheduler.Entity;
-import com.su.FlightScheduler.DTO.PilotWithLanguagesDTO;
+import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -157,6 +157,10 @@ public class PilotEntity  implements Serializable {
         return languages;
     }
 
+    public List<PilotAssignmentEntity> getAssignments() {
+        return assignments;
+    }
+
     public void setPilotId(int pilotId) {
         this.pilotId = pilotId;
     }
@@ -199,5 +203,9 @@ public class PilotEntity  implements Serializable {
 
     public void setLanguages(List<PilotLanguageEntity> languages) {
         this.languages = languages;
+    }
+
+    public void setAssignments(List<PilotAssignmentEntity> assignments) {
+        this.assignments = assignments;
     }
 }

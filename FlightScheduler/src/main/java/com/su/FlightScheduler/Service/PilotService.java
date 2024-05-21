@@ -23,8 +23,4 @@ public interface PilotService {
 
     // Method to delete a pilot by ID
     public PilotEntity deletePilotById(int id) throws RuntimeException;
-
-    public boolean authenticate(LoginRequest loginRequest);
-
-
 }
