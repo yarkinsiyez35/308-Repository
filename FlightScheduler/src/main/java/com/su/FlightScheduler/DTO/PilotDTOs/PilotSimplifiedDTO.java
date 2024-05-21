@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.DTO;
+package com.su.FlightScheduler.DTO.PilotDTOs;
 
 import com.su.FlightScheduler.Entity.PilotEntity;
 

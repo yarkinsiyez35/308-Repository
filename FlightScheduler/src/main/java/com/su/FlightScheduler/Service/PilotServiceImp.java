@@ -124,13 +124,4 @@ public class PilotServiceImp implements PilotService {
         }
 
     }
-
-    @Override
-    public boolean authenticate(LoginRequest loginRequest)
-    {
-        //check if a pilot exists with given email and password
-        Optional<PilotEntity> pilotEntity = pilotRepository.findPilotEntityByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-        //return true if it exists
-        return pilotEntity.isPresent();
-    }
 }
