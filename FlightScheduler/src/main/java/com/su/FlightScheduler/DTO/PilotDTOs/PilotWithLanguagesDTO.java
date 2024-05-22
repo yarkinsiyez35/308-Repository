@@ -50,6 +50,27 @@ public class PilotWithLanguagesDTO implements Serializable {
         }
     }
 
+
+    public PilotWithLanguagesDTO(PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO)
+    {
+        this.pilotId = pilotWithLanguagesAsStringDTO.getPilotId();
+        this.email = pilotWithLanguagesAsStringDTO.getEmail();
+        this.password = pilotWithLanguagesAsStringDTO.getPassword();
+        this.firstName = pilotWithLanguagesAsStringDTO.getFirstName();
+        this.surname = pilotWithLanguagesAsStringDTO.getSurname();
+        this.age = pilotWithLanguagesAsStringDTO.getAge();
+        this.gender = pilotWithLanguagesAsStringDTO.getGender();
+        this.allowedRange = pilotWithLanguagesAsStringDTO.getAllowedRange();
+        this.nationality = pilotWithLanguagesAsStringDTO.getNationality();
+        this.seniority = pilotWithLanguagesAsStringDTO.getSeniority();
+        String[] languagesArray = pilotWithLanguagesAsStringDTO.getLanguages().split(",");
+        this.languages = new ArrayList<>();
+        for (String language : languagesArray)
+        {
+            this.languages.add(language.trim().toLowerCase());
+        }
+    }
+
     public int getPilotId() {
         return pilotId;
     }
