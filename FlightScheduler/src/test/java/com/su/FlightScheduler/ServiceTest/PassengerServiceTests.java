@@ -157,7 +157,7 @@ public class PassengerServiceTests {
 
     //TESTS FOR updatePassenger()
     @Test
-    public void UpdatePassenger()
+    public void UpdatePassenger_Existing()
     {
         int id = 1;
         PassengerEntity passengerEntity = new PassengerEntity();
@@ -166,12 +166,65 @@ public class PassengerServiceTests {
         when(passengerRepository.existsById(id)).thenReturn(true);
         when(passengerRepository.save(any(PassengerEntity.class))).thenReturn(passengerEntity);
 
-        PassengerEntity updatedPilot = passengerService.updatePassenger(passengerEntity);
+        PassengerEntity passenger = passengerService.updatePassenger(passengerEntity);
 
-        assertNotNull(updatedPilot);
-        assertEquals(id, updatedPilot.getPassengerId());
+        assertNotNull(passenger);
+        assertEquals(id, passenger.getPassengerId());
 
         verify(passengerRepository, times(1)).existsById(id);
         verify(passengerRepository, times(1)).save(any(PassengerEntity.class));
+    }
+
+    @Test
+    public void UpdatePassenger_NonExisting()
+    {
+        int passengerId = 1;
+        PassengerEntity passenger = new PassengerEntity();
+        passenger.setPassengerId(passengerId);
+
+        when(passengerRepository.existsById(passengerId)).thenReturn(false);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            passengerService.updatePassenger(passenger);
+        });
+
+        assertEquals("Passenger with id: " + passengerId + " cannot be updated!", exception.getMessage());
+
+        verify(passengerRepository, times(1)).existsById(passengerId);
+    }
+
+    @Test
+    public void DeletePassenger_Existing()
+    {
+        int passengerId = 1;
+        PassengerEntity passenger = new PassengerEntity();
+        passenger.setPassengerId(passengerId);
+
+        when(passengerRepository.findById(passengerId)).thenReturn(Optional.of(passenger));
+
+        PassengerEntity deletedPassenger = passengerService.deletePassengerById(1);
+
+        assertEquals(passengerId, deletedPassenger.getPassengerId());
+
+        verify(passengerRepository, times(1)).findById(passengerId);
+        verify(passengerRepository, times(1)).deleteById(passengerId);
+    }
+
+    @Test
+    public void DeletePassenger_NonExisting()
+    {
+        int passengerId = 1;
+        PassengerEntity passenger = new PassengerEntity();
+        passenger.setPassengerId(passengerId);
+
+        when(passengerRepository.findById(passengerId)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            passengerService.deletePassengerById(passengerId);
+        });
+
+        assertEquals("Passenger with id: " + passengerId + " cannot be deleted!", exception.getMessage());
+
+        verify(passengerRepository, times(1)).findById(passengerId);
     }
 }
