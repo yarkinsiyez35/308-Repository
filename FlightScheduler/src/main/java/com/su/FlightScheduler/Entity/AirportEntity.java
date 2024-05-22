@@ -24,6 +24,7 @@ public class AirportEntity implements Serializable {
     @Column(name = "airport_name")
     private String airportName;
 
+
     public AirportEntity() {
     }
 

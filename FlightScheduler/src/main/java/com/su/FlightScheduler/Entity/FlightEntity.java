@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "flights")
@@ -177,4 +178,18 @@ public class FlightEntity implements Serializable {
     public void setStandardMenu(String standardMenu) {
         this.standardMenu = standardMenu;
     }
+
+
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PassengerFlight> passengerFlights;
+
+    public List<PassengerFlight> getPassengerFlights() {
+        return passengerFlights;
+    }
+
+    public void setPassengerFlights(List<PassengerFlight> passengerFlights) {
+        this.passengerFlights = passengerFlights;
+    }
+
+
 }
