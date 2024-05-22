@@ -2,13 +2,16 @@ package com.su.FlightScheduler.APIs.PassengerAPI;
 
 
 import com.su.FlightScheduler.DTO.LoginRequest;
+import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.Entity.PassengerEntity;
+import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @RestController
@@ -103,6 +106,26 @@ public class PassengerController {
         else
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @GetMapping("/flights/{passengerId}")
+    public ResponseEntity<Object> findBookedFlightsByPassengerId(@PathVariable int passengerId) {
+        try {
+            //List<PassengerFlight> flights = bookingService.findBookedFlightsByPassengerId(passengerId);
+            List<PassengerFlightDTO> flights = passengerService.findBookedFlightsByPassengerId(passengerId);
+
+            return ResponseEntity.ok(flights);
+        }
+        catch (RuntimeException e) {
+            if (e instanceof NoSuchElementException) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            } else {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+            }
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
