@@ -1,12 +1,12 @@
 package com.su.FlightScheduler.APIs.FlightAPI;
 
 import com.su.FlightScheduler.Entity.*;
-import com.su.FlightScheduler.Repository.AdminRepository;
 import com.su.FlightScheduler.Repository.AirportRepository;
 import com.su.FlightScheduler.Repository.PlaneRepository;
 import com.su.FlightScheduler.Repository.CompanyRepository;
 import com.su.FlightScheduler.Service.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,6 @@ import java.util.Map;
 public class FlightController {
 
     private final FlightService flightService;
-    private final AdminRepository adminRepository;
 
     @Autowired
     private AirportRepository airportRepository;
@@ -31,153 +30,236 @@ public class FlightController {
     private CompanyRepository companyRepository;
 
 
-    private AdminEntity getAdminFromRequest(Map<String, Object> request) {
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
-        return adminRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-    }
 
-    private AdminEntity getAdminFromRequestWithKey(Map<String, Object> request, String key) {
-        Map<String, Object> adminDetails = (Map<String, Object>) request.get(key);
-        String email = (String) adminDetails.get("email");
-        String password = (String) adminDetails.get("password");
-        return adminRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-    }
-
-    private AirportEntity getAirportFromRequest(Map<String, Object> request, String key) {
-    String airportCode = (String) request.get(key);
-    return airportRepository.findAirportEntityByAirportCode(airportCode)
-            .orElseThrow(() -> new RuntimeException("Airport not found"));
-    }
-
-    private PlaneEntity getPlaneFromRequest(Map<String, Object> request, String key) {
-        String planeId = (String) request.get(key);
-        return planeRepository.findById(planeId)
-                .orElseThrow(() -> new RuntimeException("Plane not found"));
-    }
-
-    private CompanyEntity getCompanyFromRequest(Map<String, Object> request, String key) {
-        String companyId = (String) request.get(key);
-        return companyRepository.findById(companyId)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
-    }
-
-    private LocalDateTime getDateTimeFromRequest(Map<String, Object> request, String key) {
-        String dateTimeString = (String) request.get(key);
-        return LocalDateTime.parse(dateTimeString);
-    }
+    // Constructor
     @Autowired
-    public FlightController(FlightService flightService, AdminRepository adminRepository) {
+    public FlightController(FlightService flightService) {
         this.flightService = flightService;
-        this.adminRepository = adminRepository;
     }
 
+    // API Endpoints
     @PostMapping("/saveFlight")
-    public ResponseEntity<FlightEntity> saveFlight(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        FlightEntity flight = (FlightEntity) request.get("flight");
-        return ResponseEntity.ok(flightService.saveFlight(flight, admin));
+    public ResponseEntity<?> saveFlight(@RequestBody FlightEntity flight) {
+        try {
+            return ResponseEntity.ok(flightService.saveFlightObj(flight));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/createFlightFilled")
+    public ResponseEntity<?> createFlightFilled(@RequestBody Map<String, Object> request) {
+        try {
+            String flightNumber = (String) request.get("flightNumber");
+            String flightInfo = (String) request.get("flightInfo");
+            AdminEntity admin = (AdminEntity) request.get("admin");
+            return ResponseEntity.ok(flightService.createFlight(flightNumber, flightInfo, admin));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/createFlight")
-    public ResponseEntity<FlightEntity> createFlight(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        String flightInfo = (String) request.get("flightInfo");
-        return ResponseEntity.ok(flightService.createFlight(flightNumber, flightInfo, admin));
+    public ResponseEntity<?> createFlight(@RequestBody Map<String, Object> request) {
+        try {
+            String flightNumber = (String) request.get("flightNumber");
+            String flightInfo = (String) request.get("flightInfo");
+            AdminEntity admin = (AdminEntity) request.get("admin");
+            FlightEntity flight = flightService.createFlight(flightNumber, flightInfo, admin);
+            return ResponseEntity.ok(flight);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/addFlightParams1")
+    public ResponseEntity<?> addFlightParams1(@RequestBody Map<String, Object> request) {
+        try {
+            String flightNumber = (String) request.get("flightNumber");
+            PlaneEntity plane = flightService.getPlaneFromRequest(request, "plane");
+            AirportEntity sourceAirport = flightService.getAirportFromRequest(request, "sourceAirport");
+            AirportEntity destinationAirport = flightService.getAirportFromRequest(request, "destinationAirport");
+            FlightEntity flight = flightService.addFlightParams1(flightNumber, plane, sourceAirport, destinationAirport);
+            return ResponseEntity.ok(flight);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/addFlightParams2")
+    public ResponseEntity<?> addFlightParams2(@RequestBody Map<String, Object> request) {
+        try {
+            String flightNumber = (String) request.get("flightNumber");
+            Integer flightRange = (Integer) request.get("flightRange");
+            LocalDateTime departureDateTime = flightService.getDateTimeFromRequest(request, "departureDateTime");
+            LocalDateTime landingDateTime = flightService.getDateTimeFromRequest(request, "landingDateTime");
+            FlightEntity flight = flightService.addFlightParams2(flightNumber, flightRange, departureDateTime, landingDateTime);
+            return ResponseEntity.ok(flight);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/addFlightParams3")
+    public ResponseEntity<?> addFlightParams3(@RequestBody Map<String, Object> request) {
+        try {
+            String flightNumber = (String) request.get("flightNumber");
+            boolean sharedFlight = (boolean) request.get("sharedFlight");
+            CompanyEntity sharedFlightCompany = flightService.getCompanyFromRequest(request, "sharedFlightCompany");
+            FlightEntity flight = flightService.addFlightParams3(flightNumber, sharedFlight, sharedFlightCompany);
+            return ResponseEntity.ok(flight);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/findFlightByNumber")
-    public ResponseEntity<FlightEntity> findFlightByNumber(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        return ResponseEntity.ok(flightService.findFlightByNumber(flightNumber, admin).orElseThrow(() -> new RuntimeException("Flight not found")));
+    public ResponseEntity<?> findFlightByNumber(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.findFlightByNumber(flightNumber).orElseThrow(() -> new RuntimeException("Flight not found")));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/findAllFlights")
-    public ResponseEntity<List<FlightEntity>> findAllFlights(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        return ResponseEntity.ok(flightService.findAllFlights(admin));
+    public ResponseEntity<?> findAllFlights() {
+        try {
+            return ResponseEntity.ok(flightService.findAllFlights());
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("No flights found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateFlight")
-    public ResponseEntity<FlightEntity> updateFlight(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        FlightEntity flight = (FlightEntity) request.get("flight");
-        return ResponseEntity.ok(flightService.updateFlight(flight, admin));
+    public ResponseEntity<?> updateFlight(@RequestBody FlightEntity flight) {
+        try {
+            return ResponseEntity.ok(flightService.updateFlight(flight));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/deleteFlightByNumber")
-    public ResponseEntity<Object> deleteFlightByNumber(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        flightService.deleteFlightByNumber(flightNumber, admin);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteFlightByNumber(@RequestParam String flightNumber) {
+        try {
+            flightService.deleteFlightByNumber(flightNumber);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateFlightInfo")
-    public ResponseEntity<FlightEntity> updateFlightInfo(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        String flightInfo = (String) request.get("flightInfo");
-        return ResponseEntity.ok(flightService.updateFlightInfo(flightNumber, flightInfo, admin));
+    public ResponseEntity<?> updateFlightInfo(@RequestParam String flightNumber, @RequestParam String flightInfo) {
+        try {
+            return ResponseEntity.ok(flightService.updateFlightInfo(flightNumber, flightInfo));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateSourceAirport")
-    public ResponseEntity<FlightEntity> updateSourceAirport(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        AirportEntity sourceAirport = getAirportFromRequest(request, "sourceAirport");
-        return ResponseEntity.ok(flightService.updateSourceAirport(flightNumber, sourceAirport, admin));
+    public ResponseEntity<?> updateSourceAirport(@RequestParam String flightNumber, @RequestBody AirportEntity sourceAirport) {
+        try {
+            return ResponseEntity.ok(flightService.updateSourceAirport(flightNumber, sourceAirport));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateDestinationAirport")
-    public ResponseEntity<FlightEntity> updateDestinationAirport(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        AirportEntity destinationAirport = getAirportFromRequest(request, "destinationAirport");
-        return ResponseEntity.ok(flightService.updateDestinationAirport(flightNumber, destinationAirport, admin));
+    public ResponseEntity<?> updateDestinationAirport(@RequestParam String flightNumber, @RequestBody AirportEntity destinationAirport) {
+        try {
+            return ResponseEntity.ok(flightService.updateDestinationAirport(flightNumber, destinationAirport));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updatePlane")
-    public ResponseEntity<FlightEntity> updatePlane(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        PlaneEntity plane = getPlaneFromRequest(request, "plane");
-        return ResponseEntity.ok(flightService.updatePlane(flightNumber, plane, admin));
+    public ResponseEntity<?> updatePlane(@RequestParam String flightNumber, @RequestBody PlaneEntity plane) {
+        try {
+            return ResponseEntity.ok(flightService.updatePlane(flightNumber, plane));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateDepartureDateTime")
-    public ResponseEntity<FlightEntity> updateDepartureDateTime(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        LocalDateTime departureDateTime = getDateTimeFromRequest(request, "departureDateTime");
-        return ResponseEntity.ok(flightService.updateDepartureDateTime(flightNumber, departureDateTime, admin));
+    public ResponseEntity<?> updateDepartureDateTime(@RequestParam String flightNumber, @RequestParam String departureDateTime) {
+        try {
+            LocalDateTime departureDateTimeParsed = LocalDateTime.parse(departureDateTime);
+            return ResponseEntity.ok(flightService.updateDepartureDateTime(flightNumber, departureDateTimeParsed));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateLandingDateTime")
-    public ResponseEntity<FlightEntity> updateLandingDateTime(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        LocalDateTime landingDateTime = getDateTimeFromRequest(request, "landingDateTime");
-        return ResponseEntity.ok(flightService.updateLandingDateTime(flightNumber, landingDateTime, admin));
+    public ResponseEntity<?> updateLandingDateTime(@RequestParam String flightNumber, @RequestParam String landingDateTime) {
+        try {
+            LocalDateTime landingDateTimeParsed = LocalDateTime.parse(landingDateTime);
+            return ResponseEntity.ok(flightService.updateLandingDateTime(flightNumber, landingDateTimeParsed));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/updateSharedFlightCompany")
-    public ResponseEntity<FlightEntity> updateSharedFlightCompany(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        CompanyEntity sharedFlightCompany = getCompanyFromRequest(request, "sharedFlightCompany");
-        return ResponseEntity.ok(flightService.updateSharedFlightCompany(flightNumber, sharedFlightCompany, admin));
+    public ResponseEntity<?> updateSharedFlightCompany(@RequestParam String flightNumber, @RequestBody CompanyEntity sharedFlightCompany) {
+        try {
+            return ResponseEntity.ok(flightService.updateSharedFlightCompany(flightNumber, sharedFlightCompany));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
     }
 
-    /*@PostMapping("/updateAdmin")
-    public ResponseEntity<FlightEntity> updateAdmin(@RequestBody Map<String, Object> request) {
-        AdminEntity admin = getAdminFromRequest(request);
-        String flightNumber = (String) request.get("flightNumber");
-        AdminEntity newAdmin = getAdminFromRequestWithKey(request, "admin");
-        return ResponseEntity.ok(flightService.updateAdmin(flightNumber, newAdmin));
-    }*/
+
+    @GetMapping("/getSourceAirport")
+    public ResponseEntity<?> getSourceAirport(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.getSourceAirport(flightNumber));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/getDestinationAirport")
+    public ResponseEntity<?> getDestinationAirport(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.getDestinationAirport(flightNumber));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/getPlane")
+    public ResponseEntity<?> getPlane(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.getPlane(flightNumber));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/getCompany")
+    public ResponseEntity<?> getCompany(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.getCompany(flightNumber));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/getDateTime")
+    public ResponseEntity<?> getDateTime(@RequestParam String flightNumber) {
+        try {
+            return ResponseEntity.ok(flightService.getDateTime(flightNumber));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Flight not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }

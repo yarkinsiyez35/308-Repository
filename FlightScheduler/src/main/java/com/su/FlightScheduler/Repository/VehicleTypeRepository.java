@@ -6,4 +6,21 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VehicleTypeRepository extends JpaRepository<VehicleTypeEntity, String> {
+    <T> T findByVehicleType(String vehicleType, Class<T> type);
+
+    interface PilotCapacityProjection {
+        int getSeniorPilotCapacity();
+        int getJuniorPilotCapacity();
+        int getTraineePilotCapacity();
+    }
+
+    interface AttendeeCapacityProjection {
+        int getSeniorAttendeeCapacity();
+        int getJuniorAttendeeCapacity();
+        int getChefAttendeeCapacity();
+    }
+
+    interface SeatingPlanProjection {
+        String getSeatingPlan();
+    }
 }
