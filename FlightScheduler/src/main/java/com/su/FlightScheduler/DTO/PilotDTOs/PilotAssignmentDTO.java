@@ -8,7 +8,7 @@ import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 public class PilotAssignmentDTO {
     private String seatNumber;
     private int acceptedAssignment;
-    private String flightNumber;        //this part will change in the future
+    private String flightNumber;        //this part will be converted to FlightInfoForPilotDTO
 
     public PilotAssignmentDTO() {
     }
