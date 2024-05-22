@@ -10,5 +10,5 @@ import java.util.List;
 public interface PassengerFlightRepository extends JpaRepository<PassengerFlight, Integer> {
 
 
-    List<PassengerFlight> findPassengerFlightByFlight(FlightEntity flight);
+    //List<PassengerFlight> findPassengerFlightByFlight(FlightEntity flight);
 }
