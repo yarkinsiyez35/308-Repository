@@ -1,6 +1,6 @@
-package com.su.FlightScheduler.Repository;
+package com.su.FlightScheduler.Repository.CabinCrewRepositories;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

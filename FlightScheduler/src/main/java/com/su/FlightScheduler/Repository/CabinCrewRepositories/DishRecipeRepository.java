@@ -1,9 +1,8 @@
-package com.su.FlightScheduler.Repository;
+package com.su.FlightScheduler.Repository.CabinCrewRepositories;
 
-import com.su.FlightScheduler.Entity.DishRecipeEntity;
-import com.su.FlightScheduler.Entity.DishRecipePK;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipePK;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 public interface DishRecipeRepository extends JpaRepository<DishRecipeEntity, DishRecipePK> {

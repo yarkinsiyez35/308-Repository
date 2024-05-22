@@ -1,4 +1,4 @@
-package com.su.FlightScheduler.Entity;
+package com.su.FlightScheduler.Entity.CabinCrewEntites;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 

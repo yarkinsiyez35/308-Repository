@@ -1,5 +1,5 @@
-package com.su.FlightScheduler.Entity;
-import com.su.FlightScheduler.DTO.AttendantWithLanguagesDTO;
+package com.su.FlightScheduler.Entity.CabinCrewEntites;
+import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -37,10 +37,10 @@ public class CabinCrewEntity implements Serializable {
     private String seniority;
 
 
-    @OneToMany(mappedBy = "attendantLanguagePK.attendantId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "attendantLanguagePK.attendantId", cascade = CascadeType.REMOVE)
     private List<AttendantLanguageEntity> languages;
 
-    @OneToMany(mappedBy = "dishRecipePK.attendantId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "dishRecipePK.attendantId", cascade = CascadeType.REMOVE)
     private List<DishRecipeEntity> recipes;
 
 

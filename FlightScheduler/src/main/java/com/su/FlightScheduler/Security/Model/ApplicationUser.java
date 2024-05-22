@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.Security.Model;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import org.springframework.security.core.GrantedAuthority;
