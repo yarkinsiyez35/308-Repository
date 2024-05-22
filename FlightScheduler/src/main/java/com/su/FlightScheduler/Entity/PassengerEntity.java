@@ -3,6 +3,7 @@ package com.su.FlightScheduler.Entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /*
@@ -23,8 +24,8 @@ CREATE TABLE passengers(
 public class PassengerEntity implements Serializable {
 
     @Id
-    @Column(name = "passenger_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "passenger_id")
     private int passengerId;
 
     @Column(name = "email", nullable = false)
@@ -165,8 +166,22 @@ public class PassengerEntity implements Serializable {
                 && Objects.equals(getNationality(), that.getNationality());
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(getPassengerId(), getEmail(), getPassword(), getFirstName(), getSurname(), getAge(), getGender(), getNationality());
     }
+
+    @OneToMany(mappedBy = "passenger", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PassengerFlight> passengerFlights;
+
+    public List<PassengerFlight> getPassengerFlights() {
+        return passengerFlights;
+    }
+
+    public void setPassengerFlights(List<PassengerFlight> passengerFlights) {
+        this.passengerFlights = passengerFlights;
+    }
+
+
 }
