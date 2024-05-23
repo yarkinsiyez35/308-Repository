@@ -1,18 +1,19 @@
 package com.su.FlightScheduler.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class PilotAssignmentPK implements Serializable {
+
     @Column(name = "pilot_id")
     private Integer pilotId;
 
     @Column(name = "flight_number")
     private String flightNumber;
+
 
     public PilotAssignmentPK() {
     }
