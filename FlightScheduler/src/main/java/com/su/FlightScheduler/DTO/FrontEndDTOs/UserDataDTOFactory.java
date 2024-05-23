@@ -43,15 +43,14 @@ public class UserDataDTOFactory {
     }
 
 
-    public static List<UserDataDTO> create_available_pilot_list(List<PilotEntity> pilotEntityList)
-    {
+    public static List<UserDataDTO> create_available_pilot_list(List<PilotEntity> pilotEntityList) {
         List<UserDataDTO> userDataDTOList = new ArrayList<>();
-        for (PilotEntity pilotEntity : pilotEntityList)
-        {
+        for (PilotEntity pilotEntity : pilotEntityList) {
             UserDataDTO userDataDTO = create_pilot_data_with_no_flight_from_pilot_entity(pilotEntity);
             userDataDTOList.add(userDataDTO);
         }
         return userDataDTOList;
+    }
 
     public static UserDataDTO create_cabincrew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
     {
@@ -71,6 +70,5 @@ public class UserDataDTOFactory {
         }
         userDataDTO.setFlights(userFlightDataDTOList);
         return userDataDTO;
-
     }
 }
