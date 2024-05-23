@@ -16,12 +16,13 @@ public class FlightDataDTO {
     private String airlineCompany;
     private String flightId;
     private String planeId;
+    private String menu;
 
     // private String menu; //THIS WILL BE ADDED
     public FlightDataDTO() {
     }
 
-    public FlightDataDTO(String from, String goTo, String departureAirport, String landingAirport, LocalDateTime departureTime, LocalDateTime landingTime, String planeType, String airlineCompany, String flightId, String planeId) {
+    public FlightDataDTO(String from, String goTo, String departureAirport, String landingAirport, LocalDateTime departureTime, LocalDateTime landingTime, String planeType, String airlineCompany, String flightId, String planeId, String menu) {
         this.from = from;
         this.goTo = goTo;
         this.departureAirport = departureAirport;
@@ -32,6 +33,7 @@ public class FlightDataDTO {
         this.airlineCompany = airlineCompany;
         this.flightId = flightId;
         this.planeId = planeId;
+        this.menu = menu;
     }
 
     public FlightDataDTO(FlightEntity flightEntity)
@@ -53,6 +55,7 @@ public class FlightDataDTO {
         }
         this.flightId = flightEntity.getFlightNumber();
         this.planeId = Integer.toString(flightEntity.getPlane().getPlaneId());
+        this.menu = flightEntity.getStandardMenu();
     }
 
     public String getFrom() {
@@ -95,6 +98,10 @@ public class FlightDataDTO {
         return planeId;
     }
 
+    public String getMenu() {
+        return menu;
+    }
+
     public void setFrom(String from) {
         this.from = from;
     }
@@ -133,5 +140,9 @@ public class FlightDataDTO {
 
     public void setPlaneId(String planeId) {
         this.planeId = planeId;
+    }
+
+    public void setMenu(String menu) {
+        this.menu = menu;
     }
 }
