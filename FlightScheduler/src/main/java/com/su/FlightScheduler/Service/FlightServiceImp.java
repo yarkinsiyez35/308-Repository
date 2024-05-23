@@ -427,6 +427,7 @@ public class FlightServiceImp implements FlightService {
 
     // The method for obtaining the SeatingPlan
 
+
     @Override
     public List<SeatingTypeDTO> decodeSeatingPlan(String flightNumber) {
         // Get the VehicleTypeEntity from the flight number
@@ -442,22 +443,27 @@ public class FlightServiceImp implements FlightService {
 
         List<SeatingTypeDTO> seatingList = new ArrayList<>();
 
-        // Split the encoded seating plan into individual seating types
-        String[] seatingTypes = seatingPlan.split("=");
+        // Split the encoded seating plan into business and economy seating types
+        String[] seatingClasses = seatingPlan.split("=");
 
-        for (String seatingType : seatingTypes) {
-            SeatingTypeDTO seating = new SeatingTypeDTO();
+        for (String seatingClass : seatingClasses) {
+            // Split the seating class into individual seating types
+            String[] seatingTypes = seatingClass.split("\\*");
 
-            // Split the seating type into rows and columns
-            String[] rowsAndColumns = seatingType.split("\\|");
+            for (String seatingType : seatingTypes) {
+                SeatingTypeDTO seating = new SeatingTypeDTO();
 
-            // Set the start row, end row, and columns for this seating type
-            seating.setStartRow(Integer.parseInt(rowsAndColumns[0]));
-            seating.setEndRow(Integer.parseInt(rowsAndColumns[1]));
-            seating.setColumns(rowsAndColumns[2]);
+                // Split the seating type into rows and columns
+                String[] rowsAndColumns = seatingType.split("\\|");
 
-            // Add this seating type to the list
-            seatingList.add(seating);
+                // Set the start row, end row, and columns for this seating type
+                seating.setStartRow(Integer.parseInt(rowsAndColumns[0]));
+                seating.setEndRow(Integer.parseInt(rowsAndColumns[1]));
+                seating.setColumns(rowsAndColumns[2]);
+
+                // Add this seating type to the list
+                seatingList.add(seating);
+            }
         }
 
         return seatingList;
