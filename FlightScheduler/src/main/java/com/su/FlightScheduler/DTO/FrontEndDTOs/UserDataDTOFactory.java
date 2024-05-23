@@ -35,6 +35,7 @@ public class UserDataDTOFactory {
         userDataDTO.setSurname(cabinCrewAssignmentsEntity.getCabinCrew().getSurname());
         userDataDTO.setId(Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId()));
         userDataDTO.setAge( cabinCrewAssignmentsEntity.getCabinCrew().getAge());
+        userDataDTO.setGender(cabinCrewAssignmentsEntity.getCabinCrew().getGender());
         userDataDTO.setNationality( cabinCrewAssignmentsEntity.getCabinCrew().getNationality());
         userDataDTO.setUserType("CabinCrew");
         List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
