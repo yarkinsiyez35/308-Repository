@@ -4,9 +4,7 @@ package com.su.FlightScheduler.DTO.FrontEndDTOs;
 import com.su.FlightScheduler.Entity.FlightEntity;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-//to be continued
 public class FlightDataDTO {
     private String from;
     private String goTo;
@@ -51,7 +49,7 @@ public class FlightDataDTO {
         }
         else
         {
-            this.airlineCompany = null;
+            this.airlineCompany = "No shared flight";
         }
         this.flightId = flightEntity.getFlightNumber();
         this.planeId = Integer.toString(flightEntity.getPlane().getPlaneId());

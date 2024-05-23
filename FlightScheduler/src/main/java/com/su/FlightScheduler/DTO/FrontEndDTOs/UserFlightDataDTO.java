@@ -2,6 +2,7 @@ package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 //this class will be used in PilotFullDTO as a List
 public class UserFlightDataDTO {
     private FlightDataDTO flightData;   //this part is used for all
-    private String userSeat;    //this part will be converted to SeatingDTO in future
+    private SeatingDTO userSeat;    //this part will be converted to SeatingDTO in future
     private LocalDateTime boughtTime;   //this part is used only for passengers
     private Integer purchaseId;     //this part is used only for passengers
     private String role;    //this part is used for pilot and cabin crew
@@ -22,7 +23,7 @@ public class UserFlightDataDTO {
     public UserFlightDataDTO() {
     }
 
-    public UserFlightDataDTO(FlightDataDTO flightData, String userSeat, LocalDateTime boughtTime, int purchaseId, String role) {
+    public UserFlightDataDTO(FlightDataDTO flightData, SeatingDTO userSeat, LocalDateTime boughtTime, Integer purchaseId, String role) {
         this.flightData = flightData;
         this.userSeat = userSeat;
         this.boughtTime = boughtTime;
@@ -33,7 +34,12 @@ public class UserFlightDataDTO {
     public UserFlightDataDTO(FlightEntity flightEntity, PilotAssignmentEntity pilotAssignmentEntity)
     {
         this.flightData = new FlightDataDTO(flightEntity);
-        this.userSeat = pilotAssignmentEntity.getSeatNumber();
+        SeatingDTO userSeat = new SeatingDTO();
+        userSeat.setSeatPosition(pilotAssignmentEntity.getSeatNumber());
+        userSeat.setSeatType("Pilot");
+        userSeat.setStatus(true);
+        userSeat.setUserId(pilotAssignmentEntity.getPilot().getPilotId());
+        this.userSeat = userSeat;
         this.boughtTime = null;
         this.purchaseId = null;
         this.role = pilotAssignmentEntity.getAssignmentRole();
@@ -42,15 +48,36 @@ public class UserFlightDataDTO {
     public UserFlightDataDTO(FlightEntity flightEntity, CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity)
     {
         this.flightData = new FlightDataDTO(flightEntity);
-        this.userSeat = cabinCrewAssignmentsEntity.getSeatNumber();
+        SeatingDTO userSeat = new SeatingDTO();
+        userSeat.setSeatPosition(cabinCrewAssignmentsEntity.getSeatNumber());
+        userSeat.setSeatType("Cabincrew");
+        userSeat.setStatus(true);
+        userSeat.setUserId(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId());
+        this.userSeat = userSeat;
         this.boughtTime = null;
         this.purchaseId = null;
         this.role = cabinCrewAssignmentsEntity.getAssignmentRole();
     }
 
+
     public UserFlightDataDTO(FlightEntity flightEntity, PassengerFlight passengerFlight){
         this.flightData = new FlightDataDTO(flightEntity);
-        this.userSeat = passengerFlight.getSeatNumber();
+        SeatingDTO userSeat = new SeatingDTO();
+        userSeat.setSeatPosition(passengerFlight.getSeatNumber());
+
+        // WHERE TO FIND IF IT IS BUSINESS OR ECONOMY
+        // UTIL FUNCTION NEEDED?
+        if (passengerFlight.getIsParent() == "T")
+        {
+            userSeat.setSeatType("Economy with child");
+        }
+        else
+        {
+            userSeat.setSeatType("Economy");
+        }
+        userSeat.setStatus(true);
+        userSeat.setUserId(passengerFlight.getPassenger().getPassengerId());
+        this.userSeat = userSeat;
         this.boughtTime = null; // might change
         this.purchaseId = passengerFlight.getBookingId();
         this.role = null;
@@ -58,11 +85,12 @@ public class UserFlightDataDTO {
 
 
 
+
     public FlightDataDTO getFlightData() {
         return flightData;
     }
 
-    public String getUserSeat() {
+    public SeatingDTO getUserSeat() {
         return userSeat;
     }
 
@@ -82,7 +110,7 @@ public class UserFlightDataDTO {
         this.flightData = flightData;
     }
 
-    public void setUserSeat(String userSeat) {
+    public void setUserSeat(SeatingDTO userSeat) {
         this.userSeat = userSeat;
     }
 

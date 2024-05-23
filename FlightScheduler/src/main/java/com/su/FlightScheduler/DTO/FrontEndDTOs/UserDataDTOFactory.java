@@ -28,8 +28,29 @@ public class UserDataDTOFactory {
         return userDataDTO;
     }
 
-    public static UserDataDTO create_passenger_data_with_given_flight(List<PassengerFlight> passengerFlightList)
+    public static UserDataDTO create_pilot_data_with_flight_list(List<PilotAssignmentEntity> pilotAssignmentEntityList)
     {
+        PilotAssignmentEntity pilotAssignmentEntity = pilotAssignmentEntityList.get(0);
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(pilotAssignmentEntity.getPilot().getEmail());
+        userDataDTO.setPassword(pilotAssignmentEntity.getPilot().getPassword());
+        userDataDTO.setName(pilotAssignmentEntity.getPilot().getFirstName());
+        userDataDTO.setSurname(pilotAssignmentEntity.getPilot().getSurname());
+        userDataDTO.setId(Integer.toString(pilotAssignmentEntity.getPilot().getPilotId()));
+        userDataDTO.setAge(pilotAssignmentEntity.getPilot().getAge());
+        userDataDTO.setGender(pilotAssignmentEntity.getPilot().getGender());
+        userDataDTO.setNationality(pilotAssignmentEntity.getPilot().getNationality());
+        userDataDTO.setUserType("PilotCrew");
+        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+        for (PilotAssignmentEntity pilotAssignment : pilotAssignmentEntityList)
+        {
+            userFlightDataDTOList.add(new UserFlightDataDTO(pilotAssignment.getFlight(), pilotAssignment));
+        }
+        userDataDTO.setFlights(userFlightDataDTOList);
+        return userDataDTO;
+    }
+
+    public static UserDataDTO create_passenger_data_with_given_flight(List<PassengerFlight> passengerFlightList) {
         UserDataDTO userDataDTO = new UserDataDTO();
         PassengerFlight passengerFlight = passengerFlightList.get(0);
         userDataDTO.setEmail(passengerFlight.getPassenger().getEmail());
@@ -37,13 +58,15 @@ public class UserDataDTOFactory {
         userDataDTO.setName(passengerFlight.getPassenger().getFirstName());
         userDataDTO.setSurname(passengerFlight.getPassenger().getSurname());
         userDataDTO.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
-        userDataDTO.setAge( passengerFlight.getPassenger().getAge());
-        userDataDTO.setNationality( passengerFlight.getPassenger().getNationality());
+        userDataDTO.setAge(passengerFlight.getPassenger().getAge());
+        userDataDTO.setNationality(passengerFlight.getPassenger().getNationality());
         userDataDTO.setUserType("Passenger");
         List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
-        for (PassengerFlight passengerFlight1 : passengerFlightList){
+        for (PassengerFlight passengerFlight1 : passengerFlightList) {
             userFlightDataDTOList.add(new UserFlightDataDTO(passengerFlight1.getFlight(), passengerFlight1));
-=======
+        }
+        return userDataDTO;
+    }
 
     public static UserDataDTO create_pilot_data_with_no_flight_from_pilot_entity(PilotEntity pilotEntity)
     {

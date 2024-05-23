@@ -41,7 +41,7 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         {
             //find every PilotAssignmentEntity
             List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_PilotId(pilotId);
-            UserDataDTO userDataDTO = new UserDataDTO(pilotAssignmentEntityList);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_flight_list(pilotAssignmentEntityList);
             return userDataDTO;
         }
         else
