@@ -1,9 +1,10 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.*;
-import com.su.FlightScheduler.Repository.AdminRepository;
 import com.su.FlightScheduler.Repository.AirportRepository;
 import com.su.FlightScheduler.Repository.VehicleTypeRepository;
+import com.su.FlightScheduler.Repository.PassengerFlightRepository;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PlaneRepository;
 import com.su.FlightScheduler.Repository.CompanyRepository;
@@ -13,9 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 
 @Service
 @Transactional
@@ -28,15 +33,19 @@ public class FlightServiceImp implements FlightService {
 
     private final VehicleTypeRepository vehicleTypeRepository;
 
+    private final PassengerFlightRepository passengerFlightRepository;
+
     @Autowired
     public FlightServiceImp(FlightRepository flightRepository, AirportRepository airportRepository,
                             PlaneRepository planeRepository, CompanyRepository companyRepository,
-                            VehicleTypeRepository vehicleTypeRepository) {
+                            VehicleTypeRepository vehicleTypeRepository,
+                            PassengerFlightRepository passengerFlightRepository) {
         this.flightRepository = flightRepository;
         this.airportRepository = airportRepository;
         this.planeRepository = planeRepository;
         this.companyRepository = companyRepository;
         this.vehicleTypeRepository = vehicleTypeRepository;
+        this.passengerFlightRepository = passengerFlightRepository;
     }
 
 
@@ -417,4 +426,79 @@ public class FlightServiceImp implements FlightService {
 
 
     // The method for obtaining the SeatingPlan
+
+    @Override
+    public List<SeatingTypeDTO> decodeSeatingPlan(String flightNumber) {
+        // Get the VehicleTypeEntity from the flight number
+        VehicleTypeEntity vehicleTypeEntity = flightRepository.findVehicleTypeByFlightId(flightNumber);
+        if (vehicleTypeEntity == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+        String vehicleType = vehicleTypeEntity.getVehicleType();
+
+        // Get the seating plan from the vehicle type
+        VehicleTypeRepository.SeatingPlanProjection seatingPlanProjection = vehicleTypeRepository.findByVehicleType(vehicleType, VehicleTypeRepository.SeatingPlanProjection.class);
+        String seatingPlan = seatingPlanProjection.getSeatingPlan();
+
+        List<SeatingTypeDTO> seatingList = new ArrayList<>();
+
+        // Split the encoded seating plan into individual seating types
+        String[] seatingTypes = seatingPlan.split("=");
+
+        for (String seatingType : seatingTypes) {
+            SeatingTypeDTO seating = new SeatingTypeDTO();
+
+            // Split the seating type into rows and columns
+            String[] rowsAndColumns = seatingType.split("\\|");
+
+            // Set the start row, end row, and columns for this seating type
+            seating.setStartRow(Integer.parseInt(rowsAndColumns[0]));
+            seating.setEndRow(Integer.parseInt(rowsAndColumns[1]));
+            seating.setColumns(rowsAndColumns[2]);
+
+            // Add this seating type to the list
+            seatingList.add(seating);
+        }
+
+        return seatingList;
+    }
+
+    @Override
+    public List<SeatingDTO> findBookedFlightsByFlightNumber(String flightNumber) {
+
+    FlightEntity flight = getFlightOrThrow(flightNumber);
+
+    List<PassengerFlight> passengers = passengerFlightRepository.findPassengerFlightByFlight(flight);
+    if (passengers.isEmpty()) {
+        throw new EntityNotFoundException("No passengers found for flight with ID: " + flightNumber);
+    }
+
+    int businessEndRowNonFinal = 0;
+    List<SeatingTypeDTO> seatingList = decodeSeatingPlan(flightNumber);
+    for (SeatingTypeDTO seating : seatingList) {
+        if ("business".equals(seating.getType())) {
+            businessEndRowNonFinal = seating.getEndRow();
+            break;
+        }
+    }
+    final int businessEndRow = businessEndRowNonFinal;
+
+    // Map each PassengerFlight to a Seat
+    List<SeatingDTO> seats = passengers.stream().map(passengerFlight -> {
+        SeatingDTO seat = new SeatingDTO();
+        seat.setSeatPosition(passengerFlight.getSeatNumber());
+        seat.setSeatType(getSeatType(passengerFlight.getSeatNumber(), businessEndRow));
+        seat.setStatus(true);
+        seat.setUserId(passengerFlight.getPassenger().getPassengerId());
+        return seat;
+    }).collect(Collectors.toList());
+
+    return seats;
+    }
+
+    private String getSeatType(String seatNumber, int businessEndRow) {
+        // Determine the seat type based on the row number
+        int rowNumber = Integer.parseInt(seatNumber.substring(1));
+        return rowNumber <= businessEndRow ? "business" : "economy";
+    }
 }
