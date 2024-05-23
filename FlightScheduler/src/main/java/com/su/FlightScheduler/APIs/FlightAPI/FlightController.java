@@ -1,5 +1,8 @@
 package com.su.FlightScheduler.APIs.FlightAPI;
 
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.Seats;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Repository.AirportRepository;
 import com.su.FlightScheduler.Repository.PlaneRepository;
@@ -272,5 +275,17 @@ public class FlightController {
         return ResponseEntity.ok(flightService.getDateTime(flightNumber));
     }
 
+    // --- End of Getters for the entities ---
 
+    @GetMapping("/flights/{flightId}/seats")
+    public Seats getSeats(@PathVariable String flightId) {
+        List<SeatingTypeDTO> seatList = flightService.decodeSeatingPlan(flightId);
+        List<SeatingDTO> seatingList = flightService.findBookedFlightsByFlightNumber(flightId);
+
+        Seats seats = new Seats();
+        seats.setSeatList(seatList);
+        seats.setSeatingList(seatingList);
+
+        return seats;
+    }
 }

@@ -1,5 +1,7 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Repository.VehicleTypeRepository;
 
@@ -74,4 +76,7 @@ public interface FlightService {
     VehicleTypeRepository.AttendeeCapacityProjection findAttendeeCapacityByFlightNumber(String flightNumber);
     VehicleTypeRepository.PilotCapacityProjection findPilotCapacityByFlightNumber(String flightNumber);
     // --- End of Getters for DTOs (Projections) ---
+
+    List<SeatingTypeDTO> decodeSeatingPlan(String flightNumber);
+    List<SeatingDTO> findBookedFlightsByFlightNumber(String flightNumber);
 }

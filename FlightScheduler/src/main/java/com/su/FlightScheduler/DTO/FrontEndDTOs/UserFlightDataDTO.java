@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 //this class will be used in PilotFullDTO as a List
 public class UserFlightDataDTO {
     private FlightDataDTO flightData;   //this part is used for all
-    private String userSeat;    //this part will be converted to SeatDTO in future
+    private String userSeat;    //this part will be converted to SeatingDTO in future
     private LocalDateTime boughtTime;   //this part is used only for passengers
     private Integer purchaseId;     //this part is used only for passengers
     private String role;    //this part is used for pilot and cabin crew
