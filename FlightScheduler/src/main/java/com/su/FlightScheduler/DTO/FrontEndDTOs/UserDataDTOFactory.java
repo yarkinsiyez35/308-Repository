@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 
@@ -24,6 +25,7 @@ public class UserDataDTOFactory {
         userDataDTO.setFlights(userFlightDataDTOListWithGivenFlightNumber);
         return userDataDTO;
     }
+
 
     public static UserDataDTO create_pilot_data_with_no_flight_from_pilot_entity(PilotEntity pilotEntity)
     {
@@ -50,5 +52,25 @@ public class UserDataDTOFactory {
             userDataDTOList.add(userDataDTO);
         }
         return userDataDTOList;
+
+    public static UserDataDTO create_cabincrew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = cabinCrewAssignmentsEntityList.get(0);
+        userDataDTO.setEmail(cabinCrewAssignmentsEntity.getCabinCrew().getEmail());
+        userDataDTO.setPassword(cabinCrewAssignmentsEntity.getCabinCrew().getPassword());
+        userDataDTO.setName(cabinCrewAssignmentsEntity.getCabinCrew().getFirstName());
+        userDataDTO.setSurname(cabinCrewAssignmentsEntity.getCabinCrew().getSurname());
+        userDataDTO.setId(Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId()));
+        userDataDTO.setAge( cabinCrewAssignmentsEntity.getCabinCrew().getAge());
+        userDataDTO.setNationality( cabinCrewAssignmentsEntity.getCabinCrew().getNationality());
+        userDataDTO.setUserType("CabinCrew");
+        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+        for (CabinCrewAssignmentsEntity cabinCrewAssignment : cabinCrewAssignmentsEntityList){
+            userFlightDataDTOList.add(new UserFlightDataDTO(cabinCrewAssignment.getFlight(), cabinCrewAssignment));
+        }
+        userDataDTO.setFlights(userFlightDataDTOList);
+        return userDataDTO;
+
     }
 }
