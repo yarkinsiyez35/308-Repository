@@ -43,7 +43,7 @@ public class AuthenticationService {
         ApplicationUser applicationUser = new ApplicationUser(body.getUsername(), body.getPassword(), roles);
 
         //save to the passenger
-        PassengerEntity passengerEntity = new PassengerEntity(700,body.getUsername(), body.getPassword(), body.getFirstName(),body.getLastName(), body.getAge(), body.getGender(), body.getNationality());
+        PassengerEntity passengerEntity = new PassengerEntity(body.getUsername(), body.getPassword(), body.getFirstName(),body.getLastName(), body.getAge(), body.getGender(), body.getNationality());
 
         passengerRepository.save(passengerEntity);
         //return the application user

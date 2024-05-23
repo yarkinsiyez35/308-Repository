@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.Entity.PilotLanguageEntity;
+import com.su.FlightScheduler.Entity.PilotLanguagePK;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotLanguageRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import com.su.FlightScheduler.Entity.PilotEntity;
@@ -31,6 +32,10 @@ public class PilotServiceImp implements PilotService {
         {
             throw new RuntimeException("Pilot with id " + pilot.getPilotId() + " cannot be created!");
         }
+        if (pilotRepository.findPilotEntityByEmail(pilot.getEmail()).isPresent())   //cannot create a pilot with another existing email address
+        {
+            throw new RuntimeException("Pilot with email " + pilot.getEmail() + " cannot be created!");
+        }
 
         PilotEntity savedPilot;
         if (pilot.getLanguages() != null)   //if pilot has languages
@@ -48,6 +53,41 @@ public class PilotServiceImp implements PilotService {
         {
             //save the entity
             savedPilot = pilotRepository.save(pilot);
+        }
+        //return saved entity
+        return savedPilot;
+    }
+
+    @Override
+    public PilotEntity savePilotWithoutId(PilotEntity pilotEntity) throws RuntimeException {
+        if (pilotRepository.findPilotEntityByEmail(pilotEntity.getEmail()).isPresent())   //cannot create a pilot with another existing email address
+        {
+            throw new RuntimeException("Pilot with email " + pilotEntity.getEmail() + " cannot be created!");
+        }
+
+        PilotEntity savedPilot;
+        if (pilotEntity.getLanguages() != null)   //if pilot has languages
+        {
+            //create the same entity without the languages
+            PilotEntity newPilot = new PilotEntity(pilotEntity);
+            //save the entity without languages
+            savedPilot = pilotRepository.save(new PilotEntity(pilotEntity));
+            //set the pilot id of the languages
+            List<PilotLanguageEntity> languagesToBeSaved = pilotEntity.getLanguages();
+            for (PilotLanguageEntity pilotLanguageEntity : languagesToBeSaved)
+            {
+                PilotLanguagePK pilotLanguagePK = new PilotLanguagePK(savedPilot.getPilotId(), pilotLanguageEntity.getPilotLanguagePK().getLanguage());
+                pilotLanguageEntity.setPilotLanguagePK(pilotLanguagePK);
+            }
+            //save the languages to the PilotLanguageEntity table
+            List<PilotLanguageEntity> savedPilotLanguageEntityList = pilotLanguageRepository.saveAll(pilotEntity.getLanguages());
+            //add the saved languages to the saved PilotLanguageEntity
+            savedPilot.setLanguages(savedPilotLanguageEntityList);  //add the languages to the returned object
+        }
+        else
+        {
+            //save the entity
+            savedPilot = pilotRepository.save(pilotEntity);
         }
         //return saved entity
         return savedPilot;
@@ -79,6 +119,10 @@ public class PilotServiceImp implements PilotService {
         if (!pilotExistsById(pilot.getPilotId()))   //a nonexistent pilot cannot be updated
         {
             throw new RuntimeException("Pilot with id: " + pilot.getPilotId() + " cannot be updated!");
+        }
+        if (pilotRepository.findPilotEntityByEmail(pilot.getEmail()).isPresent() && pilot.getPilotId() != pilotRepository.findPilotEntityByEmail(pilot.getEmail()).get().getPilotId())
+        {
+            throw new RuntimeException("Pilot with email " + pilot.getEmail() + " cannot be updated!");
         }
         PilotEntity updatedPilot;
         if (pilot.getLanguages() != null)
