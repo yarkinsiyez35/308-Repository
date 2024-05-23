@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
     @Transactional(readOnly = true)
     Optional<AdminEntity> findByEmailAndPassword(String email, String password);
+    Optional<AdminEntity> findAdminEntityByEmail(String email);
 }
