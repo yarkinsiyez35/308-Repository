@@ -1,5 +1,7 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
+import com.su.FlightScheduler.Entity.PassengerFlight;
+=======
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 
@@ -68,6 +70,22 @@ public class UserDataDTO {
         }
     }
 
+    public UserDataDTO(PassengerFlight passengerFlight) //this will be called when there is one assignment
+    {
+        this.email = passengerFlight.getPassenger().getEmail();
+        this.password = passengerFlight.getPassenger().getPassword();
+        this.name = passengerFlight.getPassenger().getFirstName();
+        this.surname = passengerFlight.getPassenger().getSurname();
+        this.id = Integer.toString(passengerFlight.getPassenger().getPassengerId());
+        this.age = passengerFlight.getPassenger().getAge();
+        this.gender = passengerFlight.getPassenger().getGender();
+        this.nationality = passengerFlight.getPassenger().getNationality();
+        this.userType = "Passenger";
+        this.flights = new ArrayList<>();
+        this.flights.add(new UserFlightDataDTO(passengerFlight.getFlight(), passengerFlight));
+    }
+
+=======
     public UserDataDTO(CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity){
 
         this.email = cabinCrewAssignmentsEntity.getCabinCrew().getEmail();
