@@ -4,10 +4,12 @@ import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
+import com.su.FlightScheduler.Entity.PilotAssignmentPK;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotAssignmentRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
+import com.su.FlightScheduler.Util.SeatIncrementer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,8 +49,101 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
     }
 
     @Override
-    public FlightEntity assignPilotToFlight(String flightNumber, int pilotId, String role) {
-        return null;
+    public UserDataDTO assignPilotToFlight(String flightNumber, int pilotId) {
+        if (!flightRepository.existsById(flightNumber))
+        {
+            throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
+        if (!pilotRepository.existsById(pilotId))
+        {
+            throw new RuntimeException("Pilot with id: " + pilotId + " does not exist!");
+        }
+        //find the flight
+        FlightEntity flightEntity = flightRepository.findById(flightNumber).get();
+        //find the current assignment list
+        List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_FlightNumber(flightNumber);
+        //find the to be assigned pilot
+        PilotEntity pilot = pilotRepository.findById(pilotId).get();
+        //primary key is set for PilotAssignmentEntity
+        PilotAssignmentPK pilotAssignmentPK = new PilotAssignmentPK(pilotId, flightNumber);
+        //calculate sizes
+        int size = pilotAssignmentEntityList.size();
+        int seniorSize = flightEntity.getPlane().getVehicleType().getSeniorPilotCapacity();
+        int juniorSize = flightEntity.getPlane().getVehicleType().getJuniorPilotCapacity();
+        int traineeSize = flightEntity.getPlane().getVehicleType().getTraineePilotCapacity();
+
+
+        PilotAssignmentEntity savedPilotAssignmentEntity;
+        if (size < seniorSize)  //assign senior pilot
+        {
+            //find the seat
+            String newSeat;
+            if (size == 0)
+            {
+                newSeat = "0A";
+            }
+            else
+            {
+                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                newSeat = SeatIncrementer.incrementSeat(lastSeat);
+            }
+            //create PilotAssignmentEntity
+            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Senior", newSeat,1);
+            //set pilot and flight field
+            pilotAssignmentEntity.setPilot(pilot);
+            pilotAssignmentEntity.setFlight(flightEntity);
+            //save PilotAssignmentEntity
+            savedPilotAssignmentEntity = pilotAssignmentRepository.save(pilotAssignmentEntity);
+        }
+        else if (size < seniorSize + juniorSize)    //assign a junior pilot
+        {
+            //find the seat
+            String newSeat;
+            if (size == 0)
+            {
+                newSeat = "1A";
+            }
+            else
+            {
+                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                newSeat = SeatIncrementer.incrementSeat(lastSeat);
+            }
+            //create PilotAssignmentEntity
+            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Junior", "1A",1);
+            //set pilot and flight field
+            pilotAssignmentEntity.setPilot(pilot);
+            pilotAssignmentEntity.setFlight(flightEntity);
+            //save PilotAssignmentEntity
+            savedPilotAssignmentEntity = pilotAssignmentRepository.save(pilotAssignmentEntity);
+        }
+        else if (size < seniorSize + juniorSize + traineeSize)  //assign a trainee pilot
+        {
+            //find the seat
+            String newSeat;
+            if (size == 0)
+            {
+                newSeat = "2A";
+            }
+            else
+            {
+                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                newSeat = SeatIncrementer.incrementSeat(lastSeat);
+            }
+            //create PilotAssignmentEntity
+            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Trainee", "1A",1);
+            //set pilot and flight field
+            pilotAssignmentEntity.setPilot(pilot);
+            pilotAssignmentEntity.setFlight(flightEntity);
+            //save PilotAssignmentEntity
+            savedPilotAssignmentEntity = pilotAssignmentRepository.save(pilotAssignmentEntity);
+        }
+        else
+        {
+            throw new RuntimeException("Pilot capacity of flight with id: " + flightNumber + " is full!");
+        }
+
+        UserDataDTO userDataDTO = new UserDataDTO(savedPilotAssignmentEntity);
+        return userDataDTO;
     }
 
     @Override

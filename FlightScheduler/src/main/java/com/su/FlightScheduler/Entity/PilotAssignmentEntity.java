@@ -78,4 +78,12 @@ public class PilotAssignmentEntity {
     public void setAcceptedAssignment(int acceptedAssignment) {
         this.acceptedAssignment = acceptedAssignment;
     }
+
+    public void setFlight(FlightEntity flight) {
+        this.flight = flight;
+    }
+
+    public void setPilot(PilotEntity pilot) {
+        this.pilot = pilot;
+    }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface CabinAssignmentRepository extends JpaRepository<CabinCrewAssignmentsEntity, CabinCrewAssignmentsPK> {
 
     public List<CabinCrewAssignmentsEntity> findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_AttendantId(int attendantId);
+    public List<CabinCrewAssignmentsEntity> findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_FlightNumber(String flightNumber);
 }

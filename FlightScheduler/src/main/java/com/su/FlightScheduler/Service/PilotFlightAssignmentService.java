@@ -10,7 +10,7 @@ public interface PilotFlightAssignmentService
 {
     public UserDataDTO getFlightsOfPilot(int pilotId);   //return the flights of a given pilot with id
 
-    public FlightEntity assignPilotToFlight(String flightNumber, int pilotId, String role); //assign a pilot to a flight
+    public UserDataDTO assignPilotToFlight(String flightNumber, int pilotId); //assign a pilot to a flight
 
     public List<UserDataDTO> getPilotsOfFlight(String flightNumber);    //get all pilots in a flight
 

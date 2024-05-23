@@ -2,6 +2,7 @@ package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 
@@ -37,9 +38,15 @@ public class UserFlightDataDTO {
         this.role = pilotAssignmentEntity.getAssignmentRole();
     }
 
+    public UserFlightDataDTO(FlightEntity flightEntity, CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity)
+    {
+        this.flightData = new FlightDataDTO(flightEntity);
+        this.userSeat = cabinCrewAssignmentsEntity.getSeatNumber();
+        this.boughtTime = null;
+        this.purchaseId = null;
+        this.role = cabinCrewAssignmentsEntity.getAssignmentRole();
+    }
 
-    //add for CabinCrewAssignments Entity
-    //add for PassengerFlight
 
 
     public FlightDataDTO getFlightData() {

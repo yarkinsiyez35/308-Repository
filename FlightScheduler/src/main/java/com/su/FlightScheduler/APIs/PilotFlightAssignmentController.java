@@ -6,10 +6,7 @@ import com.su.FlightScheduler.Service.PilotFlightAssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class PilotFlightAssignmentController {
     }
 
     @GetMapping("/pilot/{pilotId}")
-    ResponseEntity<Object> getFlightAssignmentsOfAPilot(@PathVariable int pilotId)
+    public ResponseEntity<Object> getFlightAssignmentsOfAPilot(@PathVariable int pilotId)
     {
         try
         {
@@ -41,7 +38,7 @@ public class PilotFlightAssignmentController {
     }
 
     @GetMapping("/flight/{flightId}")
-    ResponseEntity<Object> getPilotsOfAFlight(@PathVariable String flightId)
+    public ResponseEntity<Object> getPilotsOfAFlight(@PathVariable String flightId)
     {
         try
         {
@@ -51,6 +48,21 @@ public class PilotFlightAssignmentController {
         catch (RuntimeException e)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/{pilotId}/{flightId}")
+    public ResponseEntity<Object> assignPilotToAFlight(@PathVariable int pilotId, @PathVariable String flightId)
+    {
+        try
+        {
+            UserDataDTO userDataDTO = pilotFlightAssignmentService.assignPilotToFlight(flightId, pilotId);
+            return ResponseEntity.ok(userDataDTO);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
         }
     }
 }
