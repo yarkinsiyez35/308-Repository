@@ -5,6 +5,9 @@ import com.su.FlightScheduler.Security.DTO.RegistrationDTO;
 import com.su.FlightScheduler.Security.Model.ApplicationUser;
 import com.su.FlightScheduler.Security.Service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,15 +25,30 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ApplicationUser registerUser(@RequestBody RegistrationDTO body){
-        return authenticationService.registerUser(body);
+    public ResponseEntity<Object> registerUser(@RequestBody RegistrationDTO body){
+       try
+       {
+           ApplicationUser applicationUser = authenticationService.registerUser(body);
+           return ResponseEntity.ok(applicationUser);
+       }
+       catch (RuntimeException e)
+       {
+           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+       }
     }
 
 
 
     @PostMapping("/login")
-    public LoginResponseDTO loginUser(@RequestBody RegistrationDTO body){
-        LoginResponseDTO loginResponseDTO = authenticationService.loginUser(body.getUsername(), body.getPassword());
-        return loginResponseDTO;
+    public ResponseEntity<Object> loginUser(@RequestBody RegistrationDTO body){
+        try
+        {
+            LoginResponseDTO loginResponseDTO = authenticationService.loginUser(body.getUsername(), body.getPassword());
+            return ResponseEntity.ok(loginResponseDTO);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
     }
 }
