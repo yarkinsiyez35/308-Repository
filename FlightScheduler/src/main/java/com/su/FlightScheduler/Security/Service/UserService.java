@@ -2,6 +2,7 @@ package com.su.FlightScheduler.Security.Service;
 
 import java.util.Optional;
 
+import com.su.FlightScheduler.Entity.AdminEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
@@ -59,7 +60,12 @@ public class UserService implements UserDetailsService {
             ApplicationUser applicationUser = new ApplicationUser(passengerEntity.get());
             return applicationUser;
         }
-
+        Optional<AdminEntity> adminEntity = adminRepository.findAdminEntityByEmail(username);
+        if (adminEntity.isPresent())
+        {
+            ApplicationUser applicationUser = new ApplicationUser(adminEntity.get());
+            return applicationUser;
+        }
 
 
         //edit later

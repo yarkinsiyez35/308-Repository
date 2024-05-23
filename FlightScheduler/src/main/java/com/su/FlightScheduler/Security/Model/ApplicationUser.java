@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Security.Model;
 
+import com.su.FlightScheduler.Entity.AdminEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
@@ -15,6 +16,7 @@ public class ApplicationUser implements UserDetails {
 
     private String username;
     private String password;
+    private int id;
     private Set<ApplicationAuthority> authorities;
 
     public ApplicationUser() {
@@ -28,11 +30,18 @@ public class ApplicationUser implements UserDetails {
         this.authorities = authorities;
     }
 
-
+    public ApplicationUser(String username, String password, int id, Set<ApplicationAuthority> authorities) {
+        this.username = username;
+        this.password = password;
+        this.id = id;
+        this.authorities = authorities;
+    }
+    //add id here to constructor
     public ApplicationUser(PilotEntity pilotEntity)
     {
         this.username = pilotEntity.getEmail();
         this.password = pilotEntity.getPassword();
+        this.id = pilotEntity.getPilotId();
         ApplicationAuthority applicationAuthority = new ApplicationAuthority("PILOT");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
@@ -42,6 +51,7 @@ public class ApplicationUser implements UserDetails {
     {
         this.username = cabinCrewEntity.getEmail();
         this.password = cabinCrewEntity.getPassword();
+        this.id = cabinCrewEntity.getAttendantId();
         ApplicationAuthority applicationAuthority = new ApplicationAuthority("ATTENDANT");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
@@ -51,7 +61,18 @@ public class ApplicationUser implements UserDetails {
     {
         this.username = passengerEntity.getEmail();
         this.password = passengerEntity.getPassword();
+        this.id = passengerEntity.getPassengerId();
         ApplicationAuthority applicationAuthority = new ApplicationAuthority("PASSENGER");
+        this.authorities = new HashSet<>();
+        this.authorities.add(applicationAuthority);
+    }
+
+    public ApplicationUser(AdminEntity adminEntity)
+    {
+        this.username = adminEntity.getEmail();
+        this.password = adminEntity.getPassword();
+        this.id = adminEntity.getAdminId();
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("ADMIN");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }
@@ -78,8 +99,16 @@ public class ApplicationUser implements UserDetails {
         return this.username;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /* If you want account locking capabilities create variables and ways to set them for the methods below */
