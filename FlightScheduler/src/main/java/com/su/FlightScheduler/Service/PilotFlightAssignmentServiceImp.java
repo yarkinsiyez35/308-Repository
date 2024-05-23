@@ -9,11 +9,13 @@ import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotAssignmentRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
+import com.su.FlightScheduler.Util.FlightDateChecker;
 import com.su.FlightScheduler.Util.SeatIncrementer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,57 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         {
             throw new RuntimeException("Pilot with id: " + pilotId + " does not exist!");
         }
+    }
+
+    @Override
+    public List<UserDataDTO> getAvailablePilotsForFlight(String flightNumber) {
+        if (!flightRepository.existsById(flightNumber))
+        {
+            throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
+        FlightEntity flight = flightRepository.findById(flightNumber).get();
+        LocalDateTime departureTime = flight.getDepartureDateTime();
+        String sourceCity = flight.getSourceAirport().getCity();
+        int flightRange = flight.getFlightRange();
+        //find the currently assigned pilot list
+        List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_FlightNumber(flightNumber);
+
+        //find the needed role
+        int size = pilotAssignmentEntityList.size();
+        int seniorSize = flight.getPlane().getVehicleType().getSeniorPilotCapacity();
+        int juniorSize = flight.getPlane().getVehicleType().getJuniorPilotCapacity();
+        int traineeSize = flight.getPlane().getVehicleType().getTraineePilotCapacity();
+
+
+        List<PilotEntity> availablePilotList = new ArrayList<>();
+
+        if (size < seniorSize)  //find available senior pilot
+        {
+            //find all senior pilots that can fly flightRange
+            List<PilotEntity> pilotEntityList = pilotRepository.findPilotEntityBySeniorityAndAllowedRangeGreaterThanEqual("Senior", flightRange);
+            availablePilotList = findAvailablePilotsFromGivenListAndFlight(pilotEntityList, flight);
+        }
+        else if (size < seniorSize + juniorSize)    //find available junior pilot
+        {
+            //find all junior pilots that can fly flightRange
+            List<PilotEntity> pilotEntityList = pilotRepository.findPilotEntityBySeniorityAndAllowedRangeGreaterThanEqual("Junior", flightRange);
+            availablePilotList = findAvailablePilotsFromGivenListAndFlight(pilotEntityList, flight);
+
+        }
+        else if (size < seniorSize + juniorSize + traineeSize)  //find available trainee pilot
+        {
+            //find all trainee pilots that can fly flight range
+            List<PilotEntity> pilotEntityList = pilotRepository.findPilotEntityBySeniorityAndAllowedRangeGreaterThanEqual("Trainee", flightRange);
+            availablePilotList = findAvailablePilotsFromGivenListAndFlight(pilotEntityList, flight);
+        }
+        else    //flight pilot capacity is full
+        {
+            throw new RuntimeException("Pilot capacity of flight with id: " + flightNumber + " is full!");
+        }
+
+        List<UserDataDTO> userDataDTOList = UserDataDTOFactory.create_available_pilot_list(availablePilotList);
+
+        return userDataDTOList;
     }
 
     @Override
@@ -164,5 +217,39 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         {
             throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
         }
+    }
+
+
+    private List<PilotEntity> findAvailablePilotsFromGivenListAndFlight(List<PilotEntity> pilotEntityList, FlightEntity flight)
+    {
+        List<PilotEntity> availablePilotList = new ArrayList<>();
+        for (PilotEntity pilotCandidate : pilotEntityList)
+        {
+            //get flights of the current pilot
+            List<PilotAssignmentEntity> currentPilotAssignmentList = pilotAssignmentRepository.findAllByPilotAssignmentPK_PilotId(pilotCandidate.getPilotId());
+
+            if (currentPilotAssignmentList.size() == 0) //pilot has no flights, pilot can be assigned
+            {
+                availablePilotList.add(pilotCandidate);
+            }
+            else
+            {
+                boolean isAvailable = true;
+                //for each assignment
+                for (PilotAssignmentEntity currentPilotAssignment : currentPilotAssignmentList)
+                {
+                    if (!FlightDateChecker.flightDoesNotOverlap(currentPilotAssignment.getFlight(), flight))
+                    {
+                        isAvailable = false;    //one overlap makes the pilot unavailable
+                        break;
+                    }
+                }
+                if (isAvailable)    //pilot is available if none of the assignments overlap
+                {
+                    availablePilotList.add(pilotCandidate); //add to available list
+                }
+            }
+        }
+        return availablePilotList;
     }
 }

@@ -1,6 +1,8 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 import com.su.FlightScheduler.Entity.PassengerFlight;
+=======
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 
 import java.util.ArrayList;
@@ -83,6 +85,21 @@ public class UserDataDTO {
         this.flights.add(new UserFlightDataDTO(passengerFlight.getFlight(), passengerFlight));
     }
 
+=======
+    public UserDataDTO(CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity){
+
+        this.email = cabinCrewAssignmentsEntity.getCabinCrew().getEmail();
+        this.password = cabinCrewAssignmentsEntity.getCabinCrew().getPassword();
+        this.name = cabinCrewAssignmentsEntity.getCabinCrew().getFirstName();
+        this.surname = cabinCrewAssignmentsEntity.getCabinCrew().getSurname();
+        this.id = Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId());
+        this.gender = cabinCrewAssignmentsEntity.getCabinCrew().getGender();
+        this.nationality = cabinCrewAssignmentsEntity.getCabinCrew().getNationality();
+        this.userType = "CabinCrew";
+        this.flights = new ArrayList<>();
+        this.flights.add(new UserFlightDataDTO(cabinCrewAssignmentsEntity.getFlight(), cabinCrewAssignmentsEntity));
+    }
+    
     public String getEmail() {
         return email;
     }

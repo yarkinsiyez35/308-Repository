@@ -23,4 +23,5 @@ public interface VehicleTypeRepository extends JpaRepository<VehicleTypeEntity, 
     interface SeatingPlanProjection {
         String getSeatingPlan();
     }
+
 }

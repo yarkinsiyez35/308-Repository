@@ -11,4 +11,5 @@ import java.util.List;
 public interface PilotAssignmentRepository extends JpaRepository<PilotAssignmentEntity, PilotAssignmentPK> {
     public List<PilotAssignmentEntity> findAllByPilotAssignmentPK_PilotId(int pilotId);
     public List<PilotAssignmentEntity> findAllByPilotAssignmentPK_FlightNumber(String flightNumber);
+
 }
