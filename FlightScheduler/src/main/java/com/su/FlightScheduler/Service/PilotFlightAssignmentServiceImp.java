@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,7 +52,22 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
     }
 
     @Override
-    public List<PilotEntity> getPilotsOfFlight(String flightNumber) {
-        return null;
+    public List<UserDataDTO> getPilotsOfFlight(String flightNumber) {
+        if (flightRepository.existsById(flightNumber))  //flight exists in the repository
+        {
+            //get every assignment
+            List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_FlightNumber(flightNumber);
+            List<UserDataDTO> userDataDTOList = new ArrayList<>();
+            for (PilotAssignmentEntity pilotAssignmentEntity : pilotAssignmentEntityList)
+            {
+                UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_given_flight(pilotAssignmentEntity, flightNumber);
+                userDataDTOList.add(userDataDTO);
+            }
+            return userDataDTOList;
+        }
+        else
+        {
+            throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
     }
 }

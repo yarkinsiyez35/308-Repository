@@ -12,6 +12,6 @@ public interface PilotFlightAssignmentService
 
     public FlightEntity assignPilotToFlight(String flightNumber, int pilotId, String role); //assign a pilot to a flight
 
-    public List<PilotEntity> getPilotsOfFlight(String flightNumber);    //get all pilots in a flight
+    public List<UserDataDTO> getPilotsOfFlight(String flightNumber);    //get all pilots in a flight
 
 }

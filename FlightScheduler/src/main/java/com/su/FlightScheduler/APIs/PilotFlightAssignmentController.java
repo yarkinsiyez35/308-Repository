@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("test/assignment")
 public class PilotFlightAssignmentController {
@@ -24,15 +26,27 @@ public class PilotFlightAssignmentController {
         this.pilotFlightAssignmentService = pilotFlightAssignmentService;
     }
 
-
-
-    @GetMapping("/{pilotId}")
+    @GetMapping("/pilot/{pilotId}")
     ResponseEntity<Object> getFlightAssignmentsOfAPilot(@PathVariable int pilotId)
     {
         try
         {
             UserDataDTO results = pilotFlightAssignmentService.getFlightsOfPilot(pilotId);
             return ResponseEntity.ok(results);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/flight/{flightId}")
+    ResponseEntity<Object> getPilotsOfAFlight(@PathVariable String flightId)
+    {
+        try
+        {
+            List<UserDataDTO> userDataDTOList = pilotFlightAssignmentService.getPilotsOfFlight(flightId);
+            return ResponseEntity.ok(userDataDTOList);
         }
         catch (RuntimeException e)
         {
