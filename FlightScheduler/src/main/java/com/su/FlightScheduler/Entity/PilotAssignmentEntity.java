@@ -1,10 +1,7 @@
 package com.su.FlightScheduler.Entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name= "pilot_assignments")
@@ -20,6 +17,17 @@ public class PilotAssignmentEntity {
 
     @Column(name = "accepted_assignment")
     private int acceptedAssignment;
+
+    @ManyToOne
+    @MapsId("flightNumber")
+    @JoinColumn(name = "flight_number")
+    private FlightEntity flight;
+
+
+    @ManyToOne
+    @MapsId("pilotId")
+    @JoinColumn(name = "pilot_id")
+    private PilotEntity pilot;
 
     public PilotAssignmentEntity() {
     }
@@ -45,6 +53,14 @@ public class PilotAssignmentEntity {
 
     public int getAcceptedAssignment() {
         return acceptedAssignment;
+    }
+
+    public FlightEntity getFlight() {
+        return flight;
+    }
+
+    public PilotEntity getPilot() {
+        return pilot;
     }
 
     public void setPilotAssignmentPK(PilotAssignmentPK pilotAssignmentPK) {

@@ -62,6 +62,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/pilots/**").hasAnyRole("ADMIN", "PILOT");
                     auth.requestMatchers("/api/attendants/**").hasAnyRole("ADMIN", "ATTENDANT");
                     auth.requestMatchers("/api/passengers/**").hasAnyRole("ADMIN", "PASSENGER");
+                    auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
                     auth.anyRequest().authenticated();
                 });
 

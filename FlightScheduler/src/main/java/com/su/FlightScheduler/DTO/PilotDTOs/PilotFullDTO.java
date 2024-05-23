@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.DTO.PilotDTOs;
 
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserFlightDataDTO;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Entity.PilotLanguageEntity;
@@ -20,12 +21,12 @@ public class PilotFullDTO {
     private String nationality;
     private String seniority;
     private List<String> languages;
-    private List<PilotAssignmentDTO> assignments;
+    private List<UserFlightDataDTO> assignments;
 
     public PilotFullDTO() {
     }
 
-    public PilotFullDTO(int pilotId, String email, String password, String firstName, String surname, int age, String gender, int allowedRange, String nationality, String seniority, List<String> languages, List<PilotAssignmentDTO> assignments) {
+    public PilotFullDTO(int pilotId, String email, String password, String firstName, String surname, int age, String gender, int allowedRange, String nationality, String seniority, List<String> languages, List<UserFlightDataDTO> assignments) {
         this.pilotId = pilotId;
         this.email = email;
         this.password = password;
@@ -67,7 +68,7 @@ public class PilotFullDTO {
             List<PilotAssignmentEntity> pilotAssignmentEntities = pilotEntity.getAssignments();
             for (PilotAssignmentEntity pilotAssignmentEntity : pilotAssignmentEntities)
             {
-                assignments.add(new PilotAssignmentDTO(pilotAssignmentEntity));
+                //assignments.add(new UserFlightDataDTO(pilotAssignmentEntity));
             }
         }
     }
@@ -116,7 +117,7 @@ public class PilotFullDTO {
         return languages;
     }
 
-    public List<PilotAssignmentDTO> getAssignments() {
+    public List<UserFlightDataDTO> getAssignments() {
         return assignments;
     }
 
@@ -164,7 +165,7 @@ public class PilotFullDTO {
         this.languages = languages;
     }
 
-    public void setAssignments(List<PilotAssignmentDTO> assignments) {
+    public void setAssignments(List<UserFlightDataDTO> assignments) {
         this.assignments = assignments;
     }
 }
