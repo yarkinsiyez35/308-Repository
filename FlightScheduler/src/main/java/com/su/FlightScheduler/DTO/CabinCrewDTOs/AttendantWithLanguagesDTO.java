@@ -1,9 +1,8 @@
-package com.su.FlightScheduler.DTO;
+package com.su.FlightScheduler.DTO.CabinCrewDTOs;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguageEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguagePK;
-import com.su.FlightScheduler.Entity.DishRecipeEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,6 +55,29 @@ public class AttendantWithLanguagesDTO implements Serializable {
         }
     }
 
+
+    public AttendantWithLanguagesDTO(AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
+
+        this.attendantId = attendantWithLanguagesAsStringDTO.getAttendantId();
+        this.email = attendantWithLanguagesAsStringDTO.getEmail();
+        this.password = attendantWithLanguagesAsStringDTO.getPassword();
+        this.firstName = attendantWithLanguagesAsStringDTO.getFirstName();
+        this.surname = attendantWithLanguagesAsStringDTO.getSurname();
+        this.age = attendantWithLanguagesAsStringDTO.getAge();
+        this.gender = attendantWithLanguagesAsStringDTO.getGender();
+        this.nationality = attendantWithLanguagesAsStringDTO.getNationality();
+        this.seniority = attendantWithLanguagesAsStringDTO.getSeniority();
+        String[] languagesArray = attendantWithLanguagesAsStringDTO.getLanguages().split(",");
+        this.languages = new ArrayList<>();
+        for (String language : languagesArray) {
+            this.languages.add(language.trim().toLowerCase());
+        }
+        String[] recipesArray = attendantWithLanguagesAsStringDTO.getRecipes().split(",");
+        this.recipes = new ArrayList<>();
+        for(String recipe : recipesArray){
+            this.recipes.add(recipe.toLowerCase());
+        }
+    }
 
 
     public int getAttendantId() {

@@ -1,7 +1,6 @@
-package com.su.FlightScheduler.DTO;
+package com.su.FlightScheduler.DTO.CabinCrewDTOs;
 
-import com.su.FlightScheduler.Entity.*;
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;

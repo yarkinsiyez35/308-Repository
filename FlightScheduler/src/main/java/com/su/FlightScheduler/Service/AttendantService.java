@@ -1,10 +1,8 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.LoginRequest;
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public interface AttendantService {
 

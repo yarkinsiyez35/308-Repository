@@ -1,11 +1,11 @@
 package com.su.FlightScheduler.APIs.CabinCrewAPI;
 
 
-import com.su.FlightScheduler.DTO.LoginDTO;
+import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesAsStringDTO;
 import com.su.FlightScheduler.DTO.LoginRequest;
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
-import com.su.FlightScheduler.DTO.AttendantWithLanguagesDTO;
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesDTO;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Service.AttendantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,32 +30,28 @@ public class CabinCrewController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<AttendantWithLanguagesDTO>> getAllCabinCrew() {
+    public ResponseEntity<List<AttendantWithLanguagesAsStringDTO>> getAllCabinCrew() {
 
         List<CabinCrewEntity> cabinCrewEntityList  = attendantService.findAllCabinCrew();
 
-        List<AttendantWithLanguagesDTO> attendantWithLanguagesDTOList = new ArrayList<>();
+        List<AttendantWithLanguagesAsStringDTO> attendantWithLanguagesAsStringDTOList = new ArrayList<>();
 
         for (CabinCrewEntity cabinCrewEntity : cabinCrewEntityList) {
 
             AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(cabinCrewEntity);
-
-            attendantWithLanguagesDTOList.add(attendantWithLanguagesDTO);
+            attendantWithLanguagesAsStringDTOList.add(new AttendantWithLanguagesAsStringDTO(attendantWithLanguagesDTO));
         }
-
-        return ResponseEntity.ok(attendantWithLanguagesDTOList);
+        return ResponseEntity.ok(attendantWithLanguagesAsStringDTOList);
     }
 
     @GetMapping("/{attendantId}")
-    public ResponseEntity<Object> getAttendatById(@PathVariable int attendantId) {
+    public ResponseEntity<Object> getAttendantById(@PathVariable int attendantId) {
 
         try {
-
             CabinCrewEntity cabinCrewEntity = attendantService.findAttendantById(attendantId);
-
             AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(cabinCrewEntity);
-
-            return ResponseEntity.ok(attendantWithLanguagesDTO);
+            AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO = new AttendantWithLanguagesAsStringDTO(attendantWithLanguagesDTO);
+            return ResponseEntity.ok(attendantWithLanguagesAsStringDTO);
         }
         catch (RuntimeException e){
 
@@ -68,19 +64,16 @@ public class CabinCrewController {
     }
 
     @PostMapping("/{attendantId}")
-    public ResponseEntity<Object> createAttendantWithId(@PathVariable int attendantId, @RequestBody AttendantWithLanguagesDTO attendantWithLanguagesDTO) {
+    public ResponseEntity<Object> createAttendantWithId(@PathVariable int attendantId, @RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO) {
 
         try{
-
+            AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(attendantWithLanguagesAsStringDTO);
             attendantWithLanguagesDTO.setAttendantId(attendantId);
-
             CabinCrewEntity cabinCrewEntity = new CabinCrewEntity(attendantWithLanguagesDTO);
-
             CabinCrewEntity savedAttendant = attendantService.saveCabin(cabinCrewEntity);
-
             AttendantWithLanguagesDTO savedAttendantDTO = new AttendantWithLanguagesDTO(savedAttendant);
-
-            return ResponseEntity.ok(savedAttendantDTO);
+            AttendantWithLanguagesAsStringDTO savedAttendantWithLanguagesAsStringDTO = new AttendantWithLanguagesAsStringDTO(savedAttendantDTO);
+            return ResponseEntity.ok(savedAttendantWithLanguagesAsStringDTO);
         }
         catch (RuntimeException e){
 
@@ -92,10 +85,11 @@ public class CabinCrewController {
     }
 
     @PutMapping("/{attendantId}")
-    public ResponseEntity<Object> updateAttendantWithId(@PathVariable int attendantId, @RequestBody AttendantWithLanguagesDTO attendantWithLanguagesDTO){
+    public ResponseEntity<Object> updateAttendantWithId(@PathVariable int attendantId, @RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
 
         try{
 
+            AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(attendantWithLanguagesAsStringDTO);
 
             attendantWithLanguagesDTO.setAttendantId(attendantId);
 
@@ -105,7 +99,8 @@ public class CabinCrewController {
 
             AttendantWithLanguagesDTO updatedAttendantDTO = new AttendantWithLanguagesDTO(updatedAttendant);
 
-            return ResponseEntity.ok(updatedAttendantDTO);
+            AttendantWithLanguagesAsStringDTO updatedAttendantWithLanguagesAsStringDTO = new AttendantWithLanguagesAsStringDTO(updatedAttendantDTO);
+            return ResponseEntity.ok(updatedAttendantWithLanguagesAsStringDTO);
         }
         catch (RuntimeException e){
 
@@ -126,7 +121,8 @@ public class CabinCrewController {
 
             AttendantWithLanguagesDTO deletedAttendantDTO = new AttendantWithLanguagesDTO(cabinCrewEntity);
 
-            return ResponseEntity.ok(deletedAttendantDTO);
+            AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO = new AttendantWithLanguagesAsStringDTO(deletedAttendantDTO);
+            return ResponseEntity.ok(attendantWithLanguagesAsStringDTO);
         }
         catch (RuntimeException e){
 

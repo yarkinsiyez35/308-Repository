@@ -1,8 +1,12 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
-import org.assertj.core.api.Assertions;
+
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
+import com.su.FlightScheduler.Repository.PilotRepository;
+
+
+import  org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;

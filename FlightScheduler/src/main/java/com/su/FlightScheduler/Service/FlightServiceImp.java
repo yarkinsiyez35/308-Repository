@@ -2,13 +2,19 @@ package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Repository.AdminRepository;
+import com.su.FlightScheduler.Repository.AirportRepository;
+import com.su.FlightScheduler.Repository.VehicleTypeRepository;
 import com.su.FlightScheduler.Repository.FlightRepository;
+import com.su.FlightScheduler.Repository.PlaneRepository;
+import com.su.FlightScheduler.Repository.CompanyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -16,158 +22,399 @@ import java.util.Optional;
 public class FlightServiceImp implements FlightService {
 
     private final FlightRepository flightRepository;
-    private final AdminRepository adminRepository;
+    private final AirportRepository airportRepository;
+    private final PlaneRepository planeRepository;
+    private final CompanyRepository companyRepository;
+
+    private final VehicleTypeRepository vehicleTypeRepository;
 
     @Autowired
-    public FlightServiceImp(FlightRepository flightRepository, AdminRepository adminRepository) {
+    public FlightServiceImp(FlightRepository flightRepository, AirportRepository airportRepository,
+                            PlaneRepository planeRepository, CompanyRepository companyRepository,
+                            VehicleTypeRepository vehicleTypeRepository) {
         this.flightRepository = flightRepository;
-        this.adminRepository = adminRepository;
+        this.airportRepository = airportRepository;
+        this.planeRepository = planeRepository;
+        this.companyRepository = companyRepository;
+        this.vehicleTypeRepository = vehicleTypeRepository;
     }
 
-    private void verifyAdmin(AdminEntity admin) {
-        if (!adminRepository.existsById(admin.getAdminId())) {
-            throw new RuntimeException("Admin not found");
+
+    // This method is used to get the FlightEntity object from the database
+    // If the object is not found, it will throw an EntityNotFoundException
+    public FlightEntity getFlightOrThrow(String flightId) {
+        Optional<FlightEntity> optionalFlight = flightRepository.findById(flightId);
+        if (optionalFlight.isEmpty()) {
+            throw new EntityNotFoundException("Flight not found");
         }
+        return optionalFlight.get();
     }
 
+
     @Override
-    public FlightEntity saveFlight(FlightEntity flight, AdminEntity admin) {
-        verifyAdmin(admin);
+    public FlightEntity saveFlightObj(FlightEntity flight) {
         return flightRepository.save(flight);
     }
 
     @Override
-    public FlightEntity createFlight(String flightNumber, String flightInfo, AirportEntity sourceAirport, AirportEntity destinationAirport, PlaneEntity plane, Integer flightRange, LocalDateTime departureDateTime, LocalDateTime landingDateTime, boolean sharedFlight, CompanyEntity sharedFlightCompany, AdminEntity admin, String standardMenu) {
-        verifyAdmin(admin);
-        FlightEntity flight = new FlightEntity(flightNumber, flightInfo, sourceAirport, destinationAirport, plane, flightRange, departureDateTime, landingDateTime, sharedFlight, sharedFlightCompany, admin, standardMenu);
+    public FlightEntity createFlightFilled(String flightNumber, String flightInfo, AirportEntity sourceAirport,
+                                           AirportEntity destinationAirport, PlaneEntity plane,
+                                           Integer flightRange, LocalDateTime departureDateTime,
+                                           LocalDateTime landingDateTime, boolean sharedFlight,
+                                           CompanyEntity sharedFlightCompany, AdminEntity admin,
+                                           String standardMenu) {
+        FlightEntity flight = new FlightEntity(flightNumber, flightInfo, sourceAirport, destinationAirport,
+                                            plane, flightRange, departureDateTime, landingDateTime,
+                                            sharedFlight, sharedFlightCompany,
+                                             admin, standardMenu);
         return flightRepository.save(flight);
     }
 
-    @Override
-    public FlightEntity createFlight(String flightNumber, String flightInfo, AirportEntity sourceAirport, AirportEntity destinationAirport, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = new FlightEntity(flightNumber, flightInfo, sourceAirport, destinationAirport);
-        return flightRepository.save(flight);
-    }
 
+    //------------------------------------------------------------------------------------------------------------
+
+    // Multi-Layered Create Method
     @Override
     public FlightEntity createFlight(String flightNumber, String flightInfo, AdminEntity admin) {
-        verifyAdmin(admin);
         FlightEntity flight = new FlightEntity(flightNumber, flightInfo);
+        flight.setAdmin(admin);
         return flightRepository.save(flight);
     }
 
     @Override
-    public Optional<FlightEntity> findFlightByNumber(String flightNumber, AdminEntity admin) {
-        verifyAdmin(admin);
-        return flightRepository.findById(flightNumber);
-    }
-
-    @Override
-    public List<FlightEntity> findAllFlights(AdminEntity admin) {
-        verifyAdmin(admin);
-        return flightRepository.findAll();
-    }
-
-    @Override
-    public FlightEntity updateFlight(FlightEntity flight, AdminEntity admin) {
-        verifyAdmin(admin);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public void deleteFlightByNumber(String flightNumber, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
-        flightRepository.delete(flight);
-    }
-
-
-    @Override
-    public FlightEntity updateFlightInfo(String flightNumber, String flightInfo, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
-        flight.setFlightInfo(flightInfo);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public FlightEntity updateSourceAirport(String flightNumber, AirportEntity sourceAirport, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
+    public FlightEntity addFlightParams1(String flightNumber, PlaneEntity plane, AirportEntity sourceAirport, AirportEntity destinationAirport) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setPlane(plane);
         flight.setSourceAirport(sourceAirport);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public FlightEntity updateDestinationAirport(String flightNumber, AirportEntity destinationAirport, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
         flight.setDestinationAirport(destinationAirport);
         return flightRepository.save(flight);
     }
 
     @Override
-    public FlightEntity updatePlane(String flightNumber, PlaneEntity plane, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
-        flight.setPlane(plane);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public FlightEntity updateFlightRange(String flightNumber, Integer flightRange, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
+    public FlightEntity addFlightParams2(String flightNumber, Integer flightRange, LocalDateTime departureDateTime, LocalDateTime landingDateTime) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
         flight.setFlightRange(flightRange);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public FlightEntity updateDepartureDateTime(String flightNumber, LocalDateTime departureDateTime, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
         flight.setDepartureDateTime(departureDateTime);
-        return flightRepository.save(flight);
-    }
-
-    @Override
-    public FlightEntity updateLandingDateTime(String flightNumber, LocalDateTime landingDateTime, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
         flight.setLandingDateTime(landingDateTime);
         return flightRepository.save(flight);
     }
 
     @Override
-    public FlightEntity updateSharedFlight(String flightNumber, boolean sharedFlight, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
+    public FlightEntity addFlightParams3(String flightNumber, boolean sharedFlight, CompanyEntity sharedFlightCompany) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setSharedFlight(sharedFlight);
+        flight.setSharedFlightCompany(sharedFlightCompany);
+        return flightRepository.save(flight);
+    }
+    // End of Multi-Layered Create Method
+
+    // -----------------------------------------------------------------------------------------------
+
+
+    // Find Methods
+    @Override
+    public Optional<FlightEntity> findFlightByNumber(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return Optional.of(flight);
+    }
+
+    @Override
+    public List<FlightEntity> findAllFlights() {
+        return flightRepository.findAll();
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAirport(String airportCode) {
+    List<FlightEntity> flights = flightRepository.findBySourceAirportAirportCode(airportCode);
+    if (flights == null || flights.isEmpty()) {
+        throw new EntityNotFoundException("No flights found for the given departure airport");
+    }
+    return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDestinationAirport(String airportCode) {
+        List<FlightEntity> flights = flightRepository.findByDestinationAirportAirportCode(airportCode);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given destination airport");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAndDestinationAirport(String departureAirportCode, String destinationAirportCode) {
+        List<FlightEntity> flights = flightRepository.findBySourceAirportAirportCodeAndDestinationAirportAirportCode(departureAirportCode, destinationAirportCode);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure and destination airports");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureDateTime(LocalDateTime departureDateTime) {
+        List<FlightEntity> flights = flightRepository.findByDepartureDateTime(departureDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByLandingDateTime(LocalDateTime landingDateTime) {
+        List<FlightEntity> flights = flightRepository.findByLandingDateTime(landingDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given landing date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAndLandingDateTime(LocalDateTime departureDateTime, LocalDateTime landingDateTime) {
+        List<FlightEntity> flights = flightRepository.findByDepartureDateTimeAndLandingDateTime(departureDateTime, landingDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure and landing date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAirportAndDepartureDateTime(String airportCode, LocalDateTime departureDateTime) {
+        List<FlightEntity> flights = flightRepository.findBySourceAirportAirportCodeAndDepartureDateTime(airportCode, departureDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure airport and departure date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDestinationAirportAndLandingDateTime(String airportCode, LocalDateTime landingDateTime) {
+        List<FlightEntity> flights = flightRepository.findByDestinationAirportAirportCodeAndLandingDateTime(airportCode, landingDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given destination airport and landing date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime(String departureAirportCode, String destinationAirportCode, LocalDateTime departureDateTime, LocalDateTime landingDateTime) {
+        List<FlightEntity> flights = flightRepository.findBySourceAirportAirportCodeAndDestinationAirportAirportCodeAndDepartureDateTimeAndLandingDateTime(departureAirportCode, destinationAirportCode, departureDateTime, landingDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure and destination airports and departure and landing date and time");
+        }
+        return flights;
+    }
+
+    @Override
+    public List<FlightEntity> findFlightsByDepartureAirportAndDestinationAirportAndDepartureAndLandingDateTime(String departureAirportCode, String destinationAirportCode, LocalDateTime departureDateTime, LocalDateTime landingDateTime) {
+        List<FlightEntity> flights = flightRepository.findBySourceAirportAirportCodeAndDestinationAirportAirportCodeAndDepartureDateTimeAndLandingDateTime(departureAirportCode, destinationAirportCode, departureDateTime, landingDateTime);
+        if (flights == null || flights.isEmpty()) {
+            throw new EntityNotFoundException("No flights found for the given departure and destination airports and departure and landing date and time");
+        }
+        return flights;
+    }
+    // End of Find Methods
+
+    //------------------------------------------------------------------------------------------------------------
+
+    // Delete Method
+    @Override
+    public void deleteFlightByNumber(String flightNumber) {
+        getFlightOrThrow(flightNumber);
+        flightRepository.deleteById(flightNumber);
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------
+
+    // Update Methods
+    @Override
+    public FlightEntity updateFlightInfo(String flightNumber, String flightInfo) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setFlightInfo(flightInfo);
+        return flightRepository.save(flight);
+    }
+
+    // This method will not be used, but it is here to show how to update an object
+    @Override
+    public FlightEntity updateFlight(FlightEntity flight) {
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateSourceAirport(String flightNumber, AirportEntity sourceAirport) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setSourceAirport(sourceAirport);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateDestinationAirport(String flightNumber, AirportEntity destinationAirport) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setDestinationAirport(destinationAirport);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updatePlane(String flightNumber, PlaneEntity plane) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setPlane(plane);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateFlightRange(String flightNumber, Integer flightRange) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setFlightRange(flightRange);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateDepartureDateTime(String flightNumber, LocalDateTime departureDateTime) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setDepartureDateTime(departureDateTime);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateLandingDateTime(String flightNumber, LocalDateTime landingDateTime) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        flight.setLandingDateTime(landingDateTime);
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    public FlightEntity updateSharedFlight(String flightNumber, boolean sharedFlight) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
         flight.setSharedFlight(sharedFlight);
         return flightRepository.save(flight);
     }
 
     @Override
-    public FlightEntity updateSharedFlightCompany(String flightNumber, CompanyEntity sharedFlightCompany, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
+    public FlightEntity updateSharedFlightCompany(String flightNumber, CompanyEntity sharedFlightCompany) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
         flight.setSharedFlightCompany(sharedFlightCompany);
         return flightRepository.save(flight);
     }
 
-    /*@Override
-    public FlightEntity updateAdmin(String flightNumber, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
-        flight.setAdmin(admin);
-        return flightRepository.save(flight);
-    }*/
-
     @Override
-    public FlightEntity updateStandardMenu(String flightNumber, String standardMenu, AdminEntity admin) {
-        verifyAdmin(admin);
-        FlightEntity flight = flightRepository.findById(flightNumber).orElseThrow();
+    public FlightEntity updateStandardMenu(String flightNumber, String standardMenu) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
         flight.setStandardMenu(standardMenu);
         return flightRepository.save(flight);
     }
+
+    // End of Update Methods
+
+    //------------------------------------------------------------------------------------------------------------
+
+    // Simple getters for the entities of the FlightEntity
+    @Override
+    public AirportEntity getSourceAirport(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return flight.getSourceAirport();
+    }
+
+    @Override
+    public AirportEntity getDestinationAirport(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return flight.getDestinationAirport();
+    }
+
+    @Override
+    public PlaneEntity getPlane(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return flight.getPlane();
+    }
+
+    @Override
+    public CompanyEntity getCompany(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return flight.getSharedFlightCompany();
+    }
+
+    @Override
+    public LocalDateTime getDateTime(String flightNumber) {
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        return flight.getDepartureDateTime();
+    }
+
+    // End of Simple getters for the entities of the FlightEntity
+
+    //------------------------------------------------------------------------------------------------------------
+
+    // Getters for Requests to thin out the Controller
+    @Override
+    public AirportEntity getAirportFromRequest(Map<String, Object> request, String key) {
+        String airportCode = (String) request.get(key);
+        return airportRepository.findAirportEntityByAirportCode(airportCode)
+                .orElseThrow(() -> new RuntimeException("Airport not found"));
+    }
+
+    @Override
+    public PlaneEntity getPlaneFromRequest(Map<String, Object> request, String key) {
+        String planeId = (String) request.get(key);
+        return planeRepository.findById(planeId)
+                .orElseThrow(() -> new RuntimeException("Plane not found"));
+    }
+
+    @Override
+    public CompanyEntity getCompanyFromRequest(Map<String, Object> request, String key) {
+        String companyId = (String) request.get(key);
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+    }
+
+    @Override
+    public LocalDateTime getDateTimeFromRequest(Map<String, Object> request, String key) {
+        String dateTimeString = (String) request.get(key);
+        return LocalDateTime.parse(dateTimeString);
+    }
+
+    // End of Getters for Requests
+
+    //------------------------------------------------------------------------------------------------------------
+
+    // Getters for DTOs (Projections)
+    @Override
+    public VehicleTypeRepository.SeatingPlanProjection findSeatingPlanByFlightNumber(String flightNumber) {
+        VehicleTypeEntity vehicleTypeEntity = flightRepository.findVehicleTypeByFlightId(flightNumber);
+        if (vehicleTypeEntity == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+        String vehicleType = vehicleTypeEntity.getVehicleType();
+        return vehicleTypeRepository.findByVehicleType(vehicleType, VehicleTypeRepository.SeatingPlanProjection.class);
+    }
+
+    @Override
+    public VehicleTypeRepository.AttendeeCapacityProjection findAttendeeCapacityByFlightNumber(String flightNumber) {
+        VehicleTypeEntity vehicleTypeEntity = flightRepository.findVehicleTypeByFlightId(flightNumber);
+        if (vehicleTypeEntity == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+        String vehicleType = vehicleTypeEntity.getVehicleType();
+        return vehicleTypeRepository.findByVehicleType(vehicleType, VehicleTypeRepository.AttendeeCapacityProjection.class);
+    }
+
+    @Override
+    public VehicleTypeRepository.PilotCapacityProjection findPilotCapacityByFlightNumber(String flightNumber) {
+        VehicleTypeEntity vehicleTypeEntity = flightRepository.findVehicleTypeByFlightId(flightNumber);
+        if (vehicleTypeEntity == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+        String vehicleType = vehicleTypeEntity.getVehicleType();
+        return vehicleTypeRepository.findByVehicleType(vehicleType, VehicleTypeRepository.PilotCapacityProjection.class);
+    }
+
+    public FlightRepository.FlightDetailsProjection findFlightDetailsByFlightNumber(String flightNumber) {
+        FlightRepository.FlightDetailsProjection flightDetails = flightRepository.findFlightDetailsByFlightNumber(flightNumber);
+        if (flightDetails == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+        return flightDetails;
+    }
+
+    // End of Getters for DTOs (Projections)
+
+
+    // The method for obtaining the SeatingPlan
 }

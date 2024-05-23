@@ -1,9 +1,10 @@
 package com.su.FlightScheduler.ServiceTest;
 
-import com.su.FlightScheduler.Entity.*;
-import com.su.FlightScheduler.Repository.CabinLanguageRepository;
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
-import com.su.FlightScheduler.Service.AttendantService;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguagePK;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinLanguageRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Service.AttendantServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

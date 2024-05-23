@@ -1,9 +1,8 @@
-package com.su.FlightScheduler.Repository;
+package com.su.FlightScheduler.Repository.CabinCrewRepositories;
 
-import com.su.FlightScheduler.Entity.AttendantVehicleTypeEntity;
-import com.su.FlightScheduler.Entity.AttendantVehicleTypePK;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantVehicleTypeEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantVehicleTypePK;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

@@ -2,11 +2,11 @@ package com.su.FlightScheduler.Security.Service;
 
 import java.util.Optional;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Repository.AdminRepository;
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.PassengerRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import com.su.FlightScheduler.Security.Model.ApplicationUser;

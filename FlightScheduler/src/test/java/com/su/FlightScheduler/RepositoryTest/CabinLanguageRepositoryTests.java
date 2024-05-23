@@ -1,10 +1,10 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguageEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguagePK;
-import com.su.FlightScheduler.Repository.CabinLanguageRepository;
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguagePK;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinLanguageRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.LinkedTransferQueue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)

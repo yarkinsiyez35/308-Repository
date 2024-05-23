@@ -1,31 +1,21 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.LoginRequest;
-import com.su.FlightScheduler.Entity.CabinCrewEntity;
-import com.su.FlightScheduler.Entity.DishRecipeEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguageEntity;
-import com.su.FlightScheduler.Entity.AttendantLanguagePK;
-import com.su.FlightScheduler.Entity.DishRecipePK;
-import com.su.FlightScheduler.Entity.CabinCrewAssignmentsEntity;
-import com.su.FlightScheduler.Entity.CabinCrewAssignmentsPK;
-import com.su.FlightScheduler.Entity.AttendantVehicleTypeEntity;
-import com.su.FlightScheduler.Entity.AttendantVehicleTypePK;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
 
-import com.su.FlightScheduler.Repository.CabinCrewRepository;
-import com.su.FlightScheduler.Repository.CabinLanguageRepository;
-import com.su.FlightScheduler.Repository.CabinVehicleTypeRepository;
-import com.su.FlightScheduler.Repository.CabinAssignmentRepository;
-
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinLanguageRepository;
+import com.su.FlightScheduler.Repository.CabinCrewRepositories.DishRecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.su.FlightScheduler.Service.AttendantService;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CyclicBarrier;
 
 @Service
 @Transactional
@@ -33,12 +23,13 @@ public class AttendantServiceImp implements AttendantService {
 
     private final CabinCrewRepository cabinCrewRepository;
     private final CabinLanguageRepository cabinLanguageRepository;
-
+    private final DishRecipeRepository dishRecipeRepository;
 
     @Autowired
-    public AttendantServiceImp(CabinCrewRepository cabinCrewRepository, CabinLanguageRepository cabinLanguageRepository) {
+    public AttendantServiceImp(CabinCrewRepository cabinCrewRepository, CabinLanguageRepository cabinLanguageRepository, DishRecipeRepository dishRecipeRepository) {
         this.cabinCrewRepository = cabinCrewRepository;
         this.cabinLanguageRepository = cabinLanguageRepository;
+        this.dishRecipeRepository = dishRecipeRepository;
     }
 
     @Override
@@ -63,6 +54,12 @@ public class AttendantServiceImp implements AttendantService {
         }
         else {
             savedCabin = cabinCrewRepository.save(cabin);
+        }
+
+        if (cabin.getRecipes() != null)
+        {
+            List<DishRecipeEntity> savedDishRecipeList =  dishRecipeRepository.saveAll(cabin.getRecipes());
+            savedCabin.setRecipes(savedDishRecipeList);
         }
 
         return savedCabin;
@@ -117,6 +114,16 @@ public class AttendantServiceImp implements AttendantService {
         else{
 
             updatedCabin = cabinCrewRepository.save(cabin);
+        }
+
+        if (cabin.getRecipes() != null)
+        {
+            List<DishRecipeEntity> oldCabinCrewDishRecipeEntities = dishRecipeRepository.findDishRecipeEntitiesByDishRecipePK_AttendantId(cabin.getAttendantId());
+            dishRecipeRepository.deleteAll(oldCabinCrewDishRecipeEntities);
+
+            List<DishRecipeEntity> updatedCabinCrewDishRecipeEntitityList = dishRecipeRepository.saveAll(cabin.getRecipes());
+
+            updatedCabin.setRecipes(updatedCabinCrewDishRecipeEntitityList);
         }
 
         return updatedCabin;
