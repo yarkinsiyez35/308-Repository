@@ -37,6 +37,20 @@ public class PilotFlightAssignmentController {
         }
     }
 
+    @GetMapping("/flight/{flightId}/available")
+    public ResponseEntity<Object> getAvailablePilotsForAFlight(@PathVariable String flightId)
+    {
+        try
+        {
+            List<UserDataDTO> results = pilotFlightAssignmentService.getAvailablePilotsForFlight(flightId);
+            return ResponseEntity.ok(results);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/flight/{flightId}")
     public ResponseEntity<Object> getPilotsOfAFlight(@PathVariable String flightId)
     {
