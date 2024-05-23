@@ -11,6 +11,7 @@ import java.util.List;
 public class PilotEntity  implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //this needs to be added for the sql to automatically generate id
     @Column(name = "pilot_id")
     private int pilotId;
 
@@ -91,9 +92,48 @@ public class PilotEntity  implements Serializable {
         this.seniority = pilotEntity.seniority;
     }
 
+    public PilotEntity(String email, String password, String firstName, String surname, int age, String gender, int allowedRange, String nationality, String seniority, List<PilotLanguageEntity> languages, List<PilotAssignmentEntity> assignments) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.age = age;
+        this.gender = gender;
+        this.allowedRange = allowedRange;
+        this.nationality = nationality;
+        this.seniority = seniority;
+        this.languages = languages;
+        this.assignments = assignments;
+    }
+
     public PilotEntity(PilotWithLanguagesDTO pilotWithLanguagesDTO) //this constructor will be used to save a pilotEntity
     {
         this.pilotId = pilotWithLanguagesDTO.getPilotId();
+        this.email = pilotWithLanguagesDTO.getEmail();
+        this.password = pilotWithLanguagesDTO.getPassword();
+        this.firstName = pilotWithLanguagesDTO.getFirstName();
+        this.surname = pilotWithLanguagesDTO.getSurname();
+        this.age = pilotWithLanguagesDTO.getAge();
+        this.gender = pilotWithLanguagesDTO.getGender();
+        this.allowedRange = pilotWithLanguagesDTO.getAllowedRange();
+        this.nationality = pilotWithLanguagesDTO.getNationality();
+        this.seniority = pilotWithLanguagesDTO.getSeniority();
+        List<PilotLanguageEntity> languageEntities = new ArrayList<>();
+        for ( String language : pilotWithLanguagesDTO.getLanguages())
+        {
+            PilotLanguagePK pilotLanguagePK = new PilotLanguagePK(this.pilotId, language);
+            PilotLanguageEntity pilotLanguageEntity = new PilotLanguageEntity(pilotLanguagePK);
+            languageEntities.add(pilotLanguageEntity);
+        }
+        this.languages = languageEntities;
+    }
+
+    public PilotEntity(PilotWithLanguagesDTO pilotWithLanguagesDTO, boolean idIsPresent)    //set id if id is present
+    {
+        if (idIsPresent)
+        {
+            this.pilotId = pilotWithLanguagesDTO.getPilotId();
+        }
         this.email = pilotWithLanguagesDTO.getEmail();
         this.password = pilotWithLanguagesDTO.getPassword();
         this.firstName = pilotWithLanguagesDTO.getFirstName();

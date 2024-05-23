@@ -104,6 +104,28 @@ public class PilotController {
         }
     }
 
+    @PostMapping("/createPilot")
+    public ResponseEntity<Object> createPilotWithoutId(@RequestBody PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO)
+    {
+        try
+        {
+            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotWithLanguagesAsStringDTO);
+            PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO, false);
+            PilotEntity savedPilot = pilotService.savePilotWithoutId(pilotEntity);
+            PilotWithLanguagesDTO savedPilotWithLanguagesDTO = new PilotWithLanguagesDTO(savedPilot);
+            PilotWithLanguagesAsStringDTO savedPilotWithLanguagesAsStringDTO = new PilotWithLanguagesAsStringDTO(savedPilotWithLanguagesDTO);
+            return ResponseEntity.ok(savedPilotWithLanguagesAsStringDTO);
+        }
+        catch (RuntimeException e)  //this exception is expected
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+        catch (Exception e) //this should not happen
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{pilotId}")
     public ResponseEntity<Object> updatePilotWithId(@PathVariable int pilotId, @RequestBody PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO)
     {

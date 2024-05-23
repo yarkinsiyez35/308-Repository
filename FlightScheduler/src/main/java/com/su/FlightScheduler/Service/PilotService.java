@@ -10,7 +10,7 @@ public interface PilotService {
 
     // Method to save a pilot
     public PilotEntity savePilot(PilotEntity pilot) throws RuntimeException;
-
+    public PilotEntity savePilotWithoutId(PilotEntity pilotEntity) throws RuntimeException;
     // Method to find a pilot by ID
     public PilotEntity findPilotById(int id) throws RuntimeException;
     public boolean pilotExistsById(int id);

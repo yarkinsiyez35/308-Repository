@@ -61,7 +61,7 @@ CREATE TABLE flights (
 );
 
 CREATE TABLE pilots (
-    pilot_id INT PRIMARY KEY,
+    pilot_id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,  
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE crew_members (
     age INT NOT NULL,
     gender VARCHAR(8) NOT NULL,
     nationality VARCHAR(255) NOT NULL,
-    attendant_id INT PRIMARY KEY
+    attendant_id INT AUTO_INCREMENT PRIMARY KEY
 );
 
 CREATE TABLE cabin_crew_assignments (
