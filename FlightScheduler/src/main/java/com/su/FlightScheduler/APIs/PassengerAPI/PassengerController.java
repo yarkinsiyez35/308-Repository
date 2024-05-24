@@ -1,6 +1,8 @@
 package com.su.FlightScheduler.APIs.PassengerAPI;
 
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.DTO.LoginRequest;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.Entity.PassengerEntity;
@@ -32,12 +34,15 @@ public class PassengerController {
         return ResponseEntity.ok(passengerEntityList);
     }
 
-    @GetMapping("/get/{passengerId}")
+
+
+    @GetMapping("/{passengerId}")
     public ResponseEntity<Object> getPassengerWithId(@PathVariable int passengerId)
     {
         try {
             PassengerEntity passengerEntity = passengerService.findPassengerById(passengerId);
-            return ResponseEntity.ok(passengerEntity);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_no_flight_from_passenger_entity(passengerEntity);
+            return ResponseEntity.ok(userDataDTO);
         }
         catch (RuntimeException e) { //expected
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -47,6 +52,7 @@ public class PassengerController {
         }
     }
 
+    //this won't be used
     @PostMapping("/post")
     public ResponseEntity<Object> postPassenger(@RequestBody PassengerEntity passengerEntity)
     {
@@ -78,6 +84,7 @@ public class PassengerController {
         }
     }
 
+
     @DeleteMapping("/delete/{passengerId}")
     public ResponseEntity<Object> deletePassengerWithId(@PathVariable int passengerId)
     {
@@ -108,6 +115,7 @@ public class PassengerController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 
     @GetMapping("/flights/{passengerId}")
     public ResponseEntity<Object> findBookedFlightsByPassengerId(@PathVariable int passengerId) {
