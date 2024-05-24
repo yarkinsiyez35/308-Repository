@@ -1,9 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.LoginRequest;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.*;
 
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinLanguageRepository;
@@ -35,7 +33,7 @@ public class AttendantServiceImp implements AttendantService {
     @Override
     public CabinCrewEntity saveCabin(CabinCrewEntity cabin){
 
-        if (cabinCrewRepository.existsById(cabin.getAttendantId())){
+        if (cabinCrewRepository.findCabinCrewEntityByEmail(cabin.getEmail()).isPresent()){
 
             throw new RuntimeException("Cabin Crew with id " + cabin.getAttendantId() + " cannot be created!");
         }
@@ -94,6 +92,10 @@ public class AttendantServiceImp implements AttendantService {
 
             throw new RuntimeException("Cabin crew member with id: " + cabin.getAttendantId() + " cannot be updated!");
         }
+        if(cabinCrewRepository.findCabinCrewEntityByEmail(cabin.getEmail()).isPresent() && cabin.getAttendantId() != cabinCrewRepository.findCabinCrewEntityByEmail(cabin.getEmail()).get().getAttendantId()){
+
+            throw new RuntimeException("Cabin crew member with id: " + cabin.getEmail() + " cannot be updated!");
+        }
 
         CabinCrewEntity updatedCabin;
         if (cabin.getLanguages() != null){
@@ -127,6 +129,50 @@ public class AttendantServiceImp implements AttendantService {
         }
 
         return updatedCabin;
+    }
+
+
+    @Override
+    public CabinCrewEntity saveAttendantWithoutId(CabinCrewEntity cabinCrewEntity) throws RuntimeException{
+        if (cabinCrewRepository.findCabinCrewEntityByEmail(cabinCrewEntity.getEmail()).isPresent()){
+            throw new RuntimeException("Cabin Crew member with email " + cabinCrewEntity.getEmail() + " cannot be created!");
+        }
+
+        CabinCrewEntity savedCabin;
+        if (cabinCrewEntity.getLanguages() != null){
+
+            CabinCrewEntity newCabin = new CabinCrewEntity(cabinCrewEntity);
+
+            savedCabin = cabinCrewRepository.save(new CabinCrewEntity(cabinCrewEntity));
+
+            List<AttendantLanguageEntity> languagesToBeSaved = cabinCrewEntity.getLanguages();
+
+            for (AttendantLanguageEntity attendantLanguageEntity : languagesToBeSaved){
+
+                AttendantLanguagePK attendantLanguagePK = new AttendantLanguagePK(savedCabin.getAttendantId(), attendantLanguageEntity.getAttendantLanguagePK().getLanguage());
+                attendantLanguageEntity.setAttendantLanguagePK(attendantLanguagePK);
+            }
+
+            List<AttendantLanguageEntity> savedAttendantLanguageEntityList = cabinLanguageRepository.saveAll(cabinCrewEntity.getLanguages());
+            savedCabin.setLanguages(savedAttendantLanguageEntityList);
+        }
+        else{
+            savedCabin = cabinCrewRepository.save(cabinCrewEntity);
+        }
+        if (cabinCrewEntity.getRecipes() != null){
+
+            List<DishRecipeEntity> recipesToBeSaved = cabinCrewEntity.getRecipes();
+
+            for (DishRecipeEntity dishRecipeEntity : recipesToBeSaved){
+
+                DishRecipePK dishRecipePK = new DishRecipePK(savedCabin.getAttendantId(), dishRecipeEntity.getDishRecipePK().getRecipe());
+                dishRecipeEntity.setDishRecipePK(dishRecipePK);
+            }
+
+            List<DishRecipeEntity> savedDishRecipeEntityList = dishRecipeRepository.saveAll(cabinCrewEntity.getRecipes());
+            savedCabin.setRecipes(savedDishRecipeEntityList);
+        }
+        return savedCabin;
     }
 
     @Override
