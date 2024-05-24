@@ -53,6 +53,20 @@ public class FlightController {
 
     // API Endpoints
 
+    @PostMapping("/saveFlight/{adminId}")
+    public ResponseEntity<Object> saveFlightFromDTO(@RequestBody FlightDataDTO flightDataDTO, @PathVariable int adminId)
+    {
+        try
+        {
+            FlightEntity savedFlight = flightService.saveFlight(flightDataDTO, adminId);
+            FlightDataDTO savedFlightDTO = new FlightDataDTO(savedFlight);
+            return ResponseEntity.ok(savedFlightDTO);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
+    }
 
     @PostMapping("/saveFlight")
     public ResponseEntity<?> saveFlight(@RequestBody FlightEntity flight) {
@@ -222,7 +236,7 @@ public class FlightController {
         return ResponseEntity.ok(flightService.updateFlight(flight));
     }
 
-    @PostMapping("/deleteFlightByNumber")
+    @DeleteMapping("/deleteFlightByNumber")
     public ResponseEntity<?> deleteFlightByNumber(@RequestParam String flightNumber) {
         flightService.deleteFlightByNumber(flightNumber);
         return ResponseEntity.ok().build();

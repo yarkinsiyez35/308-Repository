@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.APIs.MainSystemAPI;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinAssignmentRepository;
 import com.su.FlightScheduler.Service.AttendantAssignmentService;
 import com.su.FlightScheduler.Service.PassengerFlightService;
@@ -148,8 +149,6 @@ public class MainSystemController {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
         }
     }
-
-    
 
     //functions for passenger and flight assignments
 

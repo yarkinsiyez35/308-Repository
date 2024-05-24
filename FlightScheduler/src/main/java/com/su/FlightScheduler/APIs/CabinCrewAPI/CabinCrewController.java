@@ -87,19 +87,17 @@ public class CabinCrewController {
 
     @PostMapping("/createAttendant")
     public  ResponseEntity<Object> createAttendantWithoutId(@RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
+        try
+        {
 
-        List<CabinCrewEntity> cabinCrewEntityList = attendantService.findAllCabinCrew();
-
-        List<AttendantWithLanguagesAsStringDTO> attendantWithLanguagesAsStringDTOList = new ArrayList<>();
-
-        for(CabinCrewEntity cabinCrewEntity : cabinCrewEntityList){
-
-            AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(cabinCrewEntity);
-            AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO1 = new AttendantWithLanguagesAsStringDTO(attendantWithLanguagesDTO);
-
-            attendantWithLanguagesAsStringDTOList.add(attendantWithLanguagesAsStringDTO1);
         }
-        return ResponseEntity.ok(attendantWithLanguagesAsStringDTOList);
+        catch(RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+
+
+        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/{attendantId}")

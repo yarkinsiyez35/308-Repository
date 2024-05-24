@@ -69,7 +69,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/pilots/createPilot").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.POST, "/api/pilots/{pilotId}").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasRole("Admin");
-                    auth.requestMatchers("/api/pilots/**").hasAnyRole("Admin", "Pilot");
+                    auth.requestMatchers("/api/pilots/**").hasAnyRole("Admin", "PilotCrew");
 
                     //request matcher for attendant controller
                     auth.requestMatchers("/api/attendants/createAttendant").hasRole("Admin");
@@ -85,13 +85,13 @@ public class SecurityConfiguration {
 
                     //request matchers for main controller
                     auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("Admin");
-                    auth.requestMatchers("/main/pilot/**").hasAnyRole("Admin","Pilot");
+                    auth.requestMatchers("/main/pilot/**").hasAnyRole("Admin","PilotCrew");
                     auth.requestMatchers("/main/attendant/{attendantId}/assignToFlight/{flightId}").hasRole("Admin");
                     auth.requestMatchers("/main/attendant/**").hasAnyRole("Admin","Attendant");
                     auth.requestMatchers("/main/flight/{flightId}/getAvailableAttendants").hasRole("Admin");
                     auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("Admin");
-                    auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("Admin","Pilot");
-                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "Attendant", "Pilot");
+                    auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("Admin","PilotCrew");
+                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "Attendant", "PilotCrew");
 
 
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on

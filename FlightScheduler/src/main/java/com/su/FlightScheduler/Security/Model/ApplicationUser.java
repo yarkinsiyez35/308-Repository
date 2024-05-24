@@ -42,7 +42,7 @@ public class ApplicationUser implements UserDetails {
         this.username = pilotEntity.getEmail();
         this.password = pilotEntity.getPassword();
         this.id = pilotEntity.getPilotId();
-        ApplicationAuthority applicationAuthority = new ApplicationAuthority("Pilot");
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("PilotCrew");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }

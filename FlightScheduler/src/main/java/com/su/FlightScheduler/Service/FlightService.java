@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.Entity.*;
@@ -11,6 +12,8 @@ import java.util.Optional;
 import java.util.Map;
 
 public interface FlightService {
+
+    FlightEntity saveFlight(FlightDataDTO flightDataDTO, int adminId);
     FlightEntity saveFlightObj(FlightEntity flight);
     FlightEntity createFlightFilled(String flightNumber, String flightInfo, AirportEntity
             sourceAirport, AirportEntity destinationAirport, PlaneEntity plane, Integer flightRange,
