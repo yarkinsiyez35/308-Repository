@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 
@@ -27,6 +28,20 @@ public class UserDataDTOFactory {
     }
 
 
+    public static UserDataDTO create_cabin_crew_data_with_no_flight_from_pilot_entity(CabinCrewEntity cabinCrewEntity){
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(cabinCrewEntity.getEmail());
+        userDataDTO.setPassword(cabinCrewEntity.getPassword());
+        userDataDTO.setName(cabinCrewEntity.getFirstName());
+        userDataDTO.setSurname(cabinCrewEntity.getSurname());
+        userDataDTO.setId(Integer.toString(cabinCrewEntity.getAttendantId()));
+        userDataDTO.setAge(cabinCrewEntity.getAge());
+        userDataDTO.setGender(cabinCrewEntity.getGender());
+        userDataDTO.setNationality(cabinCrewEntity.getNationality());
+        userDataDTO.setFlights(null);
+        return userDataDTO;
+    }
+
     public static UserDataDTO create_pilot_data_with_no_flight_from_pilot_entity(PilotEntity pilotEntity)
     {
         UserDataDTO userDataDTO = new UserDataDTO();
@@ -42,7 +57,6 @@ public class UserDataDTOFactory {
         return userDataDTO;
     }
 
-
     public static List<UserDataDTO> create_available_pilot_list(List<PilotEntity> pilotEntityList) {
         List<UserDataDTO> userDataDTOList = new ArrayList<>();
         for (PilotEntity pilotEntity : pilotEntityList) {
@@ -52,7 +66,16 @@ public class UserDataDTOFactory {
         return userDataDTOList;
     }
 
-    public static UserDataDTO create_cabincrew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
+    public static List<UserDataDTO> create_available_attendant_list(List<CabinCrewEntity> cabinCrewEntityList){
+        List<UserDataDTO> userDataDTOList = new ArrayList<>();
+        for(CabinCrewEntity cabinCrewEntity : cabinCrewEntityList){
+            UserDataDTO userDataDTO = create_cabin_crew_data_with_no_flight_from_pilot_entity(cabinCrewEntity);
+            userDataDTOList.add(userDataDTO);
+        }
+        return userDataDTOList;
+    }
+
+    public static UserDataDTO create_cabin_crew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
     {
         UserDataDTO userDataDTO = new UserDataDTO();
         CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = cabinCrewAssignmentsEntityList.get(0);

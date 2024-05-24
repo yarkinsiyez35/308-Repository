@@ -10,5 +10,7 @@ public interface AttendantAssignmentService {
 
     public UserDataDTO assignAttendantToFlight(String flightNumber, int attendantId); //assign a pilot to a flight
 
+    public List<UserDataDTO> getAvailableAttendantsForFlight(String flightNumber);
+
     public List<UserDataDTO> getAttendantsOfFlight(String flightNumber);    //get all pilots in a flight
 }
