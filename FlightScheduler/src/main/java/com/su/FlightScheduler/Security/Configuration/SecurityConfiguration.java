@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Security.Configuration;
 
 import com.su.FlightScheduler.Security.Utils.RSAKeyProperties;
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.cors.CorsConfiguration;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -53,7 +55,6 @@ public class SecurityConfiguration {
         daoProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(daoProvider);
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -62,35 +63,35 @@ public class SecurityConfiguration {
                     //request matchers for authentication controller
                     auth.requestMatchers("/auth/**").permitAll();
                     //request matchers for admin controller
-                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/admin/**").hasRole("Admin");
 
                     //request matchers for pilot controller
-                    auth.requestMatchers("/api/pilots/createPilot").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.POST, "/api/pilots/{pilotId}").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasRole("ADMIN");
-                    auth.requestMatchers("/api/pilots/**").hasAnyRole("ADMIN", "PILOT");
+                    auth.requestMatchers("/api/pilots/createPilot").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.POST, "/api/pilots/{pilotId}").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasRole("Admin");
+                    auth.requestMatchers("/api/pilots/**").hasAnyRole("Admin", "Pilot");
 
                     //request matcher for attendant controller
-                    auth.requestMatchers("/api/attendants/createAttendant").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.POST, "/api/attendants/{attendantId}").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasRole("ADMIN");
-                    auth.requestMatchers("/api/attendants/**").hasAnyRole("ADMIN", "ATTENDANT");
+                    auth.requestMatchers("/api/attendants/createAttendant").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.POST, "/api/attendants/{attendantId}").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasRole("Admin");
+                    auth.requestMatchers("/api/attendants/**").hasAnyRole("Admin", "Attendant");
 
                     //request matcher for passenger controller
-                    auth.requestMatchers("/api/passengers/**").hasAnyRole("ADMIN", "PASSENGER");
+                    auth.requestMatchers("/api/passengers/**").hasAnyRole("Admin", "Passenger");
 
                     //request matcher for flight controller
-                    auth.requestMatchers("/api/flights/**").permitAll();
+                    auth.requestMatchers("/api/flights/**").hasAnyRole("Admin","Passenger");
 
                     //request matchers for main controller
-                    auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("ADMIN");
-                    auth.requestMatchers("/main/pilot/**").hasAnyRole("ADMIN","PILOT");
-                    auth.requestMatchers("/main/attendant/{attendantId}/assignToFlight/{flightId}").hasRole("ADMIN");
-                    auth.requestMatchers("/main/attendant/**").hasAnyRole("ADMIN","ATTENDANT");
-                    auth.requestMatchers("/main/flight/{flightId}/getAvailableAttendants").hasRole("ADMIN");
-                    auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("ADMIN");
-                    auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("ADMIN","PILOT");
-                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("ADMIN", "ATTENDANT", "PILOT");
+                    auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("Admin");
+                    auth.requestMatchers("/main/pilot/**").hasAnyRole("Admin","Pilot");
+                    auth.requestMatchers("/main/attendant/{attendantId}/assignToFlight/{flightId}").hasRole("Admin");
+                    auth.requestMatchers("/main/attendant/**").hasAnyRole("Admin","Attendant");
+                    auth.requestMatchers("/main/flight/{flightId}/getAvailableAttendants").hasRole("Admin");
+                    auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("Admin");
+                    auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("Admin","Pilot");
+                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "Attendant", "Pilot");
 
 
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
