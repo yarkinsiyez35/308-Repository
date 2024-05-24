@@ -19,7 +19,7 @@ INSERT INTO airports (airport_code, city, country, airport_name) VALUES
     ('ADA', 'Adana', 'Turkey', 'Adana Airport'),
     ('BJV', 'Muğla', 'Turkey', 'Milas–Bodrum Airport');
 
---insert values to end_to_end_distances
+-- insert values to end_to_end_distances
 INSERT INTO end_to_end_distance (city1, city2, distance) VALUES
     ('IST', 'SAW', 45),
     ('IST', 'AYT', 481),
