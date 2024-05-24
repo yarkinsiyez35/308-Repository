@@ -9,9 +9,9 @@ CREATE TABLE airports (
 );
 
 CREATE TABLE end_to_end_distance (
-    city1 VARCHAR(255),
-    city2 VARCHAR(255),
-    distance INT
+    city1 VARCHAR(255) NOT NULL,
+    city2 VARCHAR(255) NOT NULL,
+    distance INT NOT NULL
 );
 
 CREATE TABLE admins (
