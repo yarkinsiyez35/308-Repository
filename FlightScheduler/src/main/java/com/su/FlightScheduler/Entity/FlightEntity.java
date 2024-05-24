@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Entity;
 
+import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -51,6 +52,14 @@ public class FlightEntity implements Serializable {
 
     @Column(name = "standard_menu")
     private String standardMenu;
+
+
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
+    private List<PilotAssignmentEntity> pilotAssignmentEntityList;
+
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
+    private List <CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList;
+
 
     public FlightEntity() {
     }
