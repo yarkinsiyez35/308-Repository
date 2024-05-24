@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/main")
+@CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")
 public class MainSystemController {
     private final PilotFlightAssignmentService pilotFlightAssignmentService;
     private final AttendantAssignmentService attendantAssignmentService;

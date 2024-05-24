@@ -42,7 +42,7 @@ public class ApplicationUser implements UserDetails {
         this.username = pilotEntity.getEmail();
         this.password = pilotEntity.getPassword();
         this.id = pilotEntity.getPilotId();
-        ApplicationAuthority applicationAuthority = new ApplicationAuthority("PILOT");
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("Pilot");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }
@@ -52,7 +52,7 @@ public class ApplicationUser implements UserDetails {
         this.username = cabinCrewEntity.getEmail();
         this.password = cabinCrewEntity.getPassword();
         this.id = cabinCrewEntity.getAttendantId();
-        ApplicationAuthority applicationAuthority = new ApplicationAuthority("ATTENDANT");
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("CabinCrew");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }
@@ -62,7 +62,7 @@ public class ApplicationUser implements UserDetails {
         this.username = passengerEntity.getEmail();
         this.password = passengerEntity.getPassword();
         this.id = passengerEntity.getPassengerId();
-        ApplicationAuthority applicationAuthority = new ApplicationAuthority("PASSENGER");
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("Passenger");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }
@@ -72,7 +72,7 @@ public class ApplicationUser implements UserDetails {
         this.username = adminEntity.getEmail();
         this.password = adminEntity.getPassword();
         this.id = adminEntity.getAdminId();
-        ApplicationAuthority applicationAuthority = new ApplicationAuthority("ADMIN");
+        ApplicationAuthority applicationAuthority = new ApplicationAuthority("Admin");
         this.authorities = new HashSet<>();
         this.authorities.add(applicationAuthority);
     }

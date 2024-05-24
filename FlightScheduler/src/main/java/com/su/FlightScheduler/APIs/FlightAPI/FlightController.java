@@ -1,5 +1,7 @@
 package com.su.FlightScheduler.APIs.FlightAPI;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.Seats;
@@ -15,11 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/flights")
+@CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")
 public class FlightController {
 
     private final FlightService flightService;
@@ -129,6 +133,19 @@ public class FlightController {
 
 
     // --- Find Methods ---
+    @GetMapping("/")
+    public ResponseEntity<Object> getAllFlights()
+    {
+        List<FlightEntity> flightEntityList = flightService.findAllFlights();
+        List<FlightDataDTO> flightDataDTOList = new ArrayList<>();
+        for (FlightEntity flight : flightEntityList)
+        {
+            FlightDataDTO flightDataDTO = new FlightDataDTO(flight);
+            flightDataDTOList.add(flightDataDTO);
+        }
+        return ResponseEntity.ok(flightDataDTOList);
+    }
+
     @GetMapping("/findFlightByNumber")
     public ResponseEntity<?> findFlightByNumber(@RequestParam String flightNumber) {
         try {

@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pilots")
+@CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")
 public class PilotController {
     //this controller is responsible for
     //<METHOD> <RETURN TYPE> --> <DESCRIPTION>
