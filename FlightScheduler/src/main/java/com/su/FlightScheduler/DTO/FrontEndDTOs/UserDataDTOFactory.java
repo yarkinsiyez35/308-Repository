@@ -60,6 +60,7 @@ public class UserDataDTOFactory {
 
     }
 
+    //this needs refactoring, list might be empty
     public static UserDataDTO create_passenger_data_with_given_flight(List<PassengerFlight> passengerFlightList) {
         UserDataDTO userDataDTO = new UserDataDTO();
         PassengerFlight passengerFlight = passengerFlightList.get(0);
@@ -125,6 +126,7 @@ public class UserDataDTOFactory {
         return userDataDTOList;
     }
 
+    //this needs refactoring, list might be empty
     public static UserDataDTO create_cabin_crew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
     {
         UserDataDTO userDataDTO = new UserDataDTO();

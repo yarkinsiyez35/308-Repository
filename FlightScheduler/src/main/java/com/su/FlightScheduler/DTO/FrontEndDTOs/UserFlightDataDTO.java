@@ -7,6 +7,7 @@ import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
+import com.su.FlightScheduler.Util.SeatTypeFinder;
 
 import java.time.LocalDateTime;
 
@@ -50,7 +51,7 @@ public class UserFlightDataDTO {
         this.flightData = new FlightDataDTO(flightEntity);
         SeatingDTO userSeat = new SeatingDTO();
         userSeat.setSeatPosition(cabinCrewAssignmentsEntity.getSeatNumber());
-        userSeat.setSeatType("Cabincrew");
+        userSeat.setSeatType("Cabin crew");
         userSeat.setStatus(true);
         userSeat.setUserId(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId());
         this.userSeat = userSeat;
@@ -65,15 +66,14 @@ public class UserFlightDataDTO {
         SeatingDTO userSeat = new SeatingDTO();
         userSeat.setSeatPosition(passengerFlight.getSeatNumber());
 
-        // WHERE TO FIND IF IT IS BUSINESS OR ECONOMY
-        // UTIL FUNCTION NEEDED?
+        String seatType = SeatTypeFinder.getSeatType(passengerFlight.getSeatNumber(), flightEntity.getPlane().getVehicleType().getSeatingPlan());
         if (passengerFlight.getIsParent() == "T")
         {
-            userSeat.setSeatType("Economy with child");
+            userSeat.setSeatType(seatType + " with child");
         }
         else
         {
-            userSeat.setSeatType("Economy");
+            userSeat.setSeatType(seatType);
         }
         userSeat.setStatus(true);
         userSeat.setUserId(passengerFlight.getPassenger().getPassengerId());
