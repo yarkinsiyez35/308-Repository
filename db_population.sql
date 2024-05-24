@@ -19,6 +19,28 @@ INSERT INTO airports (airport_code, city, country, airport_name) VALUES
     ('ADA', 'Adana', 'Turkey', 'Adana Airport'),
     ('BJV', 'Muğla', 'Turkey', 'Milas–Bodrum Airport');
 
+--insert values to end_to_end_distances
+    INSERT INTO end_to_end_distance (city1, city2, distance) VALUES
+    ('Istanbul', 'Antalya', 537),
+    ('Istanbul', 'Izmir', 838),
+    ('Istanbul', 'Ankara', 298),
+    ('Istanbul', 'Muğla', 601),
+    ('Antalya', 'Izmir', 345),
+    ('Antalya', 'Ankara', 654),
+    ('Antalya', 'Muğla', 789),
+    ('Izmir', 'Ankara', 123),
+    ('Izmir', 'Muğla', 456),
+    ('Ankara', 'Muğla', 234),
+    ('Gaziantep', 'Trabzon', 111),
+    ('Gaziantep', 'Nevşehir', 222),
+    ('Trabzon', 'Nevşehir', 333),
+    ('Trabzon', 'Kayseri', 444),
+    ('Nevşehir', 'Kayseri', 555),
+    ('Nevşehir', 'Sivas', 666),
+    ('Kayseri', 'Sivas', 777),
+    ('Kayseri', 'Sakarya', 888),
+    ('Sivas', 'Sakarya', 999),
+    ('Sivas', 'Bingöl', 123);
 
 -- insert values to admins 
 INSERT INTO admins (admin_id, first_name, surname, email, password) VALUES
