@@ -27,6 +27,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -57,11 +58,27 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
+                    //request matchers for authentication controller
                     auth.requestMatchers("/auth/**").permitAll();
+                    //request matchers for admin controller
                     auth.requestMatchers("/admin/**").hasRole("ADMIN");
+                    //request matchers for pilot controller
                     auth.requestMatchers("/api/pilots/**").hasAnyRole("ADMIN", "PILOT");
+                    //request matcher for attendant controller
                     auth.requestMatchers("/api/attendants/**").hasAnyRole("ADMIN", "ATTENDANT");
+                    //request matcher for passenger controller
                     auth.requestMatchers("/api/passengers/**").hasAnyRole("ADMIN", "PASSENGER");
+                    //request matchers for main controller
+                    auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("ADMIN");
+                    auth.requestMatchers("/main/pilot/**").hasAnyRole("ADMIN","PILOT");
+                    auth.requestMatchers("/main/attendant/{attendantId}/assignToFlight/{flightId}").hasRole("ADMIN");
+                    auth.requestMatchers("/main/attendant/**").hasAnyRole("ADMIN","ATTENDANT");
+                    auth.requestMatchers("/main/flight/{flightId}/getAvailableAttendants").hasRole("ADMIN");
+                    auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("ADMIN");
+                    auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("ADMIN","PILOT");
+                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("ADMIN", "ATTENDANT", "PILOT");
+
+
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
                     auth.anyRequest().authenticated();
                 });
