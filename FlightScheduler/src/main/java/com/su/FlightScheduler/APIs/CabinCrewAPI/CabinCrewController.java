@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/attendants")
 public class CabinCrewController {
 
-    //repoları servis yap
+
 
     private final CabinCrewRepository cabinCrewRepository;
     private AttendantService attendantService;
