@@ -20,27 +20,28 @@ INSERT INTO airports (airport_code, city, country, airport_name) VALUES
     ('BJV', 'Muğla', 'Turkey', 'Milas–Bodrum Airport');
 
 --insert values to end_to_end_distances
-    INSERT INTO end_to_end_distance (city1, city2, distance) VALUES
-    ('Istanbul', 'Antalya', 537),
-    ('Istanbul', 'Izmir', 838),
-    ('Istanbul', 'Ankara', 298),
-    ('Istanbul', 'Muğla', 601),
-    ('Antalya', 'Izmir', 345),
-    ('Antalya', 'Ankara', 654),
-    ('Antalya', 'Muğla', 789),
-    ('Izmir', 'Ankara', 123),
-    ('Izmir', 'Muğla', 456),
-    ('Ankara', 'Muğla', 234),
-    ('Gaziantep', 'Trabzon', 111),
-    ('Gaziantep', 'Nevşehir', 222),
-    ('Trabzon', 'Nevşehir', 333),
-    ('Trabzon', 'Kayseri', 444),
-    ('Nevşehir', 'Kayseri', 555),
-    ('Nevşehir', 'Sivas', 666),
-    ('Kayseri', 'Sivas', 777),
-    ('Kayseri', 'Sakarya', 888),
-    ('Sivas', 'Sakarya', 999),
-    ('Sivas', 'Bingöl', 123);
+INSERT INTO end_to_end_distance (city1, city2, distance) VALUES
+    ('IST', 'SAW', 45),
+    ('IST', 'AYT', 481),
+    ('IST', 'ADB', 327),
+    ('IST', 'ESB', 394),
+    ('IST', 'DLM', 481),
+    ('SAW', 'AYT', 497),
+    ('SAW', 'ADB', 351),
+    ('SAW', 'ESB', 416),
+    ('SAW', 'DLM', 506),
+    ('AYT', 'ADB', 357),
+    ('AYT', 'ESB', 484),
+    ('AYT', 'DLM', 191),
+    ('ADB', 'ESB', 520),
+    ('ADB', 'DLM', 262),
+    ('ESB', 'DLM', 603),
+    ('GZT', 'TZX', 411),
+    ('GZT', 'NAV', 420),
+    ('TZX', 'NAV', 349),
+    ('TZX', 'ASR', 530),
+    ('NAV', 'ASR', 83);
+
 
 -- insert values to admins 
 INSERT INTO admins (admin_id, first_name, surname, email, password) VALUES
