@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
+import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
@@ -76,6 +77,21 @@ public class UserDataDTOFactory {
         for (PassengerFlight passengerFlight1 : passengerFlightList) {
             userFlightDataDTOList.add(new UserFlightDataDTO(passengerFlight1.getFlight(), passengerFlight1));
         }
+        return userDataDTO;
+    }
+
+    public static UserDataDTO create_passenger_data_with_no_flight_from_passenger_entity(PassengerEntity passengerEntity)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(passengerEntity.getEmail());
+        userDataDTO.setPassword(passengerEntity.getPassword());
+        userDataDTO.setName(passengerEntity.getFirstName());
+        userDataDTO.setSurname(passengerEntity.getSurname());
+        userDataDTO.setId(Integer.toString(passengerEntity.getPassengerId()));
+        userDataDTO.setAge(passengerEntity.getAge());
+        userDataDTO.setNationality(passengerEntity.getNationality());
+        userDataDTO.setUserType("Passenger");
+        userDataDTO.setFlights(null);
         return userDataDTO;
     }
 

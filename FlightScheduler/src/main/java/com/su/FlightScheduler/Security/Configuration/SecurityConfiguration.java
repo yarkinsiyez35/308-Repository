@@ -3,6 +3,7 @@ package com.su.FlightScheduler.Security.Configuration;
 import com.su.FlightScheduler.Security.Utils.RSAKeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -62,12 +63,25 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/auth/**").permitAll();
                     //request matchers for admin controller
                     auth.requestMatchers("/admin/**").hasRole("ADMIN");
+
                     //request matchers for pilot controller
+                    auth.requestMatchers("/api/pilots/createPilot").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.POST, "/api/pilots/{pilotId}").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasRole("ADMIN");
                     auth.requestMatchers("/api/pilots/**").hasAnyRole("ADMIN", "PILOT");
+
                     //request matcher for attendant controller
+                    auth.requestMatchers("/api/attendants/createAttendant").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.POST, "/api/attendants/{attendantId}").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasRole("ADMIN");
                     auth.requestMatchers("/api/attendants/**").hasAnyRole("ADMIN", "ATTENDANT");
+
                     //request matcher for passenger controller
                     auth.requestMatchers("/api/passengers/**").hasAnyRole("ADMIN", "PASSENGER");
+
+                    //request matcher for flight controller
+                    auth.requestMatchers("/api/flights/**").permitAll();
+
                     //request matchers for main controller
                     auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("ADMIN");
                     auth.requestMatchers("/main/pilot/**").hasAnyRole("ADMIN","PILOT");
