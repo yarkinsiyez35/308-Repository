@@ -84,6 +84,23 @@ public class CabinCrewController {
         }
     }
 
+    @PostMapping("/createAttendant")
+    public  ResponseEntity<Object> createAttendantWithoutId(@RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
+
+        List<CabinCrewEntity> cabinCrewEntityList = attendantService.findAllCabinCrew();
+
+        List<AttendantWithLanguagesAsStringDTO> attendantWithLanguagesAsStringDTOList = new ArrayList<>();
+
+        for(CabinCrewEntity cabinCrewEntity : cabinCrewEntityList){
+
+            AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(cabinCrewEntity);
+            AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO1 = new AttendantWithLanguagesAsStringDTO(attendantWithLanguagesDTO);
+
+            attendantWithLanguagesAsStringDTOList.add(attendantWithLanguagesAsStringDTO1);
+        }
+        return ResponseEntity.ok(attendantWithLanguagesAsStringDTOList);
+    }
+
     @PutMapping("/{attendantId}")
     public ResponseEntity<Object> updateAttendantWithId(@PathVariable int attendantId, @RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
 

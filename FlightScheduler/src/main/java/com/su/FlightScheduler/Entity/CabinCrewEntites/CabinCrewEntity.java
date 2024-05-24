@@ -3,6 +3,7 @@ import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -77,6 +78,29 @@ public class CabinCrewEntity implements Serializable {
     }
 
     public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) { // ata created this for controller error
+    }
+
+    public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO, boolean idIsPresent){
+
+        if (idIsPresent){
+            this.attendantId = attendantWithLanguagesDTO.getAttendantId();
+        }
+        this.email = attendantWithLanguagesDTO.getEmail();
+        this.password = attendantWithLanguagesDTO.getPassword();
+        this.firstName = attendantWithLanguagesDTO.getFirstName();
+        this.surname = attendantWithLanguagesDTO.getSurname();
+        this.age = attendantWithLanguagesDTO.getAge();
+        this.gender = attendantWithLanguagesDTO.getGender();
+        this.nationality = attendantWithLanguagesDTO.getNationality();
+        this.seniority = attendantWithLanguagesDTO.getSeniority();
+        List<AttendantLanguageEntity> languageEntities = new ArrayList<>();
+        for (String language : attendantWithLanguagesDTO.getLanguages()){
+
+            AttendantLanguagePK attendantLanguagePK = new AttendantLanguagePK(this.attendantId, language);
+            AttendantLanguageEntity attendantLanguageEntity = new AttendantLanguageEntity(attendantLanguagePK);
+            languageEntities.add(attendantLanguageEntity);
+        }
+        this.languages = languageEntities;
     }
 
     // Getters
