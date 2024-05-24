@@ -54,14 +54,7 @@ The project follows a structured organization based on the roles of the componen
   - **Config**: Configuration for security settings.
   - **Utils**: Utility classes, such as RSA key generation.
 
-## Contributing
-
-Contributions are welcome. Please create a pull request with a detailed description of your changes.
 
 ## License
 
 This project is licensed under the MIT License.
-
-## Contact
-
-For any queries or issues, please contact [your_email@example.com].
