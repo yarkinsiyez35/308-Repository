@@ -13,6 +13,6 @@ public interface CabinCrewRepository extends JpaRepository<CabinCrewEntity, Inte
     public Optional<CabinCrewEntity> findCabinCrewEntityByEmailAndPassword(String email, String password);
     public Optional<CabinCrewEntity> findByAttendantId(int attendantId);
     public Optional<CabinCrewEntity> findCabinCrewEntityByEmail(String email);
-    public List<CabinCrewEntity> findCabinCrewEntityBySeniorityAllowedRangeGreaterThanEqual(String seniority, int range);
+    public List<CabinCrewEntity> findCabinCrewEntityBySeniority(String seniority);
 
 }

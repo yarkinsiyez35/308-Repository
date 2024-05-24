@@ -168,17 +168,17 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
 
         if(size < seniorSize){
 
-            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniorityAllowedRangeGreaterThanEqual("Senior", flightRange);
+            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniority("Senior");
             availableAttendantList = findAvailableAttendantsFromGivenListAndFlight(cabinCrewEntityList, flight);
         }
         else if (size < seniorSize + juniorSize) {
 
-            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniorityAllowedRangeGreaterThanEqual("Junior", flightRange);
+            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniority("Junior");
             availableAttendantList = findAvailableAttendantsFromGivenListAndFlight(cabinCrewEntityList, flight);
         }
         else if(size < seniorSize + juniorSize + chefSize){
 
-            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniorityAllowedRangeGreaterThanEqual("Chef", flightRange);
+            List<CabinCrewEntity> cabinCrewEntityList = cabinCrewRepository.findCabinCrewEntityBySeniority("Chef");
             availableAttendantList = findAvailableAttendantsFromGivenListAndFlight(cabinCrewEntityList, flight);
             
         }
