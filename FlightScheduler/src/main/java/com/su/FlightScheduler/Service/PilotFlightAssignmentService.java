@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 
@@ -12,7 +13,8 @@ public interface PilotFlightAssignmentService
 
     public List<UserDataDTO> getAvailablePilotsForFlight(String flightNumber);  //return the list of available pilots for a given flight
     public UserDataDTO assignPilotToFlight(String flightNumber, int pilotId); //assign a pilot to a flight
-
+    public UserDataDTO assignAPilotToFlightWithGivenRoleAndSeat(String flightNumber, String role, String seatNumber) throws RuntimeException;
     public List<UserDataDTO> getPilotsOfFlight(String flightNumber);    //get all pilots in a flight
+    public UserDataDTO removeFlightFromAPilot(String flightNumber, int pilotId);    //removes a pilot from a flight
 
 }

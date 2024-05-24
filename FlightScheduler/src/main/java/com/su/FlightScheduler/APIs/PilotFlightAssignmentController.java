@@ -65,13 +65,26 @@ public class PilotFlightAssignmentController {
         }
     }
 
-
     @PostMapping("/{pilotId}/{flightId}")
     public ResponseEntity<Object> assignPilotToAFlight(@PathVariable int pilotId, @PathVariable String flightId)
     {
         try
         {
             UserDataDTO userDataDTO = pilotFlightAssignmentService.assignPilotToFlight(flightId, pilotId);
+            return ResponseEntity.ok(userDataDTO);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/pilot/{pilotId}/removeFromFlight/{flightId}")
+    public ResponseEntity<Object> removePilotFromAFlight(@PathVariable int pilotId, @PathVariable String flightId)
+    {
+        try
+        {
+            UserDataDTO userDataDTO = pilotFlightAssignmentService.removeFlightFromAPilot(flightId,pilotId);
             return ResponseEntity.ok(userDataDTO);
         }
         catch (RuntimeException e)

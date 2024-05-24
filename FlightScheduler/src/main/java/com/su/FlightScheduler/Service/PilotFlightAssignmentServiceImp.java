@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,11 +38,13 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
     @Override
     public UserDataDTO getFlightsOfPilot(int pilotId) {
 
-        if (pilotRepository.existsById(pilotId))    //pilot exists in the repository
+        Optional<PilotEntity> pilotEntity = pilotRepository.findById(pilotId);
+
+        if (pilotEntity.isPresent())    //pilot exists in the repository
         {
             //find every PilotAssignmentEntity
             List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_PilotId(pilotId);
-            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_flight_list(pilotAssignmentEntityList);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_flight_list(pilotAssignmentEntityList,pilotEntity.get());
             return userDataDTO;
         }
         else
@@ -152,7 +155,7 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         {
             //find the seat
             String newSeat;
-            if (size == 0)
+            if (size == seniorSize)
             {
                 newSeat = "1A";
             }
@@ -173,7 +176,7 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         {
             //find the seat
             String newSeat;
-            if (size == 0)
+            if (size == seniorSize + juniorSize)
             {
                 newSeat = "2A";
             }
@@ -199,6 +202,38 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         return userDataDTO;
     }
 
+    public UserDataDTO assignAPilotToFlightWithGivenRoleAndSeat(String flightNumber, String role, String seatNumber) {
+        Optional<FlightEntity> flightEntity = flightRepository.findById(flightNumber);
+        if (flightEntity.isEmpty())
+        {
+            throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
+        //find flight range
+        int flightRange = flightEntity.get().getFlightRange();
+        //find candidate pilots
+        List<PilotEntity> candidatePilotList =  pilotRepository.findPilotEntityBySeniorityAndAllowedRangeGreaterThanEqual(role,flightRange);
+        //find available pilots
+        List<PilotEntity> availablePilotList = findAvailablePilotsFromGivenListAndFlight(candidatePilotList,flightEntity.get());
+
+
+        if (!availablePilotList.isEmpty())
+        {
+            //first available pilot will be assigned
+            PilotEntity toBeAssignedPilot = availablePilotList.get(0);
+            //create the entity
+            PilotAssignmentEntity pilotAssignment = new PilotAssignmentEntity(new PilotAssignmentPK(toBeAssignedPilot.getPilotId(),flightNumber), role, seatNumber,1);
+            pilotAssignment.setFlight(flightEntity.get());
+            pilotAssignment.setPilot(toBeAssignedPilot);
+            PilotAssignmentEntity savedPilotAssignment = pilotAssignmentRepository.save(pilotAssignment);
+            UserDataDTO userDataDTO = new UserDataDTO(savedPilotAssignment);
+            return userDataDTO;
+        }
+        else
+        {
+            throw new RuntimeException("Cannot add a new pilot to flight with id: " + flightNumber +"!");
+        }
+    }
+
     @Override
     public List<UserDataDTO> getPilotsOfFlight(String flightNumber) {
         if (flightRepository.existsById(flightNumber))  //flight exists in the repository
@@ -216,6 +251,32 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         else
         {
             throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
+    }
+
+    @Override
+    public UserDataDTO removeFlightFromAPilot(String flightNumber, int pilotId) {
+        //find the assignment
+        Optional<PilotAssignmentEntity> pilotAssignmentEntity = pilotAssignmentRepository.findById(new PilotAssignmentPK(pilotId, flightNumber));
+        if (pilotAssignmentEntity.isEmpty())    //throw exception if assignment does not exist
+        {
+            throw new RuntimeException("Cannot remove pilot with id: " + pilotId + " from flight with id: " + flightNumber + "!");
+        }
+        try
+        {
+            //call another function to assign
+            assignAPilotToFlightWithGivenRoleAndSeat(flightNumber, pilotAssignmentEntity.get().getAssignmentRole(), pilotAssignmentEntity.get().getSeatNumber());
+            //delete the assignment from the repository
+            pilotAssignmentRepository.deleteById(new PilotAssignmentPK(pilotId, flightNumber));
+            //return the information of the removed pilot
+            List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_PilotId(pilotId);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_flight_list(pilotAssignmentEntityList, pilotAssignmentEntity.get().getPilot());
+
+            return userDataDTO;
+        }
+        catch(RuntimeException e)
+        {
+            throw new RuntimeException("Cannot remove pilot with id: " + pilotId + " from flight with id: " + flightNumber + "because " + e.getMessage());
         }
     }
 

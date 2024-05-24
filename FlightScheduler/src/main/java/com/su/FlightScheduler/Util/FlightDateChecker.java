@@ -2,8 +2,11 @@ package com.su.FlightScheduler.Util;
 
 
 import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.PilotEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //this class will be used when looking for available pilots and cabin crew members
 public class FlightDateChecker {
