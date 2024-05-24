@@ -8,6 +8,12 @@ CREATE TABLE airports (
     airport_name VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE end_to_end_distance (
+    city1 VARCHAR(255) NOT NULL,
+    city2 VARCHAR(255) NOT NULL,
+    distance INT NOT NULL
+);
+
 CREATE TABLE admins (
     admin_id INT PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
