@@ -18,6 +18,14 @@ public class CompanyEntity implements Serializable {
     @Column(name = "additional_info", columnDefinition = "TEXT")
     private String additionalInfo;
 
+    public CompanyEntity() {
+    }
+
+    public CompanyEntity(String companyName, String additionalInfo) {
+        this.companyName = companyName;
+        this.additionalInfo = additionalInfo;
+    }
+
     // getters and setters
     public String getCompanyName() {
         return companyName;

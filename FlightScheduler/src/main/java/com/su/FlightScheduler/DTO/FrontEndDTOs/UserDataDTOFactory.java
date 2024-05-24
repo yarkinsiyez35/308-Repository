@@ -1,12 +1,11 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
-import com.su.FlightScheduler.Entity.PassengerEntity;
-import com.su.FlightScheduler.Entity.PassengerFlight;
+import com.su.FlightScheduler.Entity.*;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
-import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
-import com.su.FlightScheduler.Entity.PilotEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +55,15 @@ public class UserDataDTOFactory {
                 userFlightDataDTOList.add(new UserFlightDataDTO(pilotAssignment.getFlight(), pilotAssignment));
             }
             userDataDTO.setFlights(userFlightDataDTOList);
+            userDataDTO.setSeniority(pilotAssignmentEntity.getPilot().getSeniority());
+            List<String> languages = new ArrayList<>();
+            for (PilotLanguageEntity pilotLanguageEntity : pilotAssignmentEntity.getPilot().getLanguages())
+            {
+                languages.add(pilotLanguageEntity.getPilotLanguagePK().getLanguage());
+            }
+            String result = String.join(",", languages);
+            userDataDTO.setLanguages(result);
+            userDataDTO.setRecipe(null);
             return userDataDTO;
         }
 
@@ -105,7 +113,31 @@ public class UserDataDTOFactory {
         userDataDTO.setAge(cabinCrewEntity.getAge());
         userDataDTO.setGender(cabinCrewEntity.getGender());
         userDataDTO.setNationality(cabinCrewEntity.getNationality());
+        userDataDTO.setUserType("PilotCrew");
         userDataDTO.setFlights(null);
+        userDataDTO.setSeniority( cabinCrewEntity.getSeniority());
+        userDataDTO.setLanguages(null);
+        userDataDTO.setRecipe(null);
+        if (cabinCrewEntity.getLanguages() != null) //add languages
+        {
+            List<String> languages = new ArrayList<>();
+            for (AttendantLanguageEntity attendantLanguageEntity : cabinCrewEntity.getLanguages())
+            {
+                languages.add(attendantLanguageEntity.getAttendantLanguagePK().getLanguage());
+            }
+            String result = String.join(",", languages);
+            userDataDTO.setLanguages(result);
+        }
+        if (cabinCrewEntity.getRecipes() != null)   //add recipe
+        {
+            List<String> recipes = new ArrayList<>();
+            for (DishRecipeEntity dishRecipeEntity : cabinCrewEntity.getRecipes())
+            {
+                recipes.add(dishRecipeEntity.getDishRecipePK().getRecipe());
+            }
+            String result = String.join(",", recipes);
+            userDataDTO.setRecipe(result);
+        }
         return userDataDTO;
     }
 
@@ -120,7 +152,17 @@ public class UserDataDTOFactory {
         userDataDTO.setAge(pilotEntity.getAge());
         userDataDTO.setGender(pilotEntity.getGender());
         userDataDTO.setNationality(pilotEntity.getNationality());
+        userDataDTO.setUserType("PilotCrew");
         userDataDTO.setFlights(null);
+        userDataDTO.setSeniority( pilotEntity.getSeniority());
+        List<String> languages = new ArrayList<>();
+        for (PilotLanguageEntity pilotLanguageEntity : pilotEntity.getLanguages())
+        {
+            languages.add(pilotLanguageEntity.getPilotLanguagePK().getLanguage());
+        }
+        String result = String.join(",", languages);
+        userDataDTO.setLanguages(result);
+        userDataDTO.setRecipe(null);
         return userDataDTO;
     }
 

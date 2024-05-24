@@ -3,6 +3,8 @@ package com.su.FlightScheduler.DTO.FrontEndDTOs;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
+import com.su.FlightScheduler.Entity.PilotEntity;
+import com.su.FlightScheduler.Entity.PilotLanguageEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +20,14 @@ public class UserDataDTO {
     private String nationality;
     private String userType;    //PilotCrew , CabinCrew, Admin, Passenger
     private List<UserFlightDataDTO> flights;
+    private String seniority;
+    private String languages;
+    private String recipe;
 
     public UserDataDTO() {
     }
 
-    public UserDataDTO(String email, String password, String name, String surname, String id, Integer age, String gender, String nationality, String userType, List<UserFlightDataDTO> flights) {
+    public UserDataDTO(String email, String password, String name, String surname, String id, Integer age, String gender, String nationality, String userType, List<UserFlightDataDTO> flights, String seniority, String languages, String recipe) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -33,6 +38,9 @@ public class UserDataDTO {
         this.nationality = nationality;
         this.userType = userType;
         this.flights = flights;
+        this.seniority = seniority;
+        this.languages = languages;
+        this.recipe = recipe;
     }
 
     public UserDataDTO(PilotAssignmentEntity pilotAssignmentEntity) //this will be called when there is one assignment
@@ -48,25 +56,14 @@ public class UserDataDTO {
         this.userType = "PilotCrew";
         this.flights = new ArrayList<>();
         this.flights.add(new UserFlightDataDTO(pilotAssignmentEntity.getFlight(), pilotAssignmentEntity));
-    }
-
-    public UserDataDTO(List<PilotAssignmentEntity> pilotAssignmentEntityList)   //this will be called when there are more than one assignment
-    {
-        PilotAssignmentEntity pilotAssignmentEntity = pilotAssignmentEntityList.get(0);
-        this.email = pilotAssignmentEntity.getPilot().getEmail();
-        this.password = pilotAssignmentEntity.getPilot().getPassword();
-        this.name = pilotAssignmentEntity.getPilot().getFirstName();
-        this.surname = pilotAssignmentEntity.getPilot().getSurname();
-        this.id = Integer.toString(pilotAssignmentEntity.getPilot().getPilotId());
-        this.age = pilotAssignmentEntity.getPilot().getAge();
-        this.gender = pilotAssignmentEntity.getPilot().getGender();
-        this.nationality = pilotAssignmentEntity.getPilot().getNationality();
-        this.userType = "PilotCrew";
-        this.flights = new ArrayList<>();
-        for (PilotAssignmentEntity pilotAssignment : pilotAssignmentEntityList)
+        this.seniority = pilotAssignmentEntity.getPilot().getSeniority();
+        List<String> languages = new ArrayList<>();
+        for (PilotLanguageEntity pilotLanguageEntity : pilotAssignmentEntity.getPilot().getLanguages())
         {
-            this.flights.add(new UserFlightDataDTO(pilotAssignment.getFlight(), pilotAssignment));
+            languages.add(pilotLanguageEntity.getPilotLanguagePK().getLanguage());
         }
+        String result = String.join(",", languages);
+        this.recipe = null;
     }
 
     public UserDataDTO(PassengerFlight passengerFlight) //this will be called when there is one assignment
@@ -134,8 +131,21 @@ public class UserDataDTO {
         return userType;
     }
 
+
     public List<UserFlightDataDTO> getFlights() {
         return flights;
+    }
+
+    public String getSeniority() {
+        return seniority;
+    }
+
+    public String getLanguages() {
+        return languages;
+    }
+
+    public String getRecipe() {
+        return recipe;
     }
 
     public void setEmail(String email) {
@@ -176,5 +186,17 @@ public class UserDataDTO {
 
     public void setFlights(List<UserFlightDataDTO> flights) {
         this.flights = flights;
+    }
+
+    public void setSeniority(String seniority) {
+        this.seniority = seniority;
+    }
+
+    public void setLanguages(String languages) {
+        this.languages = languages;
+    }
+
+    public void setRecipe(String recipe) {
+        this.recipe = recipe;
     }
 }

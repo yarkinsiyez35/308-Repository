@@ -1,13 +1,9 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.*;
-import com.su.FlightScheduler.Repository.AirportRepository;
-import com.su.FlightScheduler.Repository.VehicleTypeRepository;
-import com.su.FlightScheduler.Repository.PassengerFlightRepository;
-import com.su.FlightScheduler.Repository.FlightRepository;
-import com.su.FlightScheduler.Repository.PlaneRepository;
-import com.su.FlightScheduler.Repository.CompanyRepository;
+import com.su.FlightScheduler.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,18 +30,20 @@ public class FlightServiceImp implements FlightService {
     private final VehicleTypeRepository vehicleTypeRepository;
 
     private final PassengerFlightRepository passengerFlightRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
     public FlightServiceImp(FlightRepository flightRepository, AirportRepository airportRepository,
                             PlaneRepository planeRepository, CompanyRepository companyRepository,
                             VehicleTypeRepository vehicleTypeRepository,
-                            PassengerFlightRepository passengerFlightRepository) {
+                            PassengerFlightRepository passengerFlightRepository, AdminRepository adminRepository) {
         this.flightRepository = flightRepository;
         this.airportRepository = airportRepository;
         this.planeRepository = planeRepository;
         this.companyRepository = companyRepository;
         this.vehicleTypeRepository = vehicleTypeRepository;
         this.passengerFlightRepository = passengerFlightRepository;
+        this.adminRepository = adminRepository;
     }
 
 
@@ -59,6 +57,59 @@ public class FlightServiceImp implements FlightService {
         return optionalFlight.get();
     }
 
+
+    @Override
+    public FlightEntity saveFlight(FlightDataDTO flightDataDTO, int adminId) {
+        FlightEntity flightEntity = new FlightEntity();
+        Optional<AirportEntity> sourceAirport = airportRepository.findAirportEntityByAirportCode(flightDataDTO.getDepartureAirport());
+        Optional<AirportEntity> landingAirport = airportRepository.findAirportEntityByAirportCode(flightDataDTO.getLandingAirport());
+        Optional<PlaneEntity> plane = planeRepository.findById(flightDataDTO.getPlaneId());
+        if(sourceAirport.isEmpty() || landingAirport.isEmpty())
+        {
+            throw new RuntimeException("Could not create flight, airports are wrong!");
+        }
+        if (plane.isEmpty())
+        {
+            throw new RuntimeException("Could not create flight, plane id does not exist!");
+        }
+        flightEntity.setFlightNumber(flightDataDTO.getFlightId());
+        flightEntity.setFlightInfo("Regular flight");
+        flightEntity.setSourceAirport(sourceAirport.get());
+        flightEntity.setDestinationAirport(landingAirport.get());
+        flightEntity.setPlane(plane.get());
+        //do this later with tables
+        flightEntity.setFlightRange(2000);
+        flightEntity.setDepartureDateTime(flightDataDTO.getDepartureTime());
+        flightEntity.setLandingDateTime(flightDataDTO.getLandingTime());
+        if (flightDataDTO.getAirlineCompany().equals("No shared flight"))
+        {
+            flightEntity.setSharedFlight(false);
+            flightEntity.setSharedFlightCompany(null);
+        }
+        else
+        {
+            flightEntity.setSharedFlight(true);
+            Optional<CompanyEntity> companyEntity = companyRepository.findById(flightDataDTO.getAirlineCompany());
+            if (companyEntity.isPresent())
+            {
+                flightEntity.setSharedFlightCompany(companyEntity.get());
+            }
+            else
+            {
+                CompanyEntity company = new CompanyEntity(flightDataDTO.getAirlineCompany(), "");
+                CompanyEntity savedCompany = companyRepository.save(company);
+                flightEntity.setSharedFlightCompany(savedCompany);
+            }
+        }
+        Optional<AdminEntity> adminEntity = adminRepository.findById(adminId);
+        if (adminEntity.isEmpty())
+        {
+            throw new RuntimeException("Could not create flight, admin does not exist!");
+        }
+        flightEntity.setAdmin(adminEntity.get());
+        flightEntity.setStandardMenu("Standard menu");
+        return flightRepository.save(flightEntity);
+    }
 
     @Override
     public FlightEntity saveFlightObj(FlightEntity flight) {
@@ -81,6 +132,9 @@ public class FlightServiceImp implements FlightService {
 
 
     //------------------------------------------------------------------------------------------------------------
+
+
+
 
     // Multi-Layered Create Method
     @Override

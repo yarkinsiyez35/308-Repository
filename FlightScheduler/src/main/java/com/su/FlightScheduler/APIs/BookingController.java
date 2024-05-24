@@ -78,7 +78,6 @@ public class BookingController {
     }
      */
 
-
     @DeleteMapping("/cancel/{bookingId}")
     public ResponseEntity<Object> cancelFlight(@PathVariable int bookingId) {
         try {
