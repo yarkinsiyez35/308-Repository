@@ -34,15 +34,14 @@ public class SeatTypeFinder {
                 seatingList.add(seating);
             }
         }
-
         return seatingList;
     }
 
 
     public static String getSeatType(String seatNumber, String seatingPlan)
     {
-        List<SeatingTypeDTO> seatingList = decodeSeatingType(seatingPlan);
         int businessEndRowNonFinal = 0;
+        List<SeatingTypeDTO> seatingList = decodeSeatingType(seatingPlan);
         for (SeatingTypeDTO seating : seatingList) {
             if ("business".equals(seating.getType())) {
                 businessEndRowNonFinal = seating.getEndRow();
