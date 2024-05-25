@@ -97,7 +97,7 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         else if(size < seniorSize + juniorSize) {
 
             String newSeat;
-            if (size == 0) {
+            if (size == seniorSize) {
                 newSeat = "1A";
             } else {
                 String lastSeat = SeatIncrementer.findLastCabinCrewSeat(cabinCrewAssignmentsEntityList);
@@ -111,7 +111,7 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         else if(size < seniorSize + juniorSize + chefSize){
 
             String newSeat;
-            if (size == 0){
+            if (size == seniorSize + juniorSize){
                 newSeat = "2A";
                 //set recipe here
                 String dish = cabin.getRecipes().get(0).getDishRecipePK().getRecipe();
