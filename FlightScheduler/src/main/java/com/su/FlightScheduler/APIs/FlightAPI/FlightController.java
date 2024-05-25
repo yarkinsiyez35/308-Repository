@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//TESTING: this controller should be tested
 @RestController
 @RequestMapping("/api/flights")
 @CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")

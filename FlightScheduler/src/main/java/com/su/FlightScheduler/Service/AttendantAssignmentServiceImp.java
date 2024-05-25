@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+//TESTING: this service should be tested
+
 @Service
 public class AttendantAssignmentServiceImp implements AttendantAssignmentService{
 

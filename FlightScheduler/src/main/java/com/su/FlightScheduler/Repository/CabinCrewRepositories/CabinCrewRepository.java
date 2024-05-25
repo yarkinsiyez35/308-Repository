@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
+//TESTING: these 4 functoins should be tested
 @Repository
 public interface CabinCrewRepository extends JpaRepository<CabinCrewEntity, Integer> {
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//TESTING: this controller should be tested
 @RestController
 @RequestMapping("/main")
 @CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")

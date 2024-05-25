@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
-
+//TESTING: this controller should be tested
 @Service
 @Transactional
 public class AuthenticationService {

@@ -14,7 +14,7 @@ import com.su.FlightScheduler.Entity.PilotEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//TESTING: this controller should be tested, but not now
 @RestController
 @RequestMapping("/api/pilots")
 @CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")
@@ -108,6 +108,7 @@ public class PilotController {
     @PostMapping("/createPilot")
     public ResponseEntity<Object> createPilotWithoutId(@RequestBody PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO)
     {
+        //bug here fix it
         try
         {
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotWithLanguagesAsStringDTO);

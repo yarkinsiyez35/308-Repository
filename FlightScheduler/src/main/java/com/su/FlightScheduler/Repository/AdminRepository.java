@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+//TESTING: this 2 functions should be tested
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
     @Transactional(readOnly = true)

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+//TESTING: this one function should be tested
 @Repository
 public interface AirportRepository extends JpaRepository<AirportEntity, String> {
     public Optional<AirportEntity> findAirportEntityByAirportCode(String code);

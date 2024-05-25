@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 
+//TESTING: this service should be tested
 @Service
 @Transactional
 public class FlightServiceImp implements FlightService {

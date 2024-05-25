@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+//TESTING: these 3 functions should be tested
 @Repository
 public interface PilotRepository extends JpaRepository<PilotEntity, Integer> {
 
