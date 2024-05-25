@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Entity;
 
 
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import jakarta.persistence.*;
 
 @Entity

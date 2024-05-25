@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Repository.PassengerFlightRepository;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @DataJpaTest

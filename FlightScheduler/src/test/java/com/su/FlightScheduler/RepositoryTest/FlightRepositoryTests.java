@@ -1,6 +1,9 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.*;
+import com.su.FlightScheduler.Entity.FlightEntitites.AirportEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.PlaneEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.VehicleTypeEntity;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PlaneRepository;
 import com.su.FlightScheduler.Repository.AirportRepository;

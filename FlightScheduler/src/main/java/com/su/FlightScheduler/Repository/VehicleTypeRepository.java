@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.Repository;
 
-import com.su.FlightScheduler.Entity.VehicleTypeEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.VehicleTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

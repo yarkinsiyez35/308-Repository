@@ -1,9 +1,6 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
-import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
-import com.su.FlightScheduler.Entity.FlightEntity;
-import com.su.FlightScheduler.Entity.PilotEntity;
 
 import java.util.List;
 

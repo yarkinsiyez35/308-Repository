@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.AirportEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.AirportEntity;
 import com.su.FlightScheduler.Repository.AirportRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

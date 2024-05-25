@@ -3,7 +3,7 @@ package com.su.FlightScheduler.Service;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.DTO.SimplifiedPassengerDTO;
 import com.su.FlightScheduler.DTO.forPassenger_FlightDTO;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Repository.FlightRepository;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 //TESTING: this service should be tested

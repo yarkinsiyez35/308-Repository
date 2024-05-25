@@ -1,7 +1,7 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 
 import java.time.LocalDateTime;
 
@@ -38,8 +38,8 @@ public class FlightDataDTO {
 
     public FlightDataDTO(FlightEntity flightEntity)
     {
-        this.from = flightEntity.getSourceAirport().getCity();
-        this.goTo = flightEntity.getDestinationAirport().getCity();
+        this.from = flightEntity.getSourceAirport().getCity().getCityName();
+        this.goTo = flightEntity.getDestinationAirport().getCity().getCityName();
         this.departureAirport = flightEntity.getSourceAirport().getAirportName();
         this.landingAirport = flightEntity.getDestinationAirport().getAirportName();
         this.departureTime = flightEntity.getDepartureDateTime();
