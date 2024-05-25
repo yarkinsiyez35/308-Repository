@@ -136,10 +136,6 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
             throw new RuntimeException("Cabin Crew capacity of flight with id: " + flightNumber + " is full!");
         }
 
-
-        //CHECK THIS DTO CREATION
-        //AGE IS MISSING
-
         UserDataDTO userDataDTO = new UserDataDTO(savedCabinCrewAssignmentsEntity);
         return  userDataDTO;
     }
