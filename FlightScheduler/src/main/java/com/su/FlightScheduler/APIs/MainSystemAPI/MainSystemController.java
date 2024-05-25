@@ -153,4 +153,22 @@ public class MainSystemController {
 
     //functions for passenger and flight assignments
 
+    @GetMapping("/passenger/{passengerId}/getFlights")
+    public ResponseEntity<Object> getFlightsOfPassenger(@PathVariable int passengerId)
+    {
+        return null;
+    }
+
+    @GetMapping("flight/{flightId}/getPassengers")
+    public ResponseEntity<Object> getPassengersOfFlight(@PathVariable String flightId)
+    {
+        return null;
+    }
+
+    @DeleteMapping("/passenger/{passengerId}/cancelFlight/{bookingId}")
+    public ResponseEntity<Object> deleteFlightFromPassenger(@PathVariable int passengerId, @PathVariable int bookingId)
+    {
+        return null;
+    }
+
 }
