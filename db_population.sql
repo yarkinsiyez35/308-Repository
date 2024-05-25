@@ -55,11 +55,11 @@ INSERT INTO admins (admin_id, first_name, surname, email, password) VALUES
 
 -- insert values to vehicle types
 INSERT INTO vehicle_types (vehicle_type, business_capacity, economy_capacity, senior_pilot_capacity, junior_pilot_capacity, trainee_pilot_capacity, senior_attendee_capacity, junior_attendee_capacity, chef_attendee_capacity, seating_plan) VALUES
-    ('Boeing 747', 50, 300, 4, 2, 0, 20, 30, 2, '4-5-4 seating arrangement'),
-    ('Airbus A380', 75, 400, 5, 7, 3, 25, 35, 3, '4-4-4-4 seating arrangement'),
-    ('Boeing 787', 40, 250, 3, 5, 1, 15, 25, 2, '3-3-3 seating arrangement'),
-    ('Airbus A320', 20, 150, 2, 3, 1, 10, 15, 1, '3-3 seating arrangement'),
-    ('Embraer E190', 10, 70, 1, 2, 0, 5, 10, 1, '2-2 seating arrangement');
+    ('Boeing 747', 50, 300, 4, 2, 0, 4, 2, 1, '4-5-4 seating arrangement'),
+    ('Airbus A380', 75, 400, 5, 7, 3, 6, 4, 2, '4-4-4-4 seating arrangement'),
+    ('Boeing 787', 40, 250, 3, 5, 1, 4, 2, 0, '3-3-3 seating arrangement'),
+    ('Airbus A320', 20, 150, 2, 3, 1, 6, 3, 1, '3-3 seating arrangement'),
+    ('Embraer E190', 10, 70, 1, 2, 0, 2, 2, 1, '2-2 seating arrangement');
 
 -- insert into planes
 INSERT INTO planes (plane_id, vehicle_type) VALUES
