@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//TESTING: these 11 functions should be tested
 @Repository
 public interface FlightRepository extends JpaRepository<FlightEntity, String> {
     @Query("SELECT f.plane.vehicleType FROM FlightEntity f WHERE f.flightNumber = :flight_number")

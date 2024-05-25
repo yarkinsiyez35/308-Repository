@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+//TESTING: these two functions should be tested
 @Repository
 public interface PilotAssignmentRepository extends JpaRepository<PilotAssignmentEntity, PilotAssignmentPK> {
     public List<PilotAssignmentEntity> findAllByPilotAssignmentPK_PilotId(int pilotId);

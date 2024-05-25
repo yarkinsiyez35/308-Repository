@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//TESTING: this service should be tested
 @Service
 @Transactional
 public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentService{

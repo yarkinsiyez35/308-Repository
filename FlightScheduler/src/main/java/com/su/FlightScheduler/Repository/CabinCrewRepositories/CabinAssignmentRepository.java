@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+//TESTING: these 2 functions should be tested 
 public interface CabinAssignmentRepository extends JpaRepository<CabinCrewAssignmentsEntity, CabinCrewAssignmentsPK> {
 
     public List<CabinCrewAssignmentsEntity> findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_AttendantId(int attendantId);
