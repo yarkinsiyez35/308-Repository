@@ -75,23 +75,23 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/attendants/createAttendant").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.POST, "/api/attendants/{attendantId}").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasRole("Admin");
-                    auth.requestMatchers("/api/attendants/**").hasAnyRole("Admin", "Attendant");
+                    auth.requestMatchers("/api/attendants/**").hasAnyRole("Admin", "CabinCrew");
 
                     //request matcher for passenger controller
                     auth.requestMatchers("/api/passengers/**").hasAnyRole("Admin", "Passenger");
 
                     //request matcher for flight controller
-                    auth.requestMatchers("/api/flights/**").hasAnyRole("Admin","Passenger");
+                    auth.requestMatchers("/api/flights/**").hasAnyRole("Admin","Passenger", "PilotCrew", "CabinCrew");  //FIX THIS
 
                     //request matchers for main controller
                     auth.requestMatchers("/main/pilot/{pilotId}/assignToFlight/{flightId}").hasRole("Admin");
                     auth.requestMatchers("/main/pilot/**").hasAnyRole("Admin","PilotCrew");
                     auth.requestMatchers("/main/attendant/{attendantId}/assignToFlight/{flightId}").hasRole("Admin");
-                    auth.requestMatchers("/main/attendant/**").hasAnyRole("Admin","Attendant");
+                    auth.requestMatchers("/main/attendant/**").hasAnyRole("Admin","CabinCrew");
                     auth.requestMatchers("/main/flight/{flightId}/getAvailableAttendants").hasRole("Admin");
                     auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("Admin");
                     auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("Admin","PilotCrew");
-                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "Attendant", "PilotCrew");
+                    auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "CabinCrew", "PilotCrew");
 
 
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
