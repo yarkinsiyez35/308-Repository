@@ -37,6 +37,19 @@ public class AuthenticationController {
        }
     }
 
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<Object> forgetPassword(@RequestBody RegistrationDTO body)
+    {
+        try
+        {
+            ApplicationUser updatedApplicationUser = authenticationService.forgetPassword(body.getUsername(), body.getPassword());
+            return ResponseEntity.ok(updatedApplicationUser);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
+    }
 
 
     @PostMapping("/login")
