@@ -1,11 +1,19 @@
 CREATE database FlightSchedulerDB;
 use FlightSchedulerDB; 
 
+CREATE TABLE cities (
+    city_name VARCHAR(255) NOT NULL PRIMARY KEY,
+    latitude DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL
+);
+
 CREATE TABLE airports (
     airport_code VARCHAR(3) PRIMARY KEY,
     city VARCHAR(255) NOT NULL,
     country VARCHAR(255) NOT NULL,
-    airport_name VARCHAR(255) NOT NULL
+    airport_name VARCHAR(255) NOT NULL,
+    
+    FOREIGN KEY (city) REFERENCES cities(city_name)
 );
 
 CREATE TABLE end_to_end_distance (
