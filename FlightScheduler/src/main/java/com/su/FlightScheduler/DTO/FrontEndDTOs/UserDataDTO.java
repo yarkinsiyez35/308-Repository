@@ -89,6 +89,7 @@ public class UserDataDTO {
         this.name = cabinCrewAssignmentsEntity.getCabinCrew().getFirstName();
         this.surname = cabinCrewAssignmentsEntity.getCabinCrew().getSurname();
         this.id = Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId());
+        this.age =cabinCrewAssignmentsEntity.getCabinCrew().getAge();
         this.gender = cabinCrewAssignmentsEntity.getCabinCrew().getGender();
         this.nationality = cabinCrewAssignmentsEntity.getCabinCrew().getNationality();
         this.userType = "CabinCrew";

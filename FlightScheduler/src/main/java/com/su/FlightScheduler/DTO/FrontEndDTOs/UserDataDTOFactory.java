@@ -9,6 +9,7 @@ import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
 import com.su.FlightScheduler.Util.LanguageEntityListToStringConverter;
+import org.apache.catalina.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class UserDataDTOFactory {
             }
         }
         userDataDTO.setFlights(userFlightDataDTOListWithGivenFlightNumber);
+        userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_pilot_language_entity_list_to_string(pilotAssignmentEntity.getPilot().getLanguages()));
         return userDataDTO;
     }
 
@@ -214,6 +216,8 @@ public class UserDataDTOFactory {
                 userFlightDataDTOList.add(new UserFlightDataDTO(cabinCrewAssignment.getFlight(), cabinCrewAssignment));
             }
             userDataDTO.setFlights(userFlightDataDTOList);
+            userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_cabin_crew_language_entity_list_to_string(cabinCrewEntity.getLanguages()));
+            userDataDTO.setRecipe(LanguageEntityListToStringConverter.convert_cabin_crew_dish_recipe_entity_list_to_string(cabinCrewEntity.getRecipes()));
             return userDataDTO;
         }
     }
@@ -258,6 +262,29 @@ public class UserDataDTOFactory {
         userDataDTO.setSeniority(pilotEntity.getSeniority());
         userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_pilot_language_entity_list_to_string(pilotEntity.getLanguages()));
         userDataDTO.setFlights(null);
+        userDataDTO.setRecipe(null);
+        return userDataDTO;
+    }
+
+
+    public static UserDataDTO create_pilot_with_pilot_assignment_entity(PilotAssignmentEntity pilotAssignmentEntity)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(pilotAssignmentEntity.getPilot().getEmail());
+        userDataDTO.setPassword(pilotAssignmentEntity.getPilot().getPassword());
+        userDataDTO.setName(pilotAssignmentEntity.getPilot().getFirstName());
+        userDataDTO.setSurname(pilotAssignmentEntity.getPilot().getSurname());
+        userDataDTO.setId(Integer.toString(pilotAssignmentEntity.getPilot().getPilotId()));
+        userDataDTO.setAge(pilotAssignmentEntity.getPilot().getAge());
+        userDataDTO.setGender(pilotAssignmentEntity.getPilot().getGender());
+        userDataDTO.setNationality(pilotAssignmentEntity.getPilot().getNationality());
+        userDataDTO.setUserType("PilotCrew");
+        userDataDTO.setSeniority(pilotAssignmentEntity.getPilot().getSeniority());
+        userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_pilot_language_entity_list_to_string(pilotAssignmentEntity.getPilot().getLanguages()));
+        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+        UserFlightDataDTO userFlightDataDTO = new UserFlightDataDTO(pilotAssignmentEntity.getFlight(),pilotAssignmentEntity);
+        userFlightDataDTOList.add(userFlightDataDTO);
+        userDataDTO.setFlights(userFlightDataDTOList);
         userDataDTO.setRecipe(null);
         return userDataDTO;
     }

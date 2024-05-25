@@ -2,9 +2,7 @@ package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsPK;
-import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
+import com.su.FlightScheduler.Entity.CabinCrewEntites.*;
 import com.su.FlightScheduler.Entity.FlightEntity;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinAssignmentRepository;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
@@ -37,7 +35,6 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
 
 
 
-
     @Override
     public UserDataDTO getFlightsOfAttendant(int attendantId) {
 
@@ -46,7 +43,6 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
 
             List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList = cabinAssignmentRepository.findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_AttendantId(attendantId);
             UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_flight_list(cabinCrewAssignmentsEntityList, cabinCrewEntity.get());
-
 
             return userDataDTO;
         }
@@ -81,16 +77,19 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         CabinCrewAssignmentsEntity savedCabinCrewAssignmentsEntity;
         if (size < seniorSize){
 
+            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity;
             String newSeat;
-            if (size == 0){
+            if (size == 0)
+            {
                 newSeat = "0A";
+                cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Chief", newSeat, 1);
             }
             else {
-                String lastSeat = cabinCrewAssignmentsEntityList.get(size-1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastCabinCrewSeat(cabinCrewAssignmentsEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
+                cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Senior", newSeat, 1);
             }
 
-            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Senior", newSeat, 1);
             cabinCrewAssignmentsEntity.setCabinCrew(cabin);
             cabinCrewAssignmentsEntity.setFlight(flightEntity);
             savedCabinCrewAssignmentsEntity = cabinAssignmentRepository.save(cabinCrewAssignmentsEntity);
@@ -101,10 +100,10 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
             if (size == 0) {
                 newSeat = "1A";
             } else {
-                String lastSeat = cabinCrewAssignmentsEntityList.get(size - 1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastCabinCrewSeat(cabinCrewAssignmentsEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
             }
-            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Junior", "1A", 1);
+            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Junior", newSeat, 1);
             cabinCrewAssignmentsEntity.setCabinCrew(cabin);
             cabinCrewAssignmentsEntity.setFlight(flightEntity);
             savedCabinCrewAssignmentsEntity = cabinAssignmentRepository.save(cabinCrewAssignmentsEntity);
@@ -114,12 +113,21 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
             String newSeat;
             if (size == 0){
                 newSeat = "2A";
+                //set recipe here
+                String dish = cabin.getRecipes().get(0).getDishRecipePK().getRecipe();
+                flightEntity.setStandardMenu(dish);
+
+                flightEntity = flightRepository.save(flightEntity);
             }
             else{
-                String lastSeat = cabinCrewAssignmentsEntityList.get(size - 1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastCabinCrewSeat(cabinCrewAssignmentsEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
+                //set recipe here
+                String dish = cabin.getRecipes().get(0).getDishRecipePK().getRecipe();
+                flightEntity.setStandardMenu(flightEntity.getStandardMenu() + ", " + dish);
+                flightEntity = flightRepository.save(flightEntity);
             }
-            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Chef", "2A", 1);
+            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(cabinCrewAssignmentsPK, "Chef", newSeat, 1);
             cabinCrewAssignmentsEntity.setCabinCrew(cabin);
             cabinCrewAssignmentsEntity.setFlight(flightEntity);
             savedCabinCrewAssignmentsEntity = cabinAssignmentRepository.save(cabinCrewAssignmentsEntity);
@@ -127,6 +135,10 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         else{
             throw new RuntimeException("Cabin Crew capacity of flight with id: " + flightNumber + " is full!");
         }
+
+
+        //CHECK THIS DTO CREATION
+        //AGE IS MISSING
 
         UserDataDTO userDataDTO = new UserDataDTO(savedCabinCrewAssignmentsEntity);
         return  userDataDTO;

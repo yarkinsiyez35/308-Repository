@@ -141,7 +141,7 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
             }
             else
             {
-                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastPilotSeat(pilotAssignmentEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
             }
             //create PilotAssignmentEntity
@@ -162,11 +162,11 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
             }
             else
             {
-                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastPilotSeat(pilotAssignmentEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
             }
             //create PilotAssignmentEntity
-            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Junior", "1A",1);
+            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Junior", newSeat,1);
             //set pilot and flight field
             pilotAssignmentEntity.setPilot(pilot);
             pilotAssignmentEntity.setFlight(flightEntity);
@@ -183,11 +183,11 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
             }
             else
             {
-                String lastSeat = pilotAssignmentEntityList.get(size-1).getSeatNumber();
+                String lastSeat = SeatIncrementer.findLastPilotSeat(pilotAssignmentEntityList);
                 newSeat = SeatIncrementer.incrementSeat(lastSeat);
             }
             //create PilotAssignmentEntity
-            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Trainee", "1A",1);
+            PilotAssignmentEntity pilotAssignmentEntity = new PilotAssignmentEntity(pilotAssignmentPK, "Trainee", newSeat,1);
             //set pilot and flight field
             pilotAssignmentEntity.setPilot(pilot);
             pilotAssignmentEntity.setFlight(flightEntity);
@@ -200,6 +200,7 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         }
 
         UserDataDTO userDataDTO = new UserDataDTO(savedPilotAssignmentEntity);
+        userDataDTO = UserDataDTOFactory.create_pilot_data_with_given_flight(savedPilotAssignmentEntity, flightNumber);
         return userDataDTO;
     }
 
@@ -226,7 +227,8 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
             pilotAssignment.setFlight(flightEntity.get());
             pilotAssignment.setPilot(toBeAssignedPilot);
             PilotAssignmentEntity savedPilotAssignment = pilotAssignmentRepository.save(pilotAssignment);
-            UserDataDTO userDataDTO = new UserDataDTO(savedPilotAssignment);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_with_pilot_assignment_entity(savedPilotAssignment);
+
             return userDataDTO;
         }
         else
@@ -272,7 +274,6 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
             //return the information of the removed pilot
             List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_PilotId(pilotId);
             UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_flight_list(pilotAssignmentEntityList, pilotAssignmentEntity.get().getPilot());
-
             return userDataDTO;
         }
         catch(RuntimeException e)

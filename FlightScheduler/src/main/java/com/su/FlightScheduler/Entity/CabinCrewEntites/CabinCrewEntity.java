@@ -67,7 +67,7 @@ public class CabinCrewEntity implements Serializable {
         this.gender = gender;
         this.nationality = nationality;
         this.seniority = seniority;
-       // this.languages = languages;
+        //this.languages = languages;
         //this.recipes = recipes;
         //this.assignments = assignments; //ata added
         //this.vehicleTypes = vehicleTypes; //ata added
