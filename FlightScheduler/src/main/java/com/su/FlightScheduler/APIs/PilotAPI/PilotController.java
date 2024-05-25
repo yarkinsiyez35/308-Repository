@@ -1,9 +1,12 @@
 package com.su.FlightScheduler.APIs.PilotAPI;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.DTO.PilotDTOs.PilotFullDTO;
 import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesAsStringDTO;
 import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesDTO;
 import com.su.FlightScheduler.Service.PilotService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,10 +63,9 @@ public class PilotController {
             //find the PilotEntity by id
             PilotEntity pilotEntity = pilotService.findPilotById(pilotId);
             //convert the entity to DTO
-            PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotEntity);
-            PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO = new PilotWithLanguagesAsStringDTO(pilotWithLanguagesDTO);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_with_pilot_entity(pilotEntity);
             //return the DTO
-            return ResponseEntity.ok(pilotWithLanguagesAsStringDTO);
+            return ResponseEntity.ok(userDataDTO);
         }
         catch (RuntimeException e)  //this exception is expected
         {
@@ -91,9 +93,9 @@ public class PilotController {
             //convert the saved PilotEntity to DTO
             PilotWithLanguagesDTO savedPilotDTO = new PilotWithLanguagesDTO(savedPilot);
             //convert DTO to another DTO
-            PilotWithLanguagesAsStringDTO savedPilotWithLanguagesAsStringDTO = new PilotWithLanguagesAsStringDTO(savedPilotDTO);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_pilot_data_with_pilotWithLanguagesDTO(savedPilotDTO);
             //return the DTO
-            return ResponseEntity.ok(savedPilotWithLanguagesAsStringDTO);
+            return ResponseEntity.ok(userDataDTO);
         }
         catch (RuntimeException e)  //this exception is expected
         {
@@ -111,6 +113,9 @@ public class PilotController {
         //bug here fix it
         try
         {
+            //allowedRange should come as integer
+            //languages come as null
+
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotWithLanguagesAsStringDTO);
             PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO, false);
             PilotEntity savedPilot = pilotService.savePilotWithoutId(pilotEntity);

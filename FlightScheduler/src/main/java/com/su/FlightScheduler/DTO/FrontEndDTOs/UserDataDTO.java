@@ -5,6 +5,7 @@ import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Entity.PilotLanguageEntity;
+import com.su.FlightScheduler.Util.LanguageEntityListToStringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,9 @@ public class UserDataDTO {
         this.userType = "CabinCrew";
         this.flights = new ArrayList<>();
         this.flights.add(new UserFlightDataDTO(cabinCrewAssignmentsEntity.getFlight(), cabinCrewAssignmentsEntity));
+        this.seniority = cabinCrewAssignmentsEntity.getCabinCrew().getSeniority();
+        this.languages = LanguageEntityListToStringConverter.convert_cabin_crew_language_entity_list_to_string(cabinCrewAssignmentsEntity.getCabinCrew().getLanguages());
+        this.recipe = LanguageEntityListToStringConverter.convert_cabin_crew_dish_recipe_entity_list_to_string(cabinCrewAssignmentsEntity.getCabinCrew().getRecipes());
     }
     
     public String getEmail() {

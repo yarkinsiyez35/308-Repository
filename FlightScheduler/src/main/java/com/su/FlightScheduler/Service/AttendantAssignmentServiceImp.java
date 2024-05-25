@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 //TESTING: this service should be tested
 
@@ -40,10 +41,11 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
     @Override
     public UserDataDTO getFlightsOfAttendant(int attendantId) {
 
-        if(cabinCrewRepository.existsById(attendantId)) {
+        Optional<CabinCrewEntity> cabinCrewEntity = cabinCrewRepository.findById(attendantId);
+        if(cabinCrewEntity.isPresent()) {
 
             List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList = cabinAssignmentRepository.findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_AttendantId(attendantId);
-            UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_flight_list(cabinCrewAssignmentsEntityList);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_flight_list(cabinCrewAssignmentsEntityList, cabinCrewEntity.get());
 
 
             return userDataDTO;
@@ -139,7 +141,7 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
             List<UserDataDTO> userDataDTOList = new ArrayList<>();
             for (CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity: cabinCrewAssignmentsEntityList){
 
-                UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_flight_list(cabinCrewAssignmentsEntityList);
+                UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_assignment(cabinCrewAssignmentsEntity);
                 userDataDTOList.add(userDataDTO);
             }
             return userDataDTOList;

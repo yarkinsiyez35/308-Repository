@@ -1,11 +1,14 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
+import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesAsStringDTO;
+import com.su.FlightScheduler.DTO.PilotDTOs.PilotWithLanguagesDTO;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.AttendantLanguageEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.DishRecipeEntity;
+import com.su.FlightScheduler.Util.LanguageEntityListToStringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +106,7 @@ public class UserDataDTOFactory {
         return userDataDTO;
     }
 
-    public static UserDataDTO create_cabin_crew_data_with_no_flight_from_pilot_entity(CabinCrewEntity cabinCrewEntity){
+    public static UserDataDTO create_cabin_crew_data_with_no_flight_from_cabin_crew_entity(CabinCrewEntity cabinCrewEntity){
         UserDataDTO userDataDTO = new UserDataDTO();
         userDataDTO.setEmail(cabinCrewEntity.getEmail());
         userDataDTO.setPassword(cabinCrewEntity.getPassword());
@@ -178,31 +181,84 @@ public class UserDataDTOFactory {
     public static List<UserDataDTO> create_available_attendant_list(List<CabinCrewEntity> cabinCrewEntityList){
         List<UserDataDTO> userDataDTOList = new ArrayList<>();
         for(CabinCrewEntity cabinCrewEntity : cabinCrewEntityList){
-            UserDataDTO userDataDTO = create_cabin_crew_data_with_no_flight_from_pilot_entity(cabinCrewEntity);
+            UserDataDTO userDataDTO = create_cabin_crew_data_with_no_flight_from_cabin_crew_entity(cabinCrewEntity);
             userDataDTOList.add(userDataDTO);
         }
         return userDataDTOList;
     }
 
     //this needs refactoring, list might be empty
-    public static UserDataDTO create_cabin_crew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList)
+    public static UserDataDTO create_cabin_crew_data_with_flight_list(List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList, CabinCrewEntity cabinCrewEntity)
+    {
+        if (cabinCrewAssignmentsEntityList == null || cabinCrewAssignmentsEntityList.isEmpty())
+        {
+            UserDataDTO userDataDTO = create_cabin_crew_data_with_no_flight_from_cabin_crew_entity(cabinCrewEntity);
+            return userDataDTO;
+        }
+        else
+        {
+            UserDataDTO userDataDTO = new UserDataDTO();
+            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = cabinCrewAssignmentsEntityList.get(0);
+            userDataDTO.setEmail(cabinCrewAssignmentsEntity.getCabinCrew().getEmail());
+            userDataDTO.setPassword(cabinCrewAssignmentsEntity.getCabinCrew().getPassword());
+            userDataDTO.setName(cabinCrewAssignmentsEntity.getCabinCrew().getFirstName());
+            userDataDTO.setSurname(cabinCrewAssignmentsEntity.getCabinCrew().getSurname());
+            userDataDTO.setId(Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId()));
+            userDataDTO.setAge( cabinCrewAssignmentsEntity.getCabinCrew().getAge());
+            userDataDTO.setGender(cabinCrewAssignmentsEntity.getCabinCrew().getGender());
+            userDataDTO.setNationality( cabinCrewAssignmentsEntity.getCabinCrew().getNationality());
+            userDataDTO.setUserType("CabinCrew");
+            userDataDTO.setSeniority(cabinCrewAssignmentsEntity.getCabinCrew().getSeniority());
+            List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+            for (CabinCrewAssignmentsEntity cabinCrewAssignment : cabinCrewAssignmentsEntityList){
+                userFlightDataDTOList.add(new UserFlightDataDTO(cabinCrewAssignment.getFlight(), cabinCrewAssignment));
+            }
+            userDataDTO.setFlights(userFlightDataDTOList);
+            return userDataDTO;
+        }
+    }
+
+    public static UserDataDTO create_cabin_crew_data_with_assignment(CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO(cabinCrewAssignmentsEntity);
+        return userDataDTO;
+
+    }
+    public static UserDataDTO create_pilot_data_with_pilotWithLanguagesDTO(PilotWithLanguagesDTO pilotWithLanguagesDTO)
     {
         UserDataDTO userDataDTO = new UserDataDTO();
-        CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = cabinCrewAssignmentsEntityList.get(0);
-        userDataDTO.setEmail(cabinCrewAssignmentsEntity.getCabinCrew().getEmail());
-        userDataDTO.setPassword(cabinCrewAssignmentsEntity.getCabinCrew().getPassword());
-        userDataDTO.setName(cabinCrewAssignmentsEntity.getCabinCrew().getFirstName());
-        userDataDTO.setSurname(cabinCrewAssignmentsEntity.getCabinCrew().getSurname());
-        userDataDTO.setId(Integer.toString(cabinCrewAssignmentsEntity.getCabinCrew().getAttendantId()));
-        userDataDTO.setAge( cabinCrewAssignmentsEntity.getCabinCrew().getAge());
-        userDataDTO.setGender(cabinCrewAssignmentsEntity.getCabinCrew().getGender());
-        userDataDTO.setNationality( cabinCrewAssignmentsEntity.getCabinCrew().getNationality());
-        userDataDTO.setUserType("CabinCrew");
-        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
-        for (CabinCrewAssignmentsEntity cabinCrewAssignment : cabinCrewAssignmentsEntityList){
-            userFlightDataDTOList.add(new UserFlightDataDTO(cabinCrewAssignment.getFlight(), cabinCrewAssignment));
-        }
-        userDataDTO.setFlights(userFlightDataDTOList);
+        userDataDTO.setEmail(pilotWithLanguagesDTO.getEmail());
+        userDataDTO.setPassword(pilotWithLanguagesDTO.getPassword());
+        userDataDTO.setName(pilotWithLanguagesDTO.getFirstName());
+        userDataDTO.setSurname(pilotWithLanguagesDTO.getSurname());
+        userDataDTO.setId(Integer.toString(pilotWithLanguagesDTO.getPilotId()));
+        userDataDTO.setAge(pilotWithLanguagesDTO.getAge());
+        userDataDTO.setGender(pilotWithLanguagesDTO.getGender());
+        userDataDTO.setNationality(pilotWithLanguagesDTO.getNationality());
+        userDataDTO.setUserType("PilotCrew");
+        userDataDTO.setSeniority(pilotWithLanguagesDTO.getSeniority());
+        userDataDTO.setLanguages(LanguageEntityListToStringConverter.conver_string_list_to_string(pilotWithLanguagesDTO.getLanguages()));
+        userDataDTO.setFlights(null);
+        userDataDTO.setRecipe(null);
+        return userDataDTO;
+    }
+
+    public static UserDataDTO create_pilot_with_pilot_entity(PilotEntity pilotEntity)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(pilotEntity.getEmail());
+        userDataDTO.setPassword(pilotEntity.getPassword());
+        userDataDTO.setName(pilotEntity.getFirstName());
+        userDataDTO.setSurname(pilotEntity.getSurname());
+        userDataDTO.setId(Integer.toString(pilotEntity.getPilotId()));
+        userDataDTO.setAge(pilotEntity.getAge());
+        userDataDTO.setGender(pilotEntity.getGender());
+        userDataDTO.setNationality(pilotEntity.getNationality());
+        userDataDTO.setUserType("PilotCrew");
+        userDataDTO.setSeniority(pilotEntity.getSeniority());
+        userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_pilot_language_entity_list_to_string(pilotEntity.getLanguages()));
+        userDataDTO.setFlights(null);
+        userDataDTO.setRecipe(null);
         return userDataDTO;
     }
 }
