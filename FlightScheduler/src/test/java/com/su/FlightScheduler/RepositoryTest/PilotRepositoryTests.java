@@ -9,6 +9,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -41,5 +42,22 @@ public class PilotRepositoryTests {
 
         Assertions.assertThat(pilot.isPresent()).isEqualTo(true);
     }
+
+    @Test
+    public void PilotRepository_FindBySeniorityAndAllowedRangeGreaterThanEqual() {
+        PilotEntity seniorPilot = new PilotEntity(0, "senior@gmail.com", "password", "first name", "surname", 40, "male", 7000, "Alien", "Senior");
+        PilotEntity juniorPilot = new PilotEntity(0, "junior@gmail.com", "password", "first name", "surname", 25, "female", 3000, "Alien", "Junior");
+        pilotRepository.save(seniorPilot);
+        pilotRepository.save(juniorPilot);
+
+        List<PilotEntity> seniorPilots = pilotRepository.findPilotEntityBySeniorityAndAllowedRangeGreaterThanEqual("Senior", 5000);
+
+        Assertions.assertThat(seniorPilots).isNotEmpty();
+        Assertions.assertThat(seniorPilots.size()).isEqualTo(1);
+        Assertions.assertThat(seniorPilots.get(0).getEmail()).isEqualTo("senior@gmail.com");
+        Assertions.assertThat(seniorPilots.get(0).getAllowedRange()).isGreaterThanOrEqualTo(5000);
+    }
+
+
 
 }
