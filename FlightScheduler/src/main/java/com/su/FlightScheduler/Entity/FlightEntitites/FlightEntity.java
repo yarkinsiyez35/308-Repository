@@ -1,5 +1,6 @@
-package com.su.FlightScheduler.Entity;
+package com.su.FlightScheduler.Entity.FlightEntitites;
 
+import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import jakarta.persistence.*;
 

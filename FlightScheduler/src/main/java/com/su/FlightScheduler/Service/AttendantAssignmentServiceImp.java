@@ -3,7 +3,8 @@ package com.su.FlightScheduler.Service;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.*;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.CityEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinAssignmentRepository;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.FlightRepository;
@@ -166,7 +167,8 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         }
         FlightEntity flight = flightRepository.findById(flightNumber).get();
         LocalDateTime departureTime = flight.getDepartureDateTime();
-        String sourceCity = flight.getSourceAirport().getCity();
+        CityEntity sourceCityEntity = flight.getSourceAirport().getCity();
+        String sourceCity = sourceCityEntity.getCityName();
         int flightRange = flight.getFlightRange();
 
         List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList = cabinAssignmentRepository.findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_FlightNumber(flightNumber);

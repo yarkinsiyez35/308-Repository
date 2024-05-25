@@ -4,6 +4,9 @@ import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.Entity.*;
+import com.su.FlightScheduler.Entity.FlightEntitites.AirportEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.PlaneEntity;
 import com.su.FlightScheduler.Repository.VehicleTypeRepository;
 
 import java.time.LocalDateTime;
@@ -13,7 +16,8 @@ import java.util.Map;
 
 public interface FlightService {
 
-    FlightEntity saveFlight(FlightDataDTO flightDataDTO, int adminId);
+    FlightEntity getFlightOrThrow(String flightId);
+    FlightEntity createFlight(FlightDataDTO flightDataDTO, int adminId);
     FlightEntity saveFlightObj(FlightEntity flight);
     FlightEntity createFlightFilled(String flightNumber, String flightInfo, AirportEntity
             sourceAirport, AirportEntity destinationAirport, PlaneEntity plane, Integer flightRange,
@@ -21,31 +25,31 @@ public interface FlightService {
                                     LocalDateTime landingDateTime, boolean sharedFlight,
                                     CompanyEntity sharedFlightCompany, AdminEntity admin,
                                     String standardMenu);
-    FlightEntity createFlight(String flightNumber, String flightInfo, AdminEntity admin);
-    FlightEntity addFlightParams1(String flightNumber, PlaneEntity plane, AirportEntity sourceAirport, AirportEntity destinationAirport);
-    FlightEntity addFlightParams2(String flightNumber, Integer flightRange, LocalDateTime departureDateTime, LocalDateTime landingDateTime);
-    FlightEntity addFlightParams3(String flightNumber, boolean sharedFlight, CompanyEntity sharedFlightCompany);
+
 
     // --- Find Methods ---
     Optional<FlightEntity> findFlightByNumber(String flightNumber);
+    FlightDataDTO findFlightByNumberDTO(String flightNumber);
     List<FlightEntity> findAllFlights();
-    List<FlightEntity> findFlightsByDepartureAirport(String airportCode);
-    List<FlightEntity> findFlightsByDestinationAirport(String airportCode);
-    List<FlightEntity> findFlightsByDepartureAndDestinationAirport(String departureAirportCode, String destinationAirportCode);
-    List<FlightEntity> findFlightsByDepartureDateTime(LocalDateTime departureDateTime);
-    List<FlightEntity> findFlightsByLandingDateTime(LocalDateTime landingDateTime);
-    List<FlightEntity> findFlightsByDepartureAndLandingDateTime(LocalDateTime departureDateTime, LocalDateTime landingDateTime);
-    List<FlightEntity> findFlightsByDepartureAirportAndDepartureDateTime(String airportCode, LocalDateTime departureDateTime);
-    List<FlightEntity> findFlightsByDestinationAirportAndLandingDateTime(String airportCode, LocalDateTime landingDateTime);
-    List<FlightEntity> findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime(String departureAirportCode, String destinationAirportCode, LocalDateTime departureDateTime, LocalDateTime landingDateTime);
-    List<FlightEntity> findFlightsByDepartureAirportAndDestinationAirportAndDepartureAndLandingDateTime(String departureAirportCode, String destinationAirportCode, LocalDateTime departureDateTime, LocalDateTime landingDateTime);
+    List<FlightDataDTO> findAllFlightsDTO();
+    List<FlightDataDTO> findFlightsByDepartureAirport(String airportCode);
+    List<FlightDataDTO> findFlightsByDestinationAirport(String airportCode);
+    List<FlightDataDTO> findFlightsByDepartureAndDestinationAirport(String departureAirportCode, String destinationAirportCode);
+    List<FlightDataDTO> findFlightsByDepartureDateTime(LocalDateTime departureDateTime);
+    List<FlightDataDTO> findFlightsByLandingDateTime(LocalDateTime landingDateTime);
+    List<FlightDataDTO> findFlightsByDepartureAndLandingDateTime(LocalDateTime departureDateTime, LocalDateTime landingDateTime);
+    List<FlightDataDTO> findFlightsByDepartureAirportAndDepartureDateTime(String airportCode, LocalDateTime departureDateTime);
+    List<FlightDataDTO> findFlightsByDestinationAirportAndLandingDateTime(String airportCode, LocalDateTime landingDateTime);
+    List<FlightDataDTO> findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime(String departureAirportCode, String destinationAirportCode, LocalDateTime departureDateTime, LocalDateTime landingDateTime);
+
     // --- End of Find Methods ---
 
     void deleteFlightByNumber(String flightNumber);
 
 
     // --- Update Methods ---
-    FlightEntity updateFlight(FlightEntity flight);
+    FlightEntity updateFlightByFlightObject(FlightEntity flight);
+    FlightEntity updateFlightByFlightDTO(FlightDataDTO flight, int adminId);
     FlightEntity updateFlightInfo(String flightNumber, String flightInfo);
     FlightEntity updateSourceAirport(String flightNumber, AirportEntity sourceAirport);
     FlightEntity updateDestinationAirport(String flightNumber, AirportEntity destinationAirport);
@@ -67,12 +71,6 @@ public interface FlightService {
     LocalDateTime getDateTime(String flightNumber);
     // --- End of Getters for the entities ---
 
-
-
-    AirportEntity getAirportFromRequest(Map<String, Object> request, String key);
-    PlaneEntity getPlaneFromRequest(Map<String, Object> request, String key);
-    CompanyEntity getCompanyFromRequest(Map<String, Object> request, String key);
-    LocalDateTime getDateTimeFromRequest(Map<String, Object> request, String key);
 
     // --- Getters for DTOs (Projections) ---
     VehicleTypeRepository.SeatingPlanProjection findSeatingPlanByFlightNumber(String flightNumber);

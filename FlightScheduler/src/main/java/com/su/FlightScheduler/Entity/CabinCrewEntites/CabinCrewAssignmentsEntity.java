@@ -1,7 +1,6 @@
 package com.su.FlightScheduler.Entity.CabinCrewEntites;
 
-import com.su.FlightScheduler.Entity.FlightEntity;
-import com.su.FlightScheduler.Entity.PilotEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import jakarta.persistence.*;
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
 package com.su.FlightScheduler.RepositoryTest;
 
-import com.su.FlightScheduler.Entity.VehicleTypeEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.VehicleTypeEntity;
 import com.su.FlightScheduler.Repository.VehicleTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

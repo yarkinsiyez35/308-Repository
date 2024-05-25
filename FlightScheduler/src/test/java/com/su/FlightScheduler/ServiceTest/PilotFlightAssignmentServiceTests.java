@@ -2,11 +2,12 @@ package com.su.FlightScheduler.ServiceTest;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.Entity.*;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.PlaneEntity;
 import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotAssignmentRepository;
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import com.su.FlightScheduler.Service.PilotFlightAssignmentServiceImp;
-import com.su.FlightScheduler.Util.FlightDateChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

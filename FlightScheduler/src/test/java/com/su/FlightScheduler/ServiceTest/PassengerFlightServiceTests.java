@@ -1,7 +1,7 @@
 package com.su.FlightScheduler.ServiceTest;
 
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Repository.PassengerFlightRepository;
 import com.su.FlightScheduler.Service.PassengerFlightServiceImp;

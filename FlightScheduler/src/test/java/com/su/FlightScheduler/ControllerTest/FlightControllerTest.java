@@ -1,9 +1,11 @@
 package com.su.FlightScheduler.ControllerTest;
 
 import com.su.FlightScheduler.APIs.FlightAPI.FlightController;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.Seats;
+import com.su.FlightScheduler.Entity.FlightEntitites.*;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Service.FlightService;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,17 +16,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class FlightControllerTest {
+public class FlightControllerTest {
 
     @Mock
     private FlightService flightService;
@@ -32,453 +33,501 @@ class FlightControllerTest {
     @InjectMocks
     private FlightController flightController;
 
-    private FlightEntity flight;
-    private AdminEntity admin;
-    private AirportEntity airport;
+    private FlightDataDTO flightDataDTO;
+    private FlightEntity flightEntity;
+    private AirportEntity sourceAirport;
+    private AirportEntity destinationAirport;
     private PlaneEntity plane;
     private CompanyEntity company;
+    private AdminEntity admin;
+
+
+    private VehicleTypeEntity vehicleType;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        admin = new AdminEntity();
-        admin.setAdminId(1);
+        CityEntity sourceCity = new CityEntity();
+        sourceCity.setCityName("Istanbul");
+        sourceCity.setLatitude(42.0);
+        sourceCity.setLongitude(29.0);
 
-        airport = new AirportEntity();
-        airport.setAirportCode("JFK");
+        CityEntity destinationCity = new CityEntity();
+        destinationCity.setCityName("Ankara");
+        destinationCity.setLatitude(39.0);
+        destinationCity.setLongitude(35.0);
+
+        sourceAirport = new AirportEntity();
+        sourceAirport.setAirportCode("IST");
+        sourceAirport.setAirportName("Istanbul Airport");
+        sourceAirport.setCity(sourceCity);
+
+        destinationAirport = new AirportEntity();
+        destinationAirport.setAirportCode("ESB");
+        destinationAirport.setAirportName("Esenboga Airport");
+        destinationAirport.setCity(destinationCity);
+
+        vehicleType = new VehicleTypeEntity();
+        vehicleType.setVehicleType("Boeing3169");
+        vehicleType.setSeniorAttendeeCapacity(2);
+        vehicleType.setJuniorAttendeeCapacity(2);
+        vehicleType.setSeatingPlan("2|2*10=2|2*40");
 
         plane = new PlaneEntity();
-        plane.setPlaneId(1);
+        plane.setPlaneId(3169);
+        plane.setVehicleType(vehicleType);
 
         company = new CompanyEntity();
-        company.setCompanyName("AirlineCompany");
+        company.setCompanyName("TestAirlines");
 
-        flight = new FlightEntity();
-        flight.setFlightNumber("FL123");
-        flight.setAdmin(admin);
-        flight.setSourceAirport(airport);
-        flight.setDestinationAirport(airport);
-        flight.setPlane(plane);
-        flight.setFlightRange(1000);
-        flight.setDepartureDateTime(LocalDateTime.now());
-        flight.setLandingDateTime(LocalDateTime.now().plusHours(2));
-        flight.setSharedFlight(false);
-        flight.setSharedFlightCompany(company);
+        admin = new AdminEntity();
+        admin.setAdminId(316962);
+
+        flightEntity = new FlightEntity();
+        flightEntity.setFlightNumber("SU1234");
+        flightEntity.setFlightInfo("Regular flight");
+        flightEntity.setSourceAirport(sourceAirport);
+        flightEntity.setDestinationAirport(destinationAirport);
+        flightEntity.setPlane(plane);
+        flightEntity.setFlightRange(500);
+        flightEntity.setDepartureDateTime(LocalDateTime.now().plusHours(2));
+        flightEntity.setLandingDateTime(LocalDateTime.now().plusHours(5));
+        flightEntity.setSharedFlight(false);
+        flightEntity.setSharedFlightCompany(null);
+        flightEntity.setAdmin(admin);
+        flightEntity.setStandardMenu("Standard Menu");
+
+        flightDataDTO = new FlightDataDTO();
+        flightDataDTO.setFrom("Istanbul");
+        flightDataDTO.setGoTo("Ankara");
+        flightDataDTO.setDepartureAirport("IST");
+        flightDataDTO.setLandingAirport("ESB");
+        flightDataDTO.setDepartureTime(LocalDateTime.now().plusHours(2));
+        flightDataDTO.setLandingTime(LocalDateTime.now().plusHours(5));
+        flightDataDTO.setPlaneType("Boeing3169");
+        flightDataDTO.setAirlineCompany("TestAirlines");
+        flightDataDTO.setFlightId("SU1234");  // Set the correct flightId here
+        flightDataDTO.setPlaneId("3169");
+        flightDataDTO.setMenu("Standard Menu");
     }
 
+
     @Test
-    void testSaveFlight() {
-        when(flightService.saveFlightObj(any(FlightEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.saveFlight(flight);
+    public void testSaveFlightFromDTO_Success() {
+        when(flightService.createFlight(any(FlightDataDTO.class), anyInt())).thenReturn(flightEntity);
+
+        ResponseEntity<Object> response = flightController.saveFlightFromDTO(flightDataDTO, 316962);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+
+        Object responseBody = response.getBody();
+        System.out.println("Response Body: " + responseBody);
+        assertNotNull(responseBody);
+
+        if (responseBody instanceof FlightDataDTO) {
+            FlightDataDTO savedFlightDTO = (FlightDataDTO) responseBody;
+            System.out.println("Saved Flight DTO: " + savedFlightDTO);
+            assertEquals("SU1234", savedFlightDTO.getFlightId());
+        } else {
+            fail("Response body is not of type FlightDataDTO");
+        }
+    }
+
+
+    @Test
+    public void testSaveFlightFromDTO_Fail() {
+        when(flightService.createFlight(any(FlightDataDTO.class), anyInt())).thenThrow(new RuntimeException("Error"));
+
+        ResponseEntity<Object> response = flightController.saveFlightFromDTO(flightDataDTO, 316962);
+
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+        assertEquals("Error", response.getBody());
     }
 
     @Test
-    void testSaveFlight_FlightNotFound() {
+    public void testSaveFlight_Success() {
+        when(flightService.saveFlightObj(any(FlightEntity.class))).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.saveFlight(flightEntity);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        FlightEntity savedFlight = (FlightEntity) response.getBody();
+        assertNotNull(savedFlight);
+        assertEquals("SU1234", savedFlight.getFlightNumber());
+    }
+
+    @Test
+    public void testSaveFlight_Fail() {
         when(flightService.saveFlightObj(any(FlightEntity.class))).thenThrow(new RuntimeException("Flight not found"));
-        ResponseEntity<?> response = flightController.saveFlight(flight);
+
+        ResponseEntity<?> response = flightController.saveFlight(flightEntity);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Flight not found", response.getBody());
     }
 
     @Test
-    void testCreateFlightFilled() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightInfo", "Info");
-        request.put("admin", admin);
+    public void testFindAllFlights_Success() {
+        when(flightService.findAllFlights()).thenReturn(List.of(flightEntity));
 
-        when(flightService.createFlight(anyString(), anyString(), any(AdminEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.createFlightFilled(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testCreateFlightFilled_FlightNotFound() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightInfo", "Info");
-        request.put("admin", admin);
-
-        when(flightService.createFlight(anyString(), anyString(), any(AdminEntity.class))).thenThrow(new RuntimeException("Flight not found"));
-        ResponseEntity<?> response = flightController.createFlightFilled(request);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testCreateFlight() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightInfo", "Info");
-        request.put("admin", admin);
-
-        when(flightService.createFlight(anyString(), anyString(), any(AdminEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.createFlight(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testCreateFlight_FlightNotFound() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightInfo", "Info");
-        request.put("admin", admin);
-
-        when(flightService.createFlight(anyString(), anyString(), any(AdminEntity.class))).thenThrow(new RuntimeException("Flight not found"));
-        ResponseEntity<?> response = flightController.createFlight(request);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams1() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("plane", plane);
-        request.put("sourceAirport", airport);
-        request.put("destinationAirport", airport);
-
-        when(flightService.getPlaneFromRequest(any(Map.class), anyString())).thenReturn(plane);
-        when(flightService.getAirportFromRequest(any(Map.class), anyString())).thenReturn(airport);
-        when(flightService.addFlightParams1(anyString(), any(PlaneEntity.class), any(AirportEntity.class), any(AirportEntity.class))).thenReturn(flight);
-
-        ResponseEntity<?> response = flightController.addFlightParams1(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams1_FlightNotFound() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("plane", plane);
-        request.put("sourceAirport", airport);
-        request.put("destinationAirport", airport);
-
-        when(flightService.getPlaneFromRequest(any(Map.class), anyString())).thenReturn(plane);
-        when(flightService.getAirportFromRequest(any(Map.class), anyString())).thenReturn(airport);
-        when(flightService.addFlightParams1(anyString(), any(PlaneEntity.class), any(AirportEntity.class), any(AirportEntity.class))).thenThrow(new RuntimeException("Flight not found"));
-
-        ResponseEntity<?> response = flightController.addFlightParams1(request);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams2() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightRange", 1000);
-        request.put("departureDateTime", "2024-01-01T10:00:00");
-        request.put("landingDateTime", "2024-01-01T12:00:00");
-
-        when(flightService.getDateTimeFromRequest(any(Map.class), anyString())).thenReturn(LocalDateTime.parse("2024-01-01T10:00:00"));
-        when(flightService.addFlightParams2(anyString(), anyInt(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(flight);
-
-        ResponseEntity<?> response = flightController.addFlightParams2(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams2_FlightNotFound() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("flightRange", 1000);
-        request.put("departureDateTime", "2024-01-01T10:00:00");
-        request.put("landingDateTime", "2024-01-01T12:00:00");
-
-        when(flightService.getDateTimeFromRequest(any(Map.class), anyString())).thenReturn(LocalDateTime.parse("2024-01-01T10:00:00"));
-        when(flightService.addFlightParams2(anyString(), anyInt(), any(LocalDateTime.class), any(LocalDateTime.class))).thenThrow(new RuntimeException("Flight not found"));
-
-        ResponseEntity<?> response = flightController.addFlightParams2(request);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams3() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("sharedFlight", true);
-        request.put("sharedFlightCompany", company);
-
-        when(flightService.getCompanyFromRequest(any(Map.class), anyString())).thenReturn(company);
-        when(flightService.addFlightParams3(anyString(), anyBoolean(), any(CompanyEntity.class))).thenReturn(flight);
-
-        ResponseEntity<?> response = flightController.addFlightParams3(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testAddFlightParams3_FlightNotFound() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("flightNumber", "FL123");
-        request.put("sharedFlight", true);
-        request.put("sharedFlightCompany", company);
-
-        when(flightService.getCompanyFromRequest(any(Map.class), anyString())).thenReturn(company);
-        when(flightService.addFlightParams3(anyString(), anyBoolean(), any(CompanyEntity.class))).thenThrow(new RuntimeException("Flight not found"));
-
-        ResponseEntity<?> response = flightController.addFlightParams3(request);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testFindFlightByNumber() {
-        when(flightService.findFlightByNumber(anyString())).thenReturn(Optional.of(flight));
-        ResponseEntity<?> response = flightController.findFlightByNumber("FL123");
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
-    }
-
-    @Test
-    void testFindFlightByNumber_FlightNotFound() {
-        when(flightService.findFlightByNumber(anyString())).thenReturn(Optional.empty());
-        ResponseEntity<?> response = flightController.findFlightByNumber("FL123");
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Flight not found", response.getBody());
-    }
-
-    @Test
-    void testFindAllFlights() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findAllFlights()).thenReturn(flights);
         ResponseEntity<?> response = flightController.findAllFlights();
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightEntity> flights = (List<FlightEntity>) response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightNumber());
     }
 
     @Test
-    void testFindAllFlights_NoFlightsFound() {
+    public void testFindAllFlights_Fail() {
         when(flightService.findAllFlights()).thenThrow(new RuntimeException("No flights found"));
+
         ResponseEntity<?> response = flightController.findAllFlights();
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("No flights found", response.getBody());
     }
 
     @Test
-    void testFindFlightsByDepartureAirport() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAirport(anyString())).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAirport("JFK");
+    public void testFindFlightByNumber_Success() {
+        when(flightService.findFlightByNumberDTO("SU1234")).thenReturn(flightDataDTO);
+
+        ResponseEntity<?> response = flightController.findFlightByNumber("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        FlightDataDTO flightDTO = (FlightDataDTO) response.getBody();
+        assertNotNull(flightDTO);
+        assertEquals("SU1234", flightDTO.getFlightId());
     }
 
     @Test
-    void testFindFlightsByDestinationAirport() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDestinationAirport(anyString())).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDestinationAirport("LAX");
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+    public void testFindFlightByNumber_Fail() {
+        when(flightService.findFlightByNumberDTO("SU1234")).thenThrow(new RuntimeException("Flight not found"));
+
+        ResponseEntity<?> response = flightController.findFlightByNumber("SU1234");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Flight not found", response.getBody());
     }
 
     @Test
-    void testFindFlightsByDepartureAndDestinationAirport() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAndDestinationAirport(anyString(), anyString())).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAndDestinationAirport("JFK", "LAX");
+    public void testGetAllFlights_Success() {
+        when(flightService.findAllFlightsDTO()).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<Object> response = flightController.getAllFlights();
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = (List<FlightDataDTO>) response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDepartureDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureDateTime(any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureDateTime(LocalDateTime.now());
+    public void testFindFlightsByDepartureAirport_Success() {
+        when(flightService.findFlightsByDepartureAirport("IST")).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureAirport("IST");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByLandingDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByLandingDateTime(any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByLandingDateTime(LocalDateTime.now());
+    public void testFindFlightsByDestinationAirport_Success() {
+        when(flightService.findFlightsByDestinationAirport("ESB")).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDestinationAirport("ESB");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDepartureAndLandingDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAndLandingDateTime(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAndLandingDateTime(LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+    public void testFindFlightsByDepartureAndDestinationAirport_Success() {
+        when(flightService.findFlightsByDepartureAndDestinationAirport("IST", "ESB")).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureAndDestinationAirport("IST", "ESB");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDepartureAirportAndDepartureDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAirportAndDepartureDateTime(anyString(), any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAirportAndDepartureDateTime("JFK", LocalDateTime.now());
+    public void testFindFlightsByDepartureDateTime_Success() {
+        when(flightService.findFlightsByDepartureDateTime(any(LocalDateTime.class))).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureDateTime(LocalDateTime.now().plusHours(2));
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDestinationAirportAndLandingDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDestinationAirportAndLandingDateTime(anyString(), any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDestinationAirportAndLandingDateTime("LAX", LocalDateTime.now());
+    public void testFindFlightsByLandingDateTime_Success() {
+        when(flightService.findFlightsByLandingDateTime(any(LocalDateTime.class))).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByLandingDateTime(LocalDateTime.now().plusHours(5));
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime(anyString(), anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime("JFK", "LAX", LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+    public void testFindFlightsByDepartureAndLandingDateTime_Success() {
+        when(flightService.findFlightsByDepartureAndLandingDateTime(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureAndLandingDateTime(LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(5));
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
     }
 
     @Test
-    void testFindFlightsByDepartureAirportAndDestinationAirportAndDepartureAndLandingDateTime() {
-        List<FlightEntity> flights = Collections.singletonList(flight);
-        when(flightService.findFlightsByDepartureAirportAndDestinationAirportAndDepartureAndLandingDateTime(anyString(), anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(flights);
-        ResponseEntity<List<FlightEntity>> response = flightController.findFlightsByDepartureAirportAndDestinationAirportAndDepartureAndLandingDateTime("JFK", "LAX", LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+    public void testUpdateFlightByFightDTO_Success() {
+        when(flightService.updateFlightByFlightDTO(any(FlightDataDTO.class), anyInt())).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateFlightByFightDTO(flightDataDTO, 316962);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flights, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals("SU1234", updatedFlight.getFlightNumber());
     }
 
     @Test
-    void testUpdateFlight() {
-        when(flightService.updateFlight(any(FlightEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateFlight(flight);
+    public void testDeleteFlightByNumber_Success() {
+        doNothing().when(flightService).deleteFlightByNumber("SU1234");
+
+        ResponseEntity<?> response = flightController.deleteFlightByNumber("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        verify(flightService, times(1)).deleteFlightByNumber("SU1234");
     }
 
     @Test
-    void testDeleteFlightByNumber() {
-        doNothing().when(flightService).deleteFlightByNumber(anyString());
-        ResponseEntity<?> response = flightController.deleteFlightByNumber("FL123");
+    public void testUpdateFlightInfo_Success() {
+        flightEntity.setFlightInfo("Updated flight info");
+        when(flightService.updateFlightInfo("SU1234", "Updated flight info")).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateFlightInfo("SU1234", "Updated flight info");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals("Updated flight info", updatedFlight.getFlightInfo());
     }
 
     @Test
-    void testUpdateFlightInfo() {
-        when(flightService.updateFlightInfo(anyString(), anyString())).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateFlightInfo("FL123", "Updated Info");
+    public void testUpdateSourceAirport_Success() {
+        when(flightService.updateSourceAirport("SU1234", sourceAirport)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateSourceAirport("SU1234", sourceAirport);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(sourceAirport, updatedFlight.getSourceAirport());
     }
 
     @Test
-    void testUpdateSourceAirport() {
-        when(flightService.updateSourceAirport(anyString(), any(AirportEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateSourceAirport("FL123", airport);
+    public void testUpdateDestinationAirport_Success() {
+        when(flightService.updateDestinationAirport("SU1234", destinationAirport)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateDestinationAirport("SU1234", destinationAirport);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(destinationAirport, updatedFlight.getDestinationAirport());
     }
 
     @Test
-    void testUpdateDestinationAirport() {
-        when(flightService.updateDestinationAirport(anyString(), any(AirportEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateDestinationAirport("FL123", airport);
+    public void testUpdatePlane_Success() {
+        when(flightService.updatePlane("SU1234", plane)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updatePlane("SU1234", plane);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(plane, updatedFlight.getPlane());
     }
 
     @Test
-    void testUpdatePlane() {
-        when(flightService.updatePlane(anyString(), any(PlaneEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updatePlane("FL123", plane);
+    public void testUpdateDepartureDateTime_Success() {
+        LocalDateTime newDepartureDateTime = LocalDateTime.now().plusDays(1);
+        flightEntity.setDepartureDateTime(newDepartureDateTime);
+        when(flightService.updateDepartureDateTime("SU1234", newDepartureDateTime)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateDepartureDateTime("SU1234", newDepartureDateTime.toString());
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(newDepartureDateTime, updatedFlight.getDepartureDateTime());
     }
 
     @Test
-    void testUpdateDepartureDateTime() {
-        LocalDateTime newDateTime = LocalDateTime.now().plusDays(1);
-        when(flightService.updateDepartureDateTime(anyString(), any(LocalDateTime.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateDepartureDateTime("FL123", newDateTime.toString());
+    public void testUpdateLandingDateTime_Success() {
+        LocalDateTime newLandingDateTime = LocalDateTime.now().plusDays(1);
+        flightEntity.setLandingDateTime(newLandingDateTime);
+        when(flightService.getFlightOrThrow("SU1234")).thenReturn(flightEntity); // Add this line
+        when(flightService.updateLandingDateTime("SU1234", newLandingDateTime)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateLandingDateTime("SU1234", newLandingDateTime.toString());
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(newLandingDateTime, updatedFlight.getLandingDateTime());
     }
 
     @Test
-    void testUpdateLandingDateTime() {
-        LocalDateTime newDateTime = LocalDateTime.now().plusDays(1).plusHours(2);
-        when(flightService.updateLandingDateTime(anyString(), any(LocalDateTime.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateLandingDateTime("FL123", newDateTime.toString());
+    public void testUpdateSharedFlightCompany_Success() {
+        flightEntity.setSharedFlightCompany(company);
+        when(flightService.updateSharedFlightCompany("SU1234", company)).thenReturn(flightEntity);
+
+        ResponseEntity<?> response = flightController.updateSharedFlightCompany("SU1234", company);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        FlightEntity updatedFlight = (FlightEntity) response.getBody();
+        assertNotNull(updatedFlight);
+        assertEquals(company, updatedFlight.getSharedFlightCompany());
     }
 
     @Test
-    void testUpdateSharedFlightCompany() {
-        when(flightService.updateSharedFlightCompany(anyString(), any(CompanyEntity.class))).thenReturn(flight);
-        ResponseEntity<?> response = flightController.updateSharedFlightCompany("FL123", company);
+    public void testGetSourceAirport_Success() {
+        when(flightService.getSourceAirport("SU1234")).thenReturn(sourceAirport);
+
+        ResponseEntity<?> response = flightController.getSourceAirport("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(flight, response.getBody());
+        AirportEntity airport = (AirportEntity) response.getBody();
+        assertNotNull(airport);
+        assertEquals("IST", airport.getAirportCode());
     }
 
     @Test
-    void testGetSourceAirport() {
-        when(flightService.getSourceAirport(anyString())).thenReturn(airport);
-        ResponseEntity<?> response = flightController.getSourceAirport("FL123");
+    public void testGetDestinationAirport_Success() {
+        when(flightService.getDestinationAirport("SU1234")).thenReturn(destinationAirport);
+
+        ResponseEntity<?> response = flightController.getDestinationAirport("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(airport, response.getBody());
+        AirportEntity airport = (AirportEntity) response.getBody();
+        assertNotNull(airport);
+        assertEquals("ESB", airport.getAirportCode());
     }
 
     @Test
-    void testGetDestinationAirport() {
-        when(flightService.getDestinationAirport(anyString())).thenReturn(airport);
-        ResponseEntity<?> response = flightController.getDestinationAirport("FL123");
+    public void testGetPlane_Success() {
+        when(flightService.getPlane("SU1234")).thenReturn(plane);
+
+        ResponseEntity<?> response = flightController.getPlane("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(airport, response.getBody());
+        PlaneEntity planeEntity = (PlaneEntity) response.getBody();
+        assertNotNull(planeEntity);
+        assertEquals(3169, planeEntity.getPlaneId());
     }
 
     @Test
-    void testGetPlane() {
-        when(flightService.getPlane(anyString())).thenReturn(plane);
-        ResponseEntity<?> response = flightController.getPlane("FL123");
+    public void testGetCompany_Success() {
+        when(flightService.getCompany("SU1234")).thenReturn(company);
+
+        ResponseEntity<?> response = flightController.getCompany("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(plane, response.getBody());
+        CompanyEntity companyEntity = (CompanyEntity) response.getBody();
+        assertNotNull(companyEntity);
+        assertEquals("TestAirlines", companyEntity.getCompanyName());
     }
 
     @Test
-    void testGetCompany() {
-        when(flightService.getCompany(anyString())).thenReturn(company);
-        ResponseEntity<?> response = flightController.getCompany("FL123");
+    public void testGetDateTime_Success() {
+        LocalDateTime departureTime = LocalDateTime.now().plusHours(2);
+        when(flightService.getDateTime("SU1234")).thenReturn(departureTime);
+
+        ResponseEntity<?> response = flightController.getDateTime("SU1234");
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company, response.getBody());
+        LocalDateTime dateTime = (LocalDateTime) response.getBody();
+        assertNotNull(dateTime);
+        assertEquals(departureTime, dateTime);
     }
 
     @Test
-    void testGetDateTime() {
-        LocalDateTime dateTime = LocalDateTime.now();
-        when(flightService.getDateTime(anyString())).thenReturn(dateTime);
-        ResponseEntity<?> response = flightController.getDateTime("FL123");
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dateTime, response.getBody());
-    }
+    public void testGetSeats_Success() {
+        when(flightService.decodeSeatingPlan("SU1234")).thenReturn(List.of(new SeatingTypeDTO()));
+        when(flightService.findBookedFlightsByFlightNumber("SU1234")).thenReturn(List.of(new SeatingDTO()));
 
-    @Test
-    void testGetSeats() {
-        List<SeatingTypeDTO> seatingTypeList = new ArrayList<>();
-        List<SeatingDTO> seatingDTOList = new ArrayList<>();
+        Seats seats = flightController.getSeats("SU1234");
 
-        when(flightService.decodeSeatingPlan(anyString())).thenReturn(seatingTypeList);
-        when(flightService.findBookedFlightsByFlightNumber(anyString())).thenReturn(seatingDTOList);
-
-        Seats seats = flightController.getSeats("FL123");
         assertNotNull(seats);
-        assertEquals(seatingTypeList, seats.getSeatList());
-        assertEquals(seatingDTOList, seats.getSeatingList());
+        assertEquals(1, seats.getSeatList().size());
+        assertEquals(1, seats.getSeatingList().size());
     }
+
+    @Test
+    public void testHandleEntityNotFoundException() {
+        EntityNotFoundException ex = new EntityNotFoundException("Entity not found");
+        ResponseEntity<String> response = flightController.handleEntityNotFoundException(ex);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Entity not found", response.getBody());
+    }
+
+    @Test
+    public void testSaveFlightFromDTO_InvalidData() {
+        flightDataDTO.setFlightId(null);
+        when(flightService.createFlight(any(FlightDataDTO.class), anyInt())).thenThrow(new RuntimeException("Error"));
+
+        ResponseEntity<Object> response = flightController.saveFlightFromDTO(flightDataDTO, 316962);
+
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+        assertEquals("Error", response.getBody());
+    }
+
+    @Test
+    public void testFindAllFlights_NoFlights() {
+        when(flightService.findAllFlights()).thenReturn(List.of());
+
+        ResponseEntity<?> response = flightController.findAllFlights();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<FlightEntity> flights = (List<FlightEntity>) response.getBody();
+        assertTrue(flights.isEmpty());
+    }
+
+    @Test
+    public void testFindFlightByNumber_NonExistentFlight() {
+        when(flightService.findFlightByNumberDTO("SU1234")).thenThrow(new RuntimeException("Flight not found"));
+
+        ResponseEntity<?> response = flightController.findFlightByNumber("SU1234");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Flight not found", response.getBody());
+    }
+
 }

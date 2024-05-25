@@ -1,7 +1,6 @@
 package com.su.FlightScheduler.Repository;
 
-import com.su.FlightScheduler.Entity.FlightEntity;
-import com.su.FlightScheduler.Entity.PassengerEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import org.springframework.data.jpa.repository.JpaRepository;
 

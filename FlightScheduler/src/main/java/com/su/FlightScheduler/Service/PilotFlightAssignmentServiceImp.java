@@ -2,7 +2,8 @@ package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.CityEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Entity.PilotAssignmentPK;
 import com.su.FlightScheduler.Entity.PilotEntity;
@@ -62,7 +63,8 @@ public class PilotFlightAssignmentServiceImp implements PilotFlightAssignmentSer
         }
         FlightEntity flight = flightRepository.findById(flightNumber).get();
         LocalDateTime departureTime = flight.getDepartureDateTime();
-        String sourceCity = flight.getSourceAirport().getCity();
+        CityEntity sourceCityEntity = flight.getSourceAirport().getCity();
+        String sourceCity = sourceCityEntity.getCityName();
         int flightRange = flight.getFlightRange();
         //find the currently assigned pilot list
         List<PilotAssignmentEntity> pilotAssignmentEntityList = pilotAssignmentRepository.findAllByPilotAssignmentPK_FlightNumber(flightNumber);

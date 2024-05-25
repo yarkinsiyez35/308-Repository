@@ -1,9 +1,6 @@
-package com.su.FlightScheduler.Entity;
+package com.su.FlightScheduler.Entity.FlightEntitites;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -15,8 +12,11 @@ public class AirportEntity implements Serializable {
     @Column(name = "airport_code")
     private String airportCode;
 
-    @Column(name = "city")
-    private String city;
+
+    @ManyToOne
+    @JoinColumn(name = "city", referencedColumnName = "city_name")
+    private CityEntity city;
+
 
     @Column(name = "country")
     private String country;
@@ -28,7 +28,7 @@ public class AirportEntity implements Serializable {
     public AirportEntity() {
     }
 
-    public AirportEntity(String airportCode, String city, String country, String airportName) {
+    public AirportEntity(String airportCode, CityEntity city, String country, String airportName) {
         this.airportCode = airportCode;
         this.city = city;
         this.country = country;
@@ -44,11 +44,11 @@ public class AirportEntity implements Serializable {
         this.airportCode = airportCode;
     }
 
-    public String getCity() {
+    public CityEntity getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(CityEntity city) {
         this.city = city;
     }
 

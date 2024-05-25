@@ -1,10 +1,9 @@
 package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
-import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
 import com.su.FlightScheduler.Util.SeatTypeFinder;

@@ -1,7 +1,7 @@
 package com.su.FlightScheduler.DTO;
 
-import com.su.FlightScheduler.Entity.AirportEntity;
-import com.su.FlightScheduler.Entity.FlightEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.AirportEntity;
+import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 
 
 import java.time.LocalDateTime;
