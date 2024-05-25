@@ -36,7 +36,7 @@ public class AuthenticationController {
            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
        }
     }
-
+    //    @CrossOrigin(value = "http://127.0.0.1:5500", )
     @PostMapping("/forgetPassword")
     public ResponseEntity<Object> forgetPassword(@RequestBody RegistrationDTO body)
     {
@@ -50,7 +50,6 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody RegistrationDTO body){

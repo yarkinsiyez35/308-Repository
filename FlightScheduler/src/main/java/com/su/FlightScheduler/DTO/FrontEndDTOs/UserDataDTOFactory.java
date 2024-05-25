@@ -288,4 +288,23 @@ public class UserDataDTOFactory {
         userDataDTO.setRecipe(null);
         return userDataDTO;
     }
+
+    public static UserDataDTO create_cabin_crew_with_cabin_crew_entity(CabinCrewEntity cabinCrewEntity)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(cabinCrewEntity.getEmail());
+        userDataDTO.setPassword(cabinCrewEntity.getPassword());
+        userDataDTO.setName(cabinCrewEntity.getFirstName());
+        userDataDTO.setSurname(cabinCrewEntity.getSurname());
+        userDataDTO.setId(Integer.toString(cabinCrewEntity.getAttendantId()));
+        userDataDTO.setAge(cabinCrewEntity.getAge());
+        userDataDTO.setGender(cabinCrewEntity.getGender());
+        userDataDTO.setNationality(cabinCrewEntity.getNationality());
+        userDataDTO.setUserType("CabinCrew");
+        userDataDTO.setSeniority(cabinCrewEntity.getSeniority());
+        userDataDTO.setLanguages(LanguageEntityListToStringConverter.convert_cabin_crew_language_entity_list_to_string(cabinCrewEntity.getLanguages()));
+        userDataDTO.setFlights(null);
+        userDataDTO.setRecipe(LanguageEntityListToStringConverter.convert_cabin_crew_dish_recipe_entity_list_to_string(cabinCrewEntity.getRecipes()));
+        return userDataDTO;
+    }
 }

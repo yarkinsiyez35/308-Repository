@@ -2,6 +2,8 @@ package com.su.FlightScheduler.APIs.CabinCrewAPI;
 
 
 import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesAsStringDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.DTO.LoginRequest;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewEntity;
 import com.su.FlightScheduler.DTO.CabinCrewDTOs.AttendantWithLanguagesDTO;
@@ -91,15 +93,16 @@ public class CabinCrewController {
     public  ResponseEntity<Object> createAttendantWithoutId(@RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
         try
         {
-
+            AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(attendantWithLanguagesAsStringDTO);
+            CabinCrewEntity cabinCrewEntity = new CabinCrewEntity(attendantWithLanguagesDTO, false);
+            CabinCrewEntity savedCabinCrew = attendantService.saveCabin(cabinCrewEntity);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_with_cabin_crew_entity(savedCabinCrew);
+            return ResponseEntity.ok(userDataDTO);
         }
         catch(RuntimeException e)
         {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
         }
-
-
-        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/{attendantId}")

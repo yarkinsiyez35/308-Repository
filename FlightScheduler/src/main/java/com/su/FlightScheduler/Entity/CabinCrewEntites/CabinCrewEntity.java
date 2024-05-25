@@ -73,8 +73,17 @@ public class CabinCrewEntity implements Serializable {
         //this.vehicleTypes = vehicleTypes; //ata added
     }
 
-    public CabinCrewEntity(CabinCrewEntity cabin) { // ata created this for controller error
-
+    public CabinCrewEntity(CabinCrewEntity cabin)
+    {
+        this.attendantId = cabin.getAttendantId();
+        this.email = cabin.getEmail();
+        this.password = cabin.getPassword();;
+        this.firstName = cabin.getFirstName();
+        this.surname = cabin.getSurname();
+        this.age = cabin.getAge();
+        this.gender = cabin.getGender();
+        this.nationality = cabin.getNationality();
+        this.seniority = cabin.getSeniority();
     }
 
     public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) { // ata created this for controller error
