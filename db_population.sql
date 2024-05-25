@@ -1,5 +1,22 @@
 use FlightSchedulerDB;
 
+-- insert values to cities
+INSERT INTO cities (city_name, latitude, longitude) VALUES
+    ('Istanbul', 41.0082, 28.9784),
+    ('Antalya', 36.8969, 30.7133),
+    ('Izmir', 38.4237, 27.1428),
+    ('Ankara', 39.9334, 32.8597),
+    ('Muğla', 37.2153, 28.3636),
+    ('Gaziantep', 37.0662, 37.3833),
+    ('Trabzon', 41.0015, 39.7178),
+    ('Nevşehir', 38.6244, 34.7231),
+    ('Kayseri', 38.7312, 35.4787),
+    ('Sivas', 39.7477, 37.0179),
+    ('Sakarya', 40.6935, 30.4358),
+    ('Bingöl', 38.8843, 40.4932),
+    ('Hatay', 36.4018, 36.3498),
+    ('Adana', 37.0000, 35.3213);
+
 -- insert values to airports 
 INSERT INTO airports (airport_code, city, country, airport_name) VALUES
     ('IST', 'Istanbul', 'Turkey', 'Istanbul Airport'),
