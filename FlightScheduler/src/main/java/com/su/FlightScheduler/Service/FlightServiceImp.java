@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Entity.FlightEntitites.*;
@@ -106,7 +107,11 @@ public class FlightServiceImp implements FlightService {
             }
             flightEntity.setFlightNumber(flightNumberRandom);
         }
-        else{
+        else if (flightRepository.findById(flightNumberFromRequest).isPresent())
+        {
+            throw new RuntimeException("Could not create flight, flight number already exists!");
+        }
+        else {
             flightEntity.setFlightNumber(flightNumberFromRequest);
         }
 
@@ -706,6 +711,60 @@ public class FlightServiceImp implements FlightService {
         // Determine the seat type based on the row number
         int rowNumber = Integer.parseInt(seatNumber.replaceAll("[^0-9]", ""));
         return rowNumber <= businessEndRow ? "business" : "economy";
+    }
+
+    public List<UserDataDTO> getUsersDTOByFlightNumber(String flightNumber) {
+        if (flightNumber == null || flightNumber.isEmpty()) {
+            throw new IllegalArgumentException("Flight number cannot be null or empty");
+        }
+
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+        if (flight == null) {
+            throw new EntityNotFoundException("Flight not found");
+        }
+
+        List<PassengerFlight> passengers = passengerFlightRepository.findPassengerFlightByFlight(flight);
+        if (passengers == null || passengers.isEmpty()) {
+            throw new EntityNotFoundException("No passengers found for the given flight");
+        }
+
+        return passengers.stream().map(passengerFlight -> {
+            if (passengerFlight == null || passengerFlight.getPassenger() == null) {
+                throw new EntityNotFoundException("Passenger not found");
+            }
+
+            UserDataDTO user = new UserDataDTO();
+            user.setEmail(passengerFlight.getPassenger().getEmail());
+            user.setPassword(passengerFlight.getPassenger().getPassword());
+            user.setName(passengerFlight.getPassenger().getFirstName());
+            user.setSurname(passengerFlight.getPassenger().getSurname());
+            user.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
+            user.setAge(passengerFlight.getPassenger().getAge());
+            user.setGender(passengerFlight.getPassenger().getGender());
+            user.setNationality(passengerFlight.getPassenger().getNationality());
+            user.setUserType("Passenger");
+            // You need to create a method to get the flights for the user
+            user.setFlights(new ArrayList<>());
+            return user;
+        }).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<String> getAvailableSeats(String flightNumber){
+
+        FlightEntity flight = getFlightOrThrow(flightNumber);
+
+        List<SeatingDTO> seats = findBookedFlightsByFlightNumber(flightNumber);
+
+        List<String> availableSeats = new ArrayList<>();
+        for(SeatingDTO seat : seats){
+            if(!seat.isStatus()){
+                String seatPosition = seat.getSeatPosition();
+                availableSeats.add(seatPosition);
+            }
+        }
+        return availableSeats;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.Entity.*;
@@ -80,4 +81,6 @@ public interface FlightService {
 
     List<SeatingTypeDTO> decodeSeatingPlan(String flightNumber);
     List<SeatingDTO> findBookedFlightsByFlightNumber(String flightNumber);
+    List<UserDataDTO> getUsersDTOByFlightNumber(String flightNumber);
+    List<String> getAvailableSeats(String flightNumber);
 }

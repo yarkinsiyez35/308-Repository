@@ -14,4 +14,6 @@ public interface PassengerFlightService {
     public PassengerFlight cancelFlight(int id);
     public List<PassengerFlightDTO> findAllBookings();
     public UserDataDTO findBookedFlightsByPassengerId(int passengerId);
-}
+    public PassengerFlight bookFlightAuto(int passengerId, String flightNumber, String isParent, Boolean isEconomy);
+
+    }

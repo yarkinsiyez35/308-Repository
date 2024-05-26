@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import com.su.FlightScheduler.Service.FlightService;
 
 //TESTING: this controller should be tested
 @RestController
@@ -24,11 +25,14 @@ public class MainSystemController {
     private final AttendantAssignmentService attendantAssignmentService;
     private final PassengerFlightService passengerFlightService;
 
+    private final FlightService flightService;
+
     @Autowired
-    public MainSystemController(PilotFlightAssignmentService pilotFlightAssignmentService, AttendantAssignmentService attendantAssignmentService, PassengerFlightService passengerFlightService) {
+    public MainSystemController(PilotFlightAssignmentService pilotFlightAssignmentService, AttendantAssignmentService attendantAssignmentService, PassengerFlightService passengerFlightService, FlightService flightService) {
         this.pilotFlightAssignmentService = pilotFlightAssignmentService;
         this.attendantAssignmentService = attendantAssignmentService;
         this.passengerFlightService = passengerFlightService;
+        this.flightService = flightService;
     }
 
     //functions for pilot and flight assignments
@@ -197,11 +201,11 @@ public class MainSystemController {
         }
     }
 
-    @GetMapping("/flight/{flightId}/getPassengers")
+    /*@GetMapping("/flight/{flightId}/getPassengers")
     public ResponseEntity<Object> getPassengersOfFlight(@PathVariable String flightId)
     {
         return null;
-    }
+    }*/
 
     @PostMapping("/passenger/{passengerId}/bookFlight/{flightNumber}/{isParent}")
     public ResponseEntity<Object> assignPassengerToFlight(@PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent, @RequestBody SeatingDTO seatingDTO)
@@ -231,6 +235,26 @@ public class MainSystemController {
         }
     }
 
+    @PostMapping("/passenger/{passengerId}/bookFlightAuto/{flightNumber}/{isParent}/{isEconomy}")
+    public ResponseEntity<Object> assignPassengerToFlightAutomatically(@PathVariable Boolean isEconomy, @PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent)
+    {
+        try {
+            PassengerFlight passengerFlight = passengerFlightService.bookFlightAuto(
+                    passengerId,
+                    flightNumber,
+                    isParent,
+                    isEconomy
+            );
+
+            UserDataDTO userDataDTO = new UserDataDTO(passengerFlight);
+
+            return ResponseEntity.ok(userDataDTO);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Error: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/passenger/{passengerId}/cancelBooking/{bookingId}")
     public ResponseEntity<Object> deleteFlightFromPassenger(@PathVariable int passengerId, @PathVariable int bookingId)
     {
@@ -245,5 +269,24 @@ public class MainSystemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @GetMapping("flight/{flightId}/getPassengers")
+    public ResponseEntity<Object> getPassengersOfFlight(@PathVariable String flightId)
+    {
+        try
+        {
+            List<UserDataDTO> userDataDTOList = flightService.getUsersDTOByFlightNumber(flightId);
+            return ResponseEntity.ok(userDataDTOList);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
 }
