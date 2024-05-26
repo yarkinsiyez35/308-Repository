@@ -92,6 +92,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/main/flight/{flightId}/getAvailablePilots").hasRole("Admin");
                     auth.requestMatchers("/main/flight/{flightId}/getPilots").hasAnyRole("Admin","PilotCrew");
                     auth.requestMatchers("/main/flight/{flightId}/getAttendants").hasAnyRole("Admin", "CabinCrew", "PilotCrew");
+                    auth.requestMatchers("/main/flight/{flightId}/getPassengers").hasAnyRole("Admin","CabinCrew","Passenger");
+                    auth.requestMatchers("/main/passenger/{passengerId}/getFlights").hasAnyRole("Admin","Passenger");
 
 
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
