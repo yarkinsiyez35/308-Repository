@@ -247,8 +247,9 @@ public class MainSystemController {
     }
 
     @PostMapping("/passenger/{passengerId}/bookFlightAuto/{flightNumber}/{isParent}/{isEconomy}")
-    public ResponseEntity<Object> assignPassengerToFlightAutomatically(@PathVariable Boolean isEconomy, @PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent)
+    public ResponseEntity<Object> assignPassengerToFlightAutomatically( @PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent, @PathVariable boolean isEconomy)
     {
+        System.out.println("here");
         try {
             PassengerFlight passengerFlight = passengerFlightService.bookFlightAuto(
                     passengerId,
