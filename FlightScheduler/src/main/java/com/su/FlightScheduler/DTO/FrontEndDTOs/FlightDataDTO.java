@@ -51,7 +51,7 @@ public class FlightDataDTO {
         }
         else
         {
-            this.airlineCompany = "No shared flight";
+            this.airlineCompany = "No Shared Flight";
         }
         this.flightId = flightEntity.getFlightNumber();
         this.planeId = Integer.toString(flightEntity.getPlane().getPlaneId());

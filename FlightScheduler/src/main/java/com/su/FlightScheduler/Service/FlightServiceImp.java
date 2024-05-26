@@ -161,7 +161,7 @@ public class FlightServiceImp implements FlightService {
         flightEntity.setDepartureDateTime(departureDateTime);
         flightEntity.setLandingDateTime(landingDateTime);
 
-        if (flightDataDTO.getAirlineCompany().equals("No shared flight"))
+        if (flightDataDTO.getAirlineCompany().equals("No Shared Flight"))
         {
             flightEntity.setSharedFlight(false);
             flightEntity.setSharedFlightCompany(null);
