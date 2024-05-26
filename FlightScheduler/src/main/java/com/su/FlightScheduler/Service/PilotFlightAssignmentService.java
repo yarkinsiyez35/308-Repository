@@ -7,7 +7,6 @@ import java.util.List;
 public interface PilotFlightAssignmentService
 {
     public UserDataDTO getFlightsOfPilot(int pilotId);   //return the flights of a given pilot with id
-
     public List<UserDataDTO> getAvailablePilotsForFlight(String flightNumber);  //return the list of available pilots for a given flight
     public UserDataDTO assignPilotToFlight(String flightNumber, int pilotId); //assign a pilot to a flight
     public UserDataDTO assignAPilotToFlightWithGivenRoleAndSeat(String flightNumber, String role, String seatNumber) throws RuntimeException;

@@ -180,6 +180,24 @@ public class MainSystemController {
         }
     }
 
+
+    @DeleteMapping("/attendant/{attendantId}/removeFromFlight/{flightNumber}")
+    public ResponseEntity<Object> removeAttendantFromFlight(@PathVariable int attendantId, @PathVariable String flightNumber)
+    {
+        try
+        {
+            UserDataDTO userDataDTO = attendantAssignmentService.removeAttendantFromFlight(flightNumber,attendantId);
+            return ResponseEntity.ok(userDataDTO);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     //functions for passenger and flight assignments
 
     @GetMapping("/passenger/{passengerId}/getFlights")
@@ -213,7 +231,6 @@ public class MainSystemController {
                     isParent,
                     seatingDTO.getSeatPosition()
             );
-
 
             //PassengerFlightDTO passengerFlightDTO = new PassengerFlightDTO(passengerFlight);
             UserDataDTO userDataDTO = new UserDataDTO(passengerFlight);
