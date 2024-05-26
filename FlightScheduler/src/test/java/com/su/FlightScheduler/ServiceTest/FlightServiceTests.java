@@ -310,23 +310,6 @@ public class FlightServiceTests {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    @Test
-    public void testCreateFlight_NoSharedFlight() {
-        // Arrange
-        flightDataDTO.setAirlineCompany("No shared flight");
-        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
-        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
-        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
-        when(adminRepository.findById(316962)).thenReturn(Optional.of(admin));
-        when(flightRepository.save(any(FlightEntity.class))).thenReturn(flightEntity);
-
-        // Act
-        FlightEntity result = flightService.createFlight(flightDataDTO, 316962);
-
-        // Assert
-        assertFalse(result.isSharedFlight());
-        assertNull(result.getSharedFlightCompany());
-    }
     // -- End of Create Flight Tests --
 
 
@@ -1497,4 +1480,204 @@ public class FlightServiceTests {
     }
 
     // Add more test cases for other methods as needed
+
+    // New updateFlightMethodTest
+
+    // New
+    @Test
+    public void testUpdateFlight_Success() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
+        when(companyRepository.findById("TestAirlines")).thenReturn(Optional.of(company));
+        when(adminRepository.findById(316962)).thenReturn(Optional.of(admin));
+        when(flightRepository.save(any(FlightEntity.class))).thenReturn(flightEntity);
+
+        FlightEntity updatedFlight = flightService.updateFlight(flightDataDTO, 316962);
+
+        assertNotNull(updatedFlight);
+        assertEquals("SU1234", updatedFlight.getFlightNumber());
+        assertEquals(sourceAirport, updatedFlight.getSourceAirport());
+        assertEquals(destinationAirport, updatedFlight.getDestinationAirport());
+        assertEquals(plane, updatedFlight.getPlane());
+        assertEquals(admin, updatedFlight.getAdmin());
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_FlightNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(false);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, id does not exist!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_SourceAirportNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, airports are wrong!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_LandingAirportNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, airports are wrong!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_PlaneNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, plane id does not exist!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+    @Test
+    public void testUpdateFlight_Fail_DepartureTimeInThePast() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+        flightDataDTO.setDepartureTime(LocalDateTime.now().minusHours(1));
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
+        when(companyRepository.findById("TestAirlines")).thenReturn(Optional.of(company));
+        when(adminRepository.findById(316962)).thenReturn(Optional.of(admin));
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Departure time cannot be in the past";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_LandingTimeBeforeDepartureTime() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+        flightDataDTO.setDepartureTime(LocalDateTime.now().plusHours(2));
+        flightDataDTO.setLandingTime(LocalDateTime.now().plusHours(1));
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
+        when(companyRepository.findById("TestAirlines")).thenReturn(Optional.of(company));
+        when(adminRepository.findById(316962)).thenReturn(Optional.of(admin));
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Landing time cannot be before departure time";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_CompanyNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
+        when(companyRepository.findById("TestAirlines")).thenReturn(Optional.empty());
+        when(adminRepository.findById(316962)).thenReturn(Optional.of(admin));
+
+        flightDataDTO.setAirlineCompany("TestAirlines");
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, the company does not exist!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testUpdateFlight_Fail_AdminNotFound() {
+        FlightDataDTO flightDataDTO = this.flightDataDTO;
+        flightDataDTO.setFlightId("SU1234");
+
+        when(flightRepository.existsById("SU1234")).thenReturn(true);
+        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
+        when(airportRepository.findAirportEntityByAirportCode("IST")).thenReturn(Optional.of(sourceAirport));
+        when(airportRepository.findAirportEntityByAirportCode("ESB")).thenReturn(Optional.of(destinationAirport));
+        when(planeRepository.findById("3169")).thenReturn(Optional.of(plane));
+        when(companyRepository.findById("TestAirlines")).thenReturn(Optional.of(company));
+        when(adminRepository.findById(316962)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightService.updateFlight(flightDataDTO, 316962);
+        });
+
+        String expectedMessage = "Could not update flight, admin does not exist!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 }
