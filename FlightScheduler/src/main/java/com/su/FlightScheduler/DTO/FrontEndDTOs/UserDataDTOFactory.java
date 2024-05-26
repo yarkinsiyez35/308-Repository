@@ -74,25 +74,35 @@ public class UserDataDTOFactory {
 
     }
 
-    //this needs refactoring, list might be empty
-    public static UserDataDTO create_passenger_data_with_given_flight(List<PassengerFlight> passengerFlightList) {
-        UserDataDTO userDataDTO = new UserDataDTO();
-        PassengerFlight passengerFlight = passengerFlightList.get(0);
-        userDataDTO.setEmail(passengerFlight.getPassenger().getEmail());
-        userDataDTO.setPassword(passengerFlight.getPassenger().getPassword());
-        userDataDTO.setName(passengerFlight.getPassenger().getFirstName());
-        userDataDTO.setSurname(passengerFlight.getPassenger().getSurname());
-        userDataDTO.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
-        userDataDTO.setAge(passengerFlight.getPassenger().getAge());
-        userDataDTO.setNationality(passengerFlight.getPassenger().getNationality());
-        userDataDTO.setUserType("Passenger");
-        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
-        for (PassengerFlight passengerFlight1 : passengerFlightList) {
-            userFlightDataDTOList.add(new UserFlightDataDTO(passengerFlight1.getFlight(), passengerFlight1));
-        }
-        return userDataDTO;
-    }
 
+    public static UserDataDTO create_passenger_data_with_flight_list(List<PassengerFlight> passengerFlightList, PassengerEntity passengerEntity) {
+
+        if (passengerFlightList.isEmpty()) {
+            UserDataDTO userDataDTO = create_passenger_data_with_no_flight_from_passenger_entity(passengerEntity);
+            return userDataDTO;
+        } else {
+            PassengerFlight passengerFlight = passengerFlightList.get(0);
+            UserDataDTO userDataDTO = new UserDataDTO();
+            userDataDTO.setEmail(passengerFlight.getPassenger().getEmail());
+            userDataDTO.setPassword(passengerFlight.getPassenger().getPassword());
+            userDataDTO.setName(passengerFlight.getPassenger().getFirstName());
+            userDataDTO.setSurname(passengerFlight.getPassenger().getSurname());
+            userDataDTO.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
+            userDataDTO.setAge(passengerFlight.getPassenger().getAge());
+            userDataDTO.setGender(passengerFlight.getPassenger().getGender());
+            userDataDTO.setNationality(passengerFlight.getPassenger().getNationality());
+            userDataDTO.setUserType("Passenger");
+            List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+            for (PassengerFlight passengerFlight1 : passengerFlightList) {
+                userFlightDataDTOList.add(new UserFlightDataDTO(passengerFlight1.getFlight(), passengerFlight1));
+            }
+            userDataDTO.setFlights(userFlightDataDTOList);
+            userDataDTO.setSeniority(null);
+            userDataDTO.setLanguages(null);
+            userDataDTO.setRecipe(null);
+            return userDataDTO;
+        }
+    }
     public static UserDataDTO create_passenger_data_with_no_flight_from_passenger_entity(PassengerEntity passengerEntity)
     {
         UserDataDTO userDataDTO = new UserDataDTO();

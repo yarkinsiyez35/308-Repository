@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.LoginRequest;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.DTO.SimplifiedPassengerDTO;
@@ -89,20 +90,5 @@ public class PassengerServiceImp implements PassengerService {
     public boolean authenticate(LoginRequest loginRequest) {
         Optional<PassengerEntity> passengerEntity = passengerRepository.findPassengerEntityByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         return passengerEntity.isPresent();
-    }
-
-    @Override
-    public List<PassengerFlightDTO> findBookedFlightsByPassengerId(int passengerId) {
-
-        PassengerEntity passenger = findPassengerById(passengerId); //runtime exception
-
-        //List<PassengerFlight> bookedFlights = passengerFlightRepository.findPassengerFlightByPassenger(passenger);
-        SimplifiedPassengerDTO passengerDTO = new SimplifiedPassengerDTO(passenger);
-        List<PassengerFlightDTO> bookedFlights = passengerDTO.getPassengerFlights();
-
-        if (bookedFlights.isEmpty()) {
-            throw new NoSuchElementException("No flights found for passenger with ID: " + passengerId); // no such element exception
-        }
-        return bookedFlights;
     }
 }

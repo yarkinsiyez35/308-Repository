@@ -1,11 +1,16 @@
 package com.su.FlightScheduler.ServiceTest;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
+import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
+import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PassengerFlightRepository;
+import com.su.FlightScheduler.Service.FlightService;
 import com.su.FlightScheduler.Service.PassengerFlightServiceImp;
 
+import com.su.FlightScheduler.Service.PassengerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,6 +30,15 @@ public class PassengerFlightServiceTests {
 
     @InjectMocks
     private PassengerFlightServiceImp bookingService;
+
+    @Mock
+    private FlightService flightService;
+
+    @Mock
+    private PassengerService passengerService;
+
+    @Mock
+    private FlightRepository flightRepository;
 
     @Mock
     private PassengerFlightRepository bookingRepo;
@@ -48,7 +62,7 @@ public class PassengerFlightServiceTests {
 
         when(bookingRepo.findById(id)).thenReturn(Optional.of(passengerFlight));
 
-        PassengerFlightDTO found = bookingService.findBookingById(id);
+        PassengerFlight found = bookingService.findBookingById(id);
 
         assertNotNull(found);
         assertEquals(id, found.getBookingId());
