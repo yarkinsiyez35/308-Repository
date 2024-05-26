@@ -81,7 +81,6 @@ public class UserFlightDataDTO {
             userSeat.setSeatType(seatType);
         }
 
-
         userSeat.setStatus(true);
         userSeat.setUserId(passengerFlight.getPassenger().getPassengerId());
         this.userSeat = userSeat;
