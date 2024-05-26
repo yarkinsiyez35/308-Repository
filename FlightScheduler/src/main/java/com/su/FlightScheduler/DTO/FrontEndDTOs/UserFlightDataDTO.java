@@ -2,13 +2,19 @@ package com.su.FlightScheduler.DTO.FrontEndDTOs;
 
 
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingTypeDTO;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.CabinCrewAssignmentsEntity;
 import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
+import com.su.FlightScheduler.Service.FlightService;
+import com.su.FlightScheduler.Service.FlightServiceImp;
 import com.su.FlightScheduler.Util.SeatTypeFinder;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 //this class is used to hold information about a pilot's assignment
 //this class will be used in PilotFullDTO as a List
@@ -18,7 +24,6 @@ public class UserFlightDataDTO {
     private LocalDateTime boughtTime;   //this part is used only for passengers
     private Integer purchaseId;     //this part is used only for passengers
     private String role;    //this part is used for pilot and cabin crew
-
 
     public UserFlightDataDTO() {
     }
@@ -65,8 +70,10 @@ public class UserFlightDataDTO {
         SeatingDTO userSeat = new SeatingDTO();
         userSeat.setSeatPosition(passengerFlight.getSeatNumber());
 
-        String seatType = SeatTypeFinder.getSeatType(passengerFlight.getSeatNumber(), flightEntity.getPlane().getVehicleType().getSeatingPlan());
-        if (passengerFlight.getIsParent() == "T")
+        //String seatType = SeatTypeFinder.getSeatType(passengerFlight.getSeatNumber(), flightEntity.getPlane().getVehicleType().getSeatingPlan());
+        //String seatType = FlightService.
+        String seatType = "economy";
+        if (Objects.equals(passengerFlight.getIsParent(), "T"))
         {
             userSeat.setSeatType(seatType + " with child");
         }
@@ -74,6 +81,8 @@ public class UserFlightDataDTO {
         {
             userSeat.setSeatType(seatType);
         }
+
+
         userSeat.setStatus(true);
         userSeat.setUserId(passengerFlight.getPassenger().getPassengerId());
         this.userSeat = userSeat;

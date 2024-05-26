@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.APIs;
 
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Service.PassengerFlightServiceImp;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/bookings")
@@ -24,11 +26,13 @@ public class BookingController {
 
     @PostMapping("/book")
     public ResponseEntity<Object> bookFlight(@RequestBody PassengerFlight booking)
-                                             /*
+/*
                                             @RequestParam int passengerId,
                                             @RequestParam String flightNumber,
                                             @RequestParam String isParent,
-                                            @RequestParam String seatNumber)*/
+                                            @RequestParam String seatNumber)
+
+ */
     {
 
         try {
@@ -43,9 +47,10 @@ public class BookingController {
             );
 
 
-            PassengerFlightDTO passengerFlightDTO = new PassengerFlightDTO(passengerFlight);
+            //PassengerFlightDTO passengerFlightDTO = new PassengerFlightDTO(passengerFlight);
+            UserDataDTO userDataDTO = new UserDataDTO(passengerFlight);
 
-            return ResponseEntity.ok(passengerFlightDTO);
+            return ResponseEntity.ok(userDataDTO);
 
         } catch (RuntimeException e) {//expected
 
@@ -81,8 +86,8 @@ public class BookingController {
     @DeleteMapping("/cancel/{bookingId}")
     public ResponseEntity<Object> cancelFlight(@PathVariable int bookingId) {
         try {
-            PassengerFlightDTO passengerFlight = bookingService.cancelFlight(bookingId);
-            return ResponseEntity.ok(passengerFlight);
+            PassengerFlight passengerFlight = bookingService.cancelFlight(bookingId);
+            return ResponseEntity.ok(new UserDataDTO(passengerFlight));
         } catch (RuntimeException e) { //expected
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -95,8 +100,8 @@ public class BookingController {
     public ResponseEntity<Object> findBookingById(@PathVariable int bookingId)
     {
         try {
-            PassengerFlightDTO passengerFlightDTO = bookingService.findBookingById(bookingId);
-            return ResponseEntity.ok(passengerFlightDTO);
+            PassengerFlight passengerFlight = bookingService.findBookingById(bookingId);
+            return ResponseEntity.ok(new UserDataDTO(passengerFlight));
         }
         catch (RuntimeException e) { //expected
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -112,4 +117,25 @@ public class BookingController {
         List<PassengerFlightDTO> bookings = bookingService.findAllBookings();
         return ResponseEntity.ok(bookings);
     }
+
+
+    @GetMapping("/booked_flights/{passengerId}")
+    public ResponseEntity<Object> findBookedFlightsByPassengerId(@PathVariable int passengerId) {
+        try {
+            UserDataDTO flights = bookingService.findBookedFlightsByPassengerId(passengerId);
+
+            return ResponseEntity.ok(flights);
+        }
+        catch (RuntimeException e) {
+            if (e instanceof NoSuchElementException) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            } else {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+            }
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

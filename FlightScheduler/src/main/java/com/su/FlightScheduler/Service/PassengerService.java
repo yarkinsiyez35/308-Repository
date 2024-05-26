@@ -16,5 +16,5 @@ public interface PassengerService {
     public PassengerEntity updatePassenger(PassengerEntity passenger);
     public PassengerEntity deletePassengerById(int id);
     public boolean authenticate(LoginRequest loginRequest);
-    public List<PassengerFlightDTO> findBookedFlightsByPassengerId(int passengerId);
+    //public List<PassengerFlightDTO> findBookedFlightsByPassengerId(int passengerId);
 }

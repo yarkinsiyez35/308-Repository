@@ -1,5 +1,7 @@
 package com.su.FlightScheduler.Service;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.DTO.PassengerFlightDTO;
 import com.su.FlightScheduler.DTO.SimplifiedPassengerDTO;
 import com.su.FlightScheduler.DTO.forPassenger_FlightDTO;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 //TESTING: this service should be tested
@@ -47,9 +50,6 @@ public class PassengerFlightServiceImp implements PassengerFlightService {
                 () -> new RuntimeException("Flight with id: " + flightNumber + " does not exist!")
         );
 
-        SimplifiedPassengerDTO passengerDTO = new SimplifiedPassengerDTO(passenger);
-        forPassenger_FlightDTO flightDTO  = new forPassenger_FlightDTO(flight);
-
         // Create booking
         PassengerFlight book = new PassengerFlight(passenger, flight, isParent, seatNumber);
 
@@ -75,21 +75,21 @@ public class PassengerFlightServiceImp implements PassengerFlightService {
      */
 
     @Override
-    public PassengerFlightDTO findBookingById(int id)
+    public PassengerFlight findBookingById(int id)
     {
         PassengerFlight passengerFlight = passengerFlightRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Booking with id: " + id + " does not exist!")
         );
-        return new PassengerFlightDTO(passengerFlight);
+        return passengerFlight;
     }
 
     @Override
-    public PassengerFlightDTO cancelFlight(int id)
+    public PassengerFlight cancelFlight(int id)
     {
         try
         {
             //find the passengerFlight to delete
-            PassengerFlightDTO passengerFlight = findBookingById(id);
+            PassengerFlight passengerFlight = findBookingById(id);
             //delete the passengerEntity
             passengerFlightRepository.deleteById(id);
             //return the deleted passengerFlight
@@ -111,5 +111,20 @@ public class PassengerFlightServiceImp implements PassengerFlightService {
         return passengerFlights;
     }
 
+    @Override
+    public UserDataDTO findBookedFlightsByPassengerId(int passengerId) {
 
+        PassengerEntity passenger = passengerService.findPassengerById(passengerId); //runtime exception
+
+        //List<PassengerFlight> bookedFlights = passengerFlightRepository.findPassengerFlightByPassenger(passenger);
+        //SimplifiedPassengerDTO passengerDTO = new SimplifiedPassengerDTO(passenger);
+        List<PassengerFlight> bookedFlights = passenger.getPassengerFlights();
+
+        UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_flight_list(bookedFlights, passenger);
+
+        if (bookedFlights.isEmpty()) {
+            throw new NoSuchElementException("No flights found for passenger with ID: " + passengerId); // no such element exception
+        }
+        return userDataDTO;
+    }
 }
