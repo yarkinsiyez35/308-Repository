@@ -9,6 +9,7 @@ import com.su.FlightScheduler.Repository.PilotRepositories.PilotAssignmentReposi
 import com.su.FlightScheduler.Repository.PilotRepositories.PilotRepository;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,9 @@ public class PilotAssignmentRepositoryTests {
     private EntityManager entityManager;
 
 
-    @BeforeEach
-    public void cleanDatabase() {
+    @AfterEach
+    public void tearDown() {
         pilotAssignmentRepository.deleteAll();
-        flightRepository.deleteAll();
-        pilotRepository.deleteAll();
-        entityManager.flush();
-        entityManager.clear();
     }
 
     @Test

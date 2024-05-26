@@ -734,8 +734,6 @@ public class FlightServiceImp implements FlightService {
                 throw new EntityNotFoundException("Passenger not found");
             }
 
-
-
             UserDataDTO user = UserDataDTOFactory.create_passenger_with_passenger_flight(passengerFlight);
             return user;
         }).collect(Collectors.toList());
