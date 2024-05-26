@@ -218,11 +218,6 @@ public class MainSystemController {
         }
     }
 
-    /*@GetMapping("/flight/{flightId}/getPassengers")
-    public ResponseEntity<Object> getPassengersOfFlight(@PathVariable String flightId)
-    {
-        return null;
-    }*/
 
     @PostMapping("/passenger/{passengerId}/bookFlight/{flightNumber}/{isParent}")
     public ResponseEntity<Object> assignPassengerToFlight(@PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent, @RequestBody SeatingDTO seatingDTO)

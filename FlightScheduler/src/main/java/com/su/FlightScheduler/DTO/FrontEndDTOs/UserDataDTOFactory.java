@@ -318,4 +318,28 @@ public class UserDataDTOFactory {
         userDataDTO.setRecipe(LanguageEntityListToStringConverter.convert_cabin_crew_dish_recipe_entity_list_to_string(cabinCrewEntity.getRecipes()));
         return userDataDTO;
     }
+
+    public static UserDataDTO create_passenger_with_passenger_flight(PassengerFlight passengerFlight)
+    {
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setEmail(passengerFlight.getPassenger().getEmail());
+        userDataDTO.setPassword(passengerFlight.getPassenger().getPassword());
+        userDataDTO.setName(passengerFlight.getPassenger().getFirstName());
+        userDataDTO.setSurname(passengerFlight.getPassenger().getSurname());
+        userDataDTO.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
+        userDataDTO.setAge(passengerFlight.getPassenger().getAge());
+        userDataDTO.setGender(passengerFlight.getPassenger().getGender());
+        userDataDTO.setNationality(passengerFlight.getPassenger().getNationality());
+        userDataDTO.setUserType("Passenger");
+        List<UserFlightDataDTO> userFlightDataDTOList = new ArrayList<>();
+        UserFlightDataDTO userFlightDataDTO = new UserFlightDataDTO(passengerFlight.getFlight(), passengerFlight);
+        userFlightDataDTOList.add(userFlightDataDTO);
+        userDataDTO.setFlights(userFlightDataDTOList);
+        userDataDTO.setSeniority(null);
+        userDataDTO.setLanguages(null);
+        userDataDTO.setRecipe(null);
+        return userDataDTO;
+    }
+
+
 }
