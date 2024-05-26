@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.su.FlightScheduler.Repository.PassengerRepository;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -25,19 +26,24 @@ public class PassengerFlightRepositoryTests {
     
     @Autowired
     private FlightRepository flightRepository;
+
+    @Autowired
+    private PassengerRepository passengerRepository;
+
+
 /*
+
     @Test
     public void PassengerFlightRepository_FindPassengerFlightByFlight() {
         // Create FlightEntity
         FlightEntity flightEntity = new FlightEntity();
         flightEntity.setFlightNumber("FN123");
-        /*
         flightEntity.setDepartureDateTime(LocalDateTime.now());
         flightEntity.setSourceAirport(null);
         flightEntity.setDestinationAirport(null);
         flightEntity.setPlane(null);
         flightEntity.setFlightRange(1000);
-        
+
 
         // Save FlightEntity first
         flightEntity = flightRepository.save(flightEntity);
@@ -47,6 +53,13 @@ public class PassengerFlightRepositoryTests {
         passengerEntity.setPassengerId(1);
         passengerEntity.setEmail("email@gmail.com");
         passengerEntity.setPassword("password");
+        passengerEntity.setFirstName("John"); // Set the first name
+        passengerEntity.setSurname("Doe"); // Set the surname
+        passengerEntity.setGender("Male"); // Set the gender
+        passengerEntity.setNationality("USA");
+
+        // Save PassengerEntity
+        passengerEntity = passengerRepository.save(passengerEntity);
 
         // Create PassengerFlight
         PassengerFlight passengerFlight = new PassengerFlight();
@@ -69,5 +82,6 @@ public class PassengerFlightRepositoryTests {
     }
 
      */
+
 }
 
