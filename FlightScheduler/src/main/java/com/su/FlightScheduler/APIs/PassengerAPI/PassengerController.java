@@ -73,8 +73,10 @@ public class PassengerController {
         try{
             PassengerEntity passengerEntity = passengerService.findPassengerById(passengerId);
             updatedPassenger.setPassengerId(passengerId); // Ensure the ID is set correctly
+            updatedPassenger.setPassengerFlights(passengerEntity.getPassengerFlights());
             PassengerEntity updatedPassengerEntity = passengerService.updatePassenger(updatedPassenger);
-            return ResponseEntity.ok(updatedPassengerEntity);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_no_flight_from_passenger_entity(updatedPassengerEntity);
+            return ResponseEntity.ok(userDataDTO);
         }
         catch (RuntimeException e) { //expected
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
