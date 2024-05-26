@@ -1322,6 +1322,7 @@ public class FlightServiceTests {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+
     /*@Test
     public void testGetUsersDTOByFlightNumber_Success() {
         // Arrange
@@ -1495,4 +1496,5 @@ public class FlightServiceTests {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    // Add more test cases for other methods as needed
 }

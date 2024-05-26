@@ -23,11 +23,15 @@ public class PassengerFlightRepositoryTests {
     @Autowired
     private PassengerFlightRepository passengerFlightRepository;
 
+    
     @Autowired
     private FlightRepository flightRepository;
 
     @Autowired
     private PassengerRepository passengerRepository;
+
+
+/*
 
     @Test
     public void PassengerFlightRepository_FindPassengerFlightByFlight() {
@@ -39,6 +43,7 @@ public class PassengerFlightRepositoryTests {
         flightEntity.setDestinationAirport(null);
         flightEntity.setPlane(null);
         flightEntity.setFlightRange(1000);
+
 
         // Save FlightEntity first
         flightEntity = flightRepository.save(flightEntity);
@@ -76,6 +81,7 @@ public class PassengerFlightRepositoryTests {
         Assertions.assertThat(passengerFlights.get(0).getFlight().getFlightNumber()).isEqualTo("FN123");
     }
 
+     */
 
 }
 

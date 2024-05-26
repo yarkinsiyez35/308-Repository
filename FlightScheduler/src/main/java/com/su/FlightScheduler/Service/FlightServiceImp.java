@@ -161,7 +161,7 @@ public class FlightServiceImp implements FlightService {
         flightEntity.setDepartureDateTime(departureDateTime);
         flightEntity.setLandingDateTime(landingDateTime);
 
-        if (flightDataDTO.getAirlineCompany().equals("No shared flight"))
+        if (flightDataDTO.getAirlineCompany().equals("No Shared Flight"))
         {
             flightEntity.setSharedFlight(false);
             flightEntity.setSharedFlightCompany(null);
@@ -375,6 +375,91 @@ public class FlightServiceImp implements FlightService {
         flightRepository.deleteById(flightNumber);
     }
 
+    @Override
+    public FlightEntity updateFlight(FlightDataDTO flightDataDTO, int adminID) {
+        String flightNumberFromRequest = flightDataDTO.getFlightId();
+
+        if (!flightRepository.existsById(flightDataDTO.getFlightId()))
+        {
+            throw new RuntimeException("Could not update flight, id does not exist!");
+        }
+        Optional<AirportEntity> sourceAirport = airportRepository.findAirportEntityByAirportCode(flightDataDTO.getDepartureAirport());
+        if(sourceAirport.isEmpty())
+        {
+            throw new RuntimeException("Could not update flight, airports are wrong!");
+        }
+        Optional<AirportEntity> landingAirport = airportRepository.findAirportEntityByAirportCode(flightDataDTO.getLandingAirport());
+        if(landingAirport.isEmpty())
+        {
+            throw new RuntimeException("Could not update flight, airports are wrong!");
+        }
+
+        Optional<PlaneEntity> plane = planeRepository.findById(flightDataDTO.getPlaneId());
+        if (plane.isEmpty())
+        {
+            throw new RuntimeException("Could not update flight, plane id does not exist!");
+        }
+
+
+        FlightEntity flightEntity = flightRepository.findById(flightDataDTO.getFlightId()).get();
+
+        flightEntity.setFlightInfo("Regular flight"); // Might need to change this one. The info is a bit different in the document provided.
+        flightEntity.setSourceAirport(sourceAirport.get());
+        flightEntity.setDestinationAirport(landingAirport.get());
+
+
+        final int allowedDistance = 1400; // This is the longest distance between two cities in Turkey, we do not allow distances longer than this.
+        int distance = getRange(sourceAirport.get().getCity(), landingAirport.get().getCity());
+        if(distance > allowedDistance){
+            throw new RuntimeException("Could not update flight, the distance between the cities exceeds the allowed distance!");
+        }
+        flightEntity.setFlightRange(distance);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime departureDateTime = flightDataDTO.getDepartureTime();
+        LocalDateTime landingDateTime = flightDataDTO.getLandingTime();
+
+        if (departureDateTime.isBefore(now)) {
+            throw new RuntimeException("Departure time cannot be in the past");
+        }
+
+        if (landingDateTime.isBefore(departureDateTime)) {
+            throw new RuntimeException("Landing time cannot be before departure time");
+        }
+
+        flightEntity.setDepartureDateTime(departureDateTime);
+        flightEntity.setLandingDateTime(landingDateTime);
+
+        if (flightDataDTO.getAirlineCompany().equals("No Shared Flight"))
+        {
+            flightEntity.setSharedFlight(false);
+            flightEntity.setSharedFlightCompany(null);
+        }
+        else
+        {
+            flightEntity.setSharedFlight(true);
+            Optional<CompanyEntity> companyEntity = companyRepository.findById(flightDataDTO.getAirlineCompany());
+            if (companyEntity.isPresent())
+            {
+                flightEntity.setSharedFlightCompany(companyEntity.get());
+            }
+            else
+            {
+                throw new RuntimeException("Could not update flight, the company does not exist!");
+            }
+        }
+
+        Optional<AdminEntity> adminEntity = adminRepository.findById(adminID);
+        if (adminEntity.isEmpty()) {
+            throw new RuntimeException("Could not update flight, admin does not exist!");
+        }
+        flightEntity.setAdmin(adminEntity.get());
+
+        return flightRepository.save(flightEntity);
+
+
+    }
+
 
     //------------------------------------------------------------------------------------------------------------
 
@@ -399,6 +484,10 @@ public class FlightServiceImp implements FlightService {
         if (existingFlight.getAdmin().getAdminId() != adminId) {
             throw new RuntimeException("Admins do not match!");
         }
+
+        flightEntity = updateFlight(flight, flightEntity.getAdmin().getAdminId());
+        return saveFlightObj(flightEntity);
+    }
 
         // Update existing flight details instead of creating a new one
         existingFlight.setFlightInfo("Regular flight");
