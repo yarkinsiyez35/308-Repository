@@ -112,6 +112,7 @@ public class UserDataDTOFactory {
         userDataDTO.setSurname(passengerEntity.getSurname());
         userDataDTO.setId(Integer.toString(passengerEntity.getPassengerId()));
         userDataDTO.setAge(passengerEntity.getAge());
+        userDataDTO.setGender(passengerEntity.getGender());
         userDataDTO.setNationality(passengerEntity.getNationality());
         userDataDTO.setUserType("Passenger");
         userDataDTO.setFlights(null);

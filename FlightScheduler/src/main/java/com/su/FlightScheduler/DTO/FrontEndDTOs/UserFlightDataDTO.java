@@ -88,7 +88,8 @@ public class UserFlightDataDTO {
         this.userSeat = userSeat;
         this.boughtTime = null; // might change
         this.purchaseId = passengerFlight.getBookingId();
-        this.role = null;
+        this.role = "Passenger";
+
     }
 
 
