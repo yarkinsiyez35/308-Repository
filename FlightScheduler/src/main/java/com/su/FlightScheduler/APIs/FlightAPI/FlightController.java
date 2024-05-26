@@ -268,7 +268,7 @@ public class FlightController {
 
     // --- End of Getters for the entities ---
 
-    @GetMapping("/flights/{flightId}/seats")
+    @GetMapping("/{flightId}/seats")
     public Seats getSeats(@PathVariable String flightId) {
         List<SeatingTypeDTO> seatList = flightService.decodeSeatingPlan(flightId);
         List<SeatingDTO> seatingList = flightService.findBookedFlightsByFlightNumber(flightId);

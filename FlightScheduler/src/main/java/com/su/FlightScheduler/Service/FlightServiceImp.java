@@ -627,10 +627,6 @@ public class FlightServiceImp implements FlightService {
         FlightEntity flight = getFlightOrThrow(flightNumber);
 
         List<PassengerFlight> passengers = passengerFlightRepository.findPassengerFlightByFlight(flight);
-        if (passengers.isEmpty()) {
-            throw new EntityNotFoundException("No passengers found for flight with ID: " + flightNumber);
-        }
-
         int businessEndRowNonFinal = 0;
         List<SeatingTypeDTO> seatingList = decodeSeatingPlan(flightNumber);
         for (SeatingTypeDTO seating : seatingList) {
