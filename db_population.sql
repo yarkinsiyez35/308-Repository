@@ -598,3 +598,26 @@ INSERT INTO dish_recipes (attendant_id, recipe) VALUES
     (43, 'Vegetable Stir Fry'),
     (48, 'Vegetable Stir Fry'),
     (48, 'Shrimp Scampi');
+
+INSERT INTO passenger_flights (passenger_id, flight_number, is_parent, seat_number) VALUES 
+    (1, 'CS1034', 'T', '12A'),
+    (2, 'CS1034', 'F', '12B'),
+    (3, 'CS1503', 'T', '14C'),
+    (4, 'CS1503', 'F', '14D'),
+    (5, 'CS1643', 'T', '10A'),
+    (6, 'CS1643', 'F', '10B'),
+    (7, 'CS1232', 'T', '8A'),
+    (8, 'CS1232', 'F', '8B'),
+    (9, 'CS2121', 'T', '6A'),
+    (10, 'CS2121', 'F', '6B'),
+    (11, 'CS1034', 'F', '13A'),
+    (12, 'CS1034', 'F', '13B'),
+    (13, 'CS1503', 'F', '15A'),
+    (14, 'CS1503', 'F', '15B'),
+    (15, 'CS1643', 'F', '11A'),
+    (16, 'CS1643', 'F', '11B'),
+    (17, 'CS1232', 'F', '9A'),
+    (18, 'CS1232', 'F', '9B'),
+    (19, 'CS2121', 'F', '7A'),
+    (20, 'CS2121', 'F', '7B');
+
