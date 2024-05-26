@@ -122,9 +122,6 @@ public class PassengerFlightServiceImp implements PassengerFlightService {
 
         UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_flight_list(bookedFlights, passenger);
 
-        if (bookedFlights.isEmpty()) {
-            throw new NoSuchElementException("No flights found for passenger with ID: " + passengerId); // no such element exception
-        }
         return userDataDTO;
     }
 }

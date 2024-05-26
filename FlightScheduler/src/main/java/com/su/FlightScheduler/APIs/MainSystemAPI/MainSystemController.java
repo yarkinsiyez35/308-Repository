@@ -1,6 +1,7 @@
 package com.su.FlightScheduler.APIs.MainSystemAPI;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.PassengerFlight;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinAssignmentRepository;
 import com.su.FlightScheduler.Service.AttendantAssignmentService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 //TESTING: this controller should be tested
 @RestController
@@ -42,6 +44,9 @@ public class MainSystemController {
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     @GetMapping("/flight/{flightId}/getAvailablePilots")
     public ResponseEntity<Object> getAvailablePilotsForFlight(@PathVariable String flightId)
@@ -54,6 +59,9 @@ public class MainSystemController {
         catch (RuntimeException e)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -69,6 +77,9 @@ public class MainSystemController {
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping("/pilot/{pilotId}/assignToFlight/{flightId}")
@@ -82,6 +93,9 @@ public class MainSystemController {
         catch (RuntimeException e)
         {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -97,6 +111,9 @@ public class MainSystemController {
         {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     //functions for cabin crew and flight assignments
@@ -111,6 +128,9 @@ public class MainSystemController {
         catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/flight/{flightId}/getAvailableAttendants")
@@ -123,6 +143,9 @@ public class MainSystemController {
         }
         catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -137,6 +160,9 @@ public class MainSystemController {
         catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping("/attendant/{attendantId}/assignToFlight/{flightId}")
@@ -149,6 +175,9 @@ public class MainSystemController {
         catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     //functions for passenger and flight assignments
@@ -156,19 +185,65 @@ public class MainSystemController {
     @GetMapping("/passenger/{passengerId}/getFlights")
     public ResponseEntity<Object> getFlightsOfPassenger(@PathVariable int passengerId)
     {
-        return null;
+        try {
+            UserDataDTO flights = passengerFlightService.findBookedFlightsByPassengerId(passengerId);
+            return ResponseEntity.ok(flights);
+        }
+        catch (RuntimeException e) {
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-    @GetMapping("flight/{flightId}/getPassengers")
+    @GetMapping("/flight/{flightId}/getPassengers")
     public ResponseEntity<Object> getPassengersOfFlight(@PathVariable String flightId)
     {
         return null;
     }
 
-    @DeleteMapping("/passenger/{passengerId}/cancelFlight/{bookingId}")
+    @PostMapping("/passenger/{passengerId}/bookFlight/{flightNumber}/{isParent}")
+    public ResponseEntity<Object> assignPassengerToFlight(@PathVariable int passengerId, @PathVariable String flightNumber, @PathVariable String isParent, @RequestBody SeatingDTO seatingDTO)
+    {
+        try {
+            PassengerFlight passengerFlight = passengerFlightService.bookFlight( //passengerId, flightNumber, isParent, seatNumber );
+                    passengerId,
+                    flightNumber,
+                    isParent,
+                    seatingDTO.getSeatPosition()
+            );
+
+
+            //PassengerFlightDTO passengerFlightDTO = new PassengerFlightDTO(passengerFlight);
+            UserDataDTO userDataDTO = new UserDataDTO(passengerFlight);
+
+            return ResponseEntity.ok(userDataDTO);
+
+        } catch (RuntimeException e) {//expected
+
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+
+        } catch (Exception e) { //should be unreachable
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
+    }
+
+    @DeleteMapping("/passenger/{passengerId}/cancelBooking/{bookingId}")
     public ResponseEntity<Object> deleteFlightFromPassenger(@PathVariable int passengerId, @PathVariable int bookingId)
     {
-        return null;
+        try
+        {
+            PassengerFlight passengerFlight = passengerFlightService.cancelFlight(bookingId);
+            return ResponseEntity.ok(new UserDataDTO(passengerFlight));
+        } catch (RuntimeException e) { //expected
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) { //should be unreachable
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }
