@@ -49,6 +49,7 @@ public interface FlightService {
 
 
     // --- Update Methods ---
+    FlightEntity updateFlight(FlightDataDTO flight, int adminID);
     FlightEntity updateFlightByFlightObject(FlightEntity flight);
     FlightEntity updateFlightByFlightDTO(FlightDataDTO flight, int adminId);
     FlightEntity updateFlightInfo(String flightNumber, String flightInfo);
