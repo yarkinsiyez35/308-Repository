@@ -2,6 +2,7 @@ package com.su.FlightScheduler.Service;
 
 import com.su.FlightScheduler.DTO.FrontEndDTOs.FlightDataDTO;
 import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.DTO.SeatDTOs.SeatingDTO;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Entity.FlightEntitites.*;
@@ -733,18 +734,9 @@ public class FlightServiceImp implements FlightService {
                 throw new EntityNotFoundException("Passenger not found");
             }
 
-            UserDataDTO user = new UserDataDTO();
-            user.setEmail(passengerFlight.getPassenger().getEmail());
-            user.setPassword(passengerFlight.getPassenger().getPassword());
-            user.setName(passengerFlight.getPassenger().getFirstName());
-            user.setSurname(passengerFlight.getPassenger().getSurname());
-            user.setId(Integer.toString(passengerFlight.getPassenger().getPassengerId()));
-            user.setAge(passengerFlight.getPassenger().getAge());
-            user.setGender(passengerFlight.getPassenger().getGender());
-            user.setNationality(passengerFlight.getPassenger().getNationality());
-            user.setUserType("Passenger");
-            // You need to create a method to get the flights for the user
-            user.setFlights(new ArrayList<>());
+
+
+            UserDataDTO user = UserDataDTOFactory.create_passenger_with_passenger_flight(passengerFlight);
             return user;
         }).collect(Collectors.toList());
     }
