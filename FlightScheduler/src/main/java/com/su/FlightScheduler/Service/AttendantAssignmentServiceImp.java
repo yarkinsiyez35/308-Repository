@@ -5,6 +5,9 @@ import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTOFactory;
 import com.su.FlightScheduler.Entity.CabinCrewEntites.*;
 import com.su.FlightScheduler.Entity.FlightEntitites.CityEntity;
 import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
+import com.su.FlightScheduler.Entity.PilotAssignmentEntity;
+import com.su.FlightScheduler.Entity.PilotAssignmentPK;
+import com.su.FlightScheduler.Entity.PilotEntity;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinAssignmentRepository;
 import com.su.FlightScheduler.Repository.CabinCrewRepositories.CabinCrewRepository;
 import com.su.FlightScheduler.Repository.FlightRepository;
@@ -142,6 +145,43 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
     }
 
     @Override
+    public UserDataDTO assignAttendantToFlightWithGivenRoleAndSeat(String flightNumber, String role, String seatNumber) throws RuntimeException {
+        Optional<FlightEntity> flightEntity = flightRepository.findById(flightNumber);
+        if (flightEntity.isEmpty())
+        {
+            throw new RuntimeException("Flight with id: " + flightNumber + " does not exist!");
+        }
+        //find flight range
+        int flightRange = flightEntity.get().getFlightRange();
+        //find candidate cabin crew
+        List<CabinCrewEntity> candidateCabinCrewList =  cabinCrewRepository.findCabinCrewEntityBySeniority(role);
+        //find available cabin crew
+        List<CabinCrewEntity> availableCabinCrewList = findAvailableAttendantsFromGivenListAndFlight(candidateCabinCrewList,flightEntity.get());
+
+        if (!availableCabinCrewList.isEmpty())
+        {
+            //first available cabin crew will be assigned
+            CabinCrewEntity toBeAssignedCabinCrew = availableCabinCrewList.get(0);
+            //create the entity
+            CabinCrewAssignmentsEntity cabinCrewAssignmentsEntity = new CabinCrewAssignmentsEntity(new CabinCrewAssignmentsPK(toBeAssignedCabinCrew.getAttendantId(),flightNumber), role, seatNumber, 1);
+            //if chef, update the recipe
+
+
+
+            cabinCrewAssignmentsEntity.setFlight(flightEntity.get());
+            cabinCrewAssignmentsEntity.setCabinCrew(toBeAssignedCabinCrew);
+            CabinCrewAssignmentsEntity savedCabinCrewAssignment = cabinAssignmentRepository.save(cabinCrewAssignmentsEntity);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_assignment(savedCabinCrewAssignment);
+            return userDataDTO;
+        }
+        else
+        {
+            throw new RuntimeException("Cannot add a new cabin crew to flight with id: " + flightNumber +"!");
+        }
+
+    }
+
+    @Override
     public List<UserDataDTO> getAttendantsOfFlight(String flightNumber) {
 
         if (flightRepository.existsById(flightNumber)){
@@ -157,6 +197,30 @@ public class AttendantAssignmentServiceImp implements AttendantAssignmentService
         }
         else{
             throw new RuntimeException("Cabin Crew member with id: " + flightNumber + " does not exist!");
+        }
+    }
+
+    @Override
+    public UserDataDTO removeAttendantFromFlight(String flightNumber, int attendantId) {
+        Optional<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntity = cabinAssignmentRepository.findById(new CabinCrewAssignmentsPK(attendantId, flightNumber));
+        if (cabinCrewAssignmentsEntity.isEmpty())
+        {
+            throw new RuntimeException("Cannot remove attendant with id: " + attendantId + " from flight with id: " + flightNumber + "!");
+        }
+        try
+        {
+            //call another function to assign
+            assignAttendantToFlightWithGivenRoleAndSeat(flightNumber, cabinCrewAssignmentsEntity.get().getAssignmentRole(), cabinCrewAssignmentsEntity.get().getSeatNumber());
+            //delete the assignment from the repository
+            cabinAssignmentRepository.deleteById(new CabinCrewAssignmentsPK(attendantId, flightNumber));
+            //return the information of the removed pilot
+            List<CabinCrewAssignmentsEntity> cabinCrewAssignmentsEntityList = cabinAssignmentRepository.findCabinCrewAssignmentsEntitiesByCabinCrewAssignmentsPK_AttendantId(attendantId);
+            UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_data_with_flight_list(cabinCrewAssignmentsEntityList, cabinCrewAssignmentsEntity.get().getCabinCrew());
+            return userDataDTO;
+        }
+        catch(RuntimeException e)
+        {
+            throw new RuntimeException("Cannot remove attendant with id: " + attendantId + " from flight with id: " + flightNumber + "because " + e.getMessage());
         }
     }
 
