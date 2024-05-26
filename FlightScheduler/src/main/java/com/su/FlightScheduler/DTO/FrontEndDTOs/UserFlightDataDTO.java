@@ -70,9 +70,8 @@ public class UserFlightDataDTO {
         SeatingDTO userSeat = new SeatingDTO();
         userSeat.setSeatPosition(passengerFlight.getSeatNumber());
 
-        //String seatType = SeatTypeFinder.getSeatType(passengerFlight.getSeatNumber(), flightEntity.getPlane().getVehicleType().getSeatingPlan());
+        String seatType = SeatTypeFinder.getSeatType(passengerFlight.getSeatNumber(), flightEntity.getPlane().getVehicleType().getSeatingPlan());
         //String seatType = FlightService.
-        String seatType = "economy";
         if (Objects.equals(passengerFlight.getIsParent(), "T"))
         {
             userSeat.setSeatType(seatType + " with child");

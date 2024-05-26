@@ -7,42 +7,51 @@ import java.util.List;
 
 public class SeatTypeFinder {
 
+
+    public static String decodeColumns(String[] columns) {
+        StringBuilder decodedColumns = new StringBuilder();
+        int columnIndex = 0;
+
+        for (int i = 0; i < columns.length; i++) {
+            int numSeats = Integer.parseInt(columns[i]);
+            char startColumn = (char) ('A' + columnIndex);
+            char endColumn = (char) (startColumn + numSeats - 1);
+            if (decodedColumns.length() > 0) {
+                decodedColumns.append('/');
+            }
+            decodedColumns.append(startColumn).append('-').append(endColumn);
+            columnIndex += numSeats;
+        }
+
+        return decodedColumns.toString();
+    }
+
+
     //this code is taken from FlightServiceImp
     public static List<SeatingTypeDTO> decodeSeatingType(String seatingPlan)
     {
         List<SeatingTypeDTO> seatingList = new ArrayList<>();
+
+        // Split the encoded seating plan into business and economy seating types
         String[] seatingClasses = seatingPlan.split("=");
 
-        // Process Business Class
-        if (seatingClasses.length > 0) {
-            String businessSeating = seatingClasses[0];
-            String[] businessComponents = businessSeating.split("\\*");
-            String[] businessColumns = businessComponents[0].split("\\|");
-            int businessRows = Integer.parseInt(businessComponents[1]);
+        int currentRow = 1; // initialize the current row counter
 
-            SeatingTypeDTO businessSeatingDTO = new SeatingTypeDTO();
-            businessSeatingDTO.setType("business");
-            businessSeatingDTO.setStartRow(1); // assuming business class starts at row 1
-            businessSeatingDTO.setEndRow(businessRows);
-            businessSeatingDTO.setColumns(String.join("-", businessColumns));
+        // Process each seating class (e.g., business, economy)
+        for (String seatingClass : seatingClasses) {
+            String[] components = seatingClass.split("\\*");
+            String[] columnGroups = components[0].split("\\|");
+            int rows = Integer.parseInt(components[1]);
 
-            seatingList.add(businessSeatingDTO);
-        }
+            SeatingTypeDTO seatingTypeDTO = new SeatingTypeDTO();
+            seatingTypeDTO.setType(currentRow == 1 ? "business" : "economy");
+            seatingTypeDTO.setStartRow(currentRow);
+            seatingTypeDTO.setEndRow(currentRow + rows - 1);
+            seatingTypeDTO.setColumns(decodeColumns(columnGroups));
 
-        // Process Economy Class
-        if (seatingClasses.length > 1) {
-            String economySeating = seatingClasses[1];
-            String[] economyComponents = economySeating.split("\\*");
-            String[] economyColumns = economyComponents[0].split("\\|");
-            int economyRows = Integer.parseInt(economyComponents[1]);
+            seatingList.add(seatingTypeDTO);
 
-            SeatingTypeDTO economySeatingDTO = new SeatingTypeDTO();
-            economySeatingDTO.setType("economy");
-            economySeatingDTO.setStartRow(1); // assuming economy class starts at row 1
-            economySeatingDTO.setEndRow(economyRows);
-            economySeatingDTO.setColumns(String.join("-", economyColumns));
-
-            seatingList.add(economySeatingDTO);
+            currentRow += rows; // update the current row counter
         }
 
         return seatingList;
@@ -60,7 +69,7 @@ public class SeatTypeFinder {
             }
         }
         final int businessEndRow = businessEndRowNonFinal;
-        int rowNumber = Integer.parseInt(seatNumber.substring(1));
+        int rowNumber = Integer.parseInt(seatNumber.replaceAll("[^0-9]", ""));
         return rowNumber <= businessEndRow ? "business" : "economy";
     }
 
