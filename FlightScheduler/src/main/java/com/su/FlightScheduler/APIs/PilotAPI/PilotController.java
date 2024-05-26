@@ -110,12 +110,8 @@ public class PilotController {
     @PostMapping("/createPilot")
     public ResponseEntity<Object> createPilotWithoutId(@RequestBody PilotWithLanguagesAsStringDTO pilotWithLanguagesAsStringDTO)
     {
-        //bug here fix it
         try
         {
-            //allowedRange should come as integer
-            //languages come as null
-            int x = 5;
             PilotWithLanguagesDTO pilotWithLanguagesDTO = new PilotWithLanguagesDTO(pilotWithLanguagesAsStringDTO);
             PilotEntity pilotEntity = new PilotEntity(pilotWithLanguagesDTO, false);
             PilotEntity savedPilot = pilotService.savePilotWithoutId(pilotEntity);

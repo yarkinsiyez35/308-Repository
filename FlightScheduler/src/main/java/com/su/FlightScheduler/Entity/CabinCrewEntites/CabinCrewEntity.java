@@ -10,6 +10,7 @@ import java.util.List;
 @Table(name = "crew_members")
 public class CabinCrewEntity implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //this needs to be added for the sql to automatically generate id
     @Column(name = "attendant_id")
     private int attendantId;
 
@@ -105,11 +106,20 @@ public class CabinCrewEntity implements Serializable {
         List<AttendantLanguageEntity> languageEntities = new ArrayList<>();
         for (String language : attendantWithLanguagesDTO.getLanguages()){
 
-            AttendantLanguagePK attendantLanguagePK = new AttendantLanguagePK(this.attendantId, language);
+            AttendantLanguagePK attendantLanguagePK = new AttendantLanguagePK( this.attendantId, language);
             AttendantLanguageEntity attendantLanguageEntity = new AttendantLanguageEntity(attendantLanguagePK);
             languageEntities.add(attendantLanguageEntity);
         }
         this.languages = languageEntities;
+
+        List<DishRecipeEntity> dishRecipeEntityList = new ArrayList<>();
+        for (String recipe: attendantWithLanguagesDTO.getRecipes())
+        {
+            DishRecipePK dishRecipePK = new DishRecipePK(this.attendantId, recipe);
+            DishRecipeEntity dishRecipeEntity = new DishRecipeEntity(dishRecipePK);
+            dishRecipeEntityList.add(dishRecipeEntity);
+        }
+        this.recipes = dishRecipeEntityList;
     }
 
     // Getters

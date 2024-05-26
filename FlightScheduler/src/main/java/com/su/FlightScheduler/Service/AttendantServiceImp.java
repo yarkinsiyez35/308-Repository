@@ -49,6 +49,7 @@ public class AttendantServiceImp implements AttendantService {
 
             savedCabin = cabinCrewRepository.save(newCabin);
 
+            //set the primary key
             List<AttendantLanguageEntity> savedCabinLanguageList = cabinLanguageRepository.saveAll(cabin.getLanguages());
 
             savedCabin.setLanguages(savedCabinLanguageList);
