@@ -11,29 +11,40 @@ public class SeatTypeFinder {
     public static List<SeatingTypeDTO> decodeSeatingType(String seatingPlan)
     {
         List<SeatingTypeDTO> seatingList = new ArrayList<>();
-
-        // Split the encoded seating plan into business and economy seating types
         String[] seatingClasses = seatingPlan.split("=");
 
-        for (String seatingClass : seatingClasses) {
-            // Split the seating class into individual seating types
-            String[] seatingTypes = seatingClass.split("\\*");
+        // Process Business Class
+        if (seatingClasses.length > 0) {
+            String businessSeating = seatingClasses[0];
+            String[] businessComponents = businessSeating.split("\\*");
+            String[] businessColumns = businessComponents[0].split("\\|");
+            int businessRows = Integer.parseInt(businessComponents[1]);
 
-            for (String seatingType : seatingTypes) {
-                SeatingTypeDTO seating = new SeatingTypeDTO();
+            SeatingTypeDTO businessSeatingDTO = new SeatingTypeDTO();
+            businessSeatingDTO.setType("business");
+            businessSeatingDTO.setStartRow(1); // assuming business class starts at row 1
+            businessSeatingDTO.setEndRow(businessRows);
+            businessSeatingDTO.setColumns(String.join("-", businessColumns));
 
-                // Split the seating type into rows and columns
-                String[] rowsAndColumns = seatingType.split("\\|");
-
-                // Set the start row, end row, and columns for this seating type
-                seating.setStartRow(Integer.parseInt(rowsAndColumns[0]));
-                seating.setEndRow(Integer.parseInt(rowsAndColumns[1]));
-                seating.setColumns(rowsAndColumns[2]);
-
-                // Add this seating type to the list
-                seatingList.add(seating);
-            }
+            seatingList.add(businessSeatingDTO);
         }
+
+        // Process Economy Class
+        if (seatingClasses.length > 1) {
+            String economySeating = seatingClasses[1];
+            String[] economyComponents = economySeating.split("\\*");
+            String[] economyColumns = economyComponents[0].split("\\|");
+            int economyRows = Integer.parseInt(economyComponents[1]);
+
+            SeatingTypeDTO economySeatingDTO = new SeatingTypeDTO();
+            economySeatingDTO.setType("economy");
+            economySeatingDTO.setStartRow(1); // assuming economy class starts at row 1
+            economySeatingDTO.setEndRow(economyRows);
+            economySeatingDTO.setColumns(String.join("-", economyColumns));
+
+            seatingList.add(economySeatingDTO);
+        }
+
         return seatingList;
     }
 
