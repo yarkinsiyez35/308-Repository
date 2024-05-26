@@ -607,23 +607,26 @@ public class FlightServiceImp implements FlightService {
         return seatingList;
     }
 
+
     private String decodeColumns(String[] columns) {
         StringBuilder decodedColumns = new StringBuilder();
         int columnIndex = 0;
 
-        for (String column : columns) {
-            int numSeats = Integer.parseInt(column);
+        for (int i = 0; i < columns.length; i++) {
+            int numSeats = Integer.parseInt(columns[i]);
             char startColumn = (char) ('A' + columnIndex);
             char endColumn = (char) (startColumn + numSeats - 1);
             if (decodedColumns.length() > 0) {
                 decodedColumns.append('/');
             }
             decodedColumns.append(startColumn).append('-').append(endColumn);
-            columnIndex += numSeats + 1; // account for the corridor
+            columnIndex += numSeats;
         }
 
         return decodedColumns.toString();
     }
+
+
 
     @Override
     public List<SeatingDTO> findBookedFlightsByFlightNumber(String flightNumber) {
@@ -676,6 +679,25 @@ public class FlightServiceImp implements FlightService {
                 }
             }
         });
+
+        // Sort the list by seat position
+        seats.sort(Comparator.comparing(SeatingDTO::getSeatPosition, new Comparator<String>() {
+            @Override
+            public int compare(String seat1, String seat2) {
+                // Extract row and column
+                int row1 = Integer.parseInt(seat1.replaceAll("[^0-9]", ""));
+                int row2 = Integer.parseInt(seat2.replaceAll("[^0-9]", ""));
+                char column1 = seat1.replaceAll("[^A-Za-z]", "").charAt(0);
+                char column2 = seat2.replaceAll("[^A-Za-z]", "").charAt(0);
+
+                // Compare row first, then column
+                if (row1 != row2) {
+                    return Integer.compare(row1, row2);
+                } else {
+                    return Character.compare(column1, column2);
+                }
+            }
+        }));
 
         return seats;
     }
