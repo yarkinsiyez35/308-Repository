@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 //TESTING: this service should be tested
+//son fonksiyon dışı testleri yaz
 
 @Service
 public class AttendantAssignmentServiceImp implements AttendantAssignmentService{
