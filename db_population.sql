@@ -268,7 +268,8 @@ INSERT INTO pilot_assignments (pilot_id, flight_number, assignment_role, seat_nu
     (3, 'CS1034', 'Junior', '2B', 1),
     (4, 'CS1034', 'Senior', '0B', 1),
     (6, 'CS1034', 'Senior', '1A', 1),
-    (11, 'CS1034', 'Senior', '1B',1);
+    (11, 'CS1034', 'Senior', '1B',1)
+    (1, 'CS1503', 'Senior', '0A',1);
 
 
 -- insert values to passengers

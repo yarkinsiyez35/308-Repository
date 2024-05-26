@@ -78,6 +78,18 @@ public class PilotEntity  implements Serializable {
         this.seniority = seniority;
     }
 
+    public PilotEntity(String email, String password, String firstName, String surname, int age, String gender, int allowedRange, String nationality, String seniority) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.age = age;
+        this.gender = gender;
+        this.allowedRange = allowedRange;
+        this.nationality = nationality;
+        this.seniority = seniority;
+    }
+
     public PilotEntity(PilotEntity pilotEntity)
     {
         this.pilotId = pilotEntity.pilotId;
