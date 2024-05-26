@@ -57,7 +57,6 @@ public class AttendantWithLanguagesDTO implements Serializable {
 
 
     public AttendantWithLanguagesDTO(AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
-
         this.attendantId = attendantWithLanguagesAsStringDTO.getAttendantId();
         this.email = attendantWithLanguagesAsStringDTO.getEmail();
         this.password = attendantWithLanguagesAsStringDTO.getPassword();
@@ -72,11 +71,16 @@ public class AttendantWithLanguagesDTO implements Serializable {
         for (String language : languagesArray) {
             this.languages.add(language.trim().toLowerCase());
         }
-        String[] recipesArray = attendantWithLanguagesAsStringDTO.getRecipes().split(",");
-        this.recipes = new ArrayList<>();
-        for(String recipe : recipesArray){
-            this.recipes.add(recipe.toLowerCase());
+        this.recipes = null;
+        if (attendantWithLanguagesAsStringDTO.getRecipes() != null || !attendantWithLanguagesAsStringDTO.getRecipes().isEmpty())
+        {
+            String[] recipesArray = attendantWithLanguagesAsStringDTO.getRecipes().split(",");
+            this.recipes = new ArrayList<>();
+            for(String recipe : recipesArray){
+                this.recipes.add(recipe.toLowerCase());
+            }
         }
+
     }
 
 

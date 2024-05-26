@@ -93,9 +93,10 @@ public class CabinCrewController {
     public  ResponseEntity<Object> createAttendantWithoutId(@RequestBody AttendantWithLanguagesAsStringDTO attendantWithLanguagesAsStringDTO){
         try
         {
+
             AttendantWithLanguagesDTO attendantWithLanguagesDTO = new AttendantWithLanguagesDTO(attendantWithLanguagesAsStringDTO);
             CabinCrewEntity cabinCrewEntity = new CabinCrewEntity(attendantWithLanguagesDTO, false);
-            CabinCrewEntity savedCabinCrew = attendantService.saveCabin(cabinCrewEntity);
+            CabinCrewEntity savedCabinCrew = attendantService.saveAttendantWithoutId(cabinCrewEntity);
             UserDataDTO userDataDTO = UserDataDTOFactory.create_cabin_crew_with_cabin_crew_entity(savedCabinCrew);
             return ResponseEntity.ok(userDataDTO);
         }
