@@ -3,6 +3,7 @@ package com.su.FlightScheduler.RepositoryTest;
 import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 import com.su.FlightScheduler.Entity.PassengerEntity;
 import com.su.FlightScheduler.Entity.PassengerFlight;
+import com.su.FlightScheduler.Repository.FlightRepository;
 import com.su.FlightScheduler.Repository.PassengerFlightRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,16 +22,24 @@ public class PassengerFlightRepositoryTests {
     @Autowired
     private PassengerFlightRepository passengerFlightRepository;
 
+    @Autowired
+    private FlightRepository flightRepository;
+
     @Test
     public void PassengerFlightRepository_FindPassengerFlightByFlight() {
         // Create FlightEntity
         FlightEntity flightEntity = new FlightEntity();
         flightEntity.setFlightNumber("FN123");
+        /*
         flightEntity.setDepartureDateTime(LocalDateTime.now());
         flightEntity.setSourceAirport(null);
         flightEntity.setDestinationAirport(null);
         flightEntity.setPlane(null);
         flightEntity.setFlightRange(1000);
+         */
+
+        // Save FlightEntity first
+        flightEntity = flightRepository.save(flightEntity);
 
         // Create PassengerEntity
         PassengerEntity passengerEntity = new PassengerEntity();
@@ -42,8 +51,11 @@ public class PassengerFlightRepositoryTests {
         PassengerFlight passengerFlight = new PassengerFlight();
         passengerFlight.setFlight(flightEntity);
         passengerFlight.setPassenger(passengerEntity);
+        passengerFlight.setBookingId(1);
+        passengerFlight.setIsParent("F");
+        passengerFlight.setSeatNumber("1A");
 
-        // Save FlightEntity and PassengerFlight
+        // Save PassengerFlight
         passengerFlightRepository.save(passengerFlight);
 
         // Find PassengerFlight by FlightEntity
@@ -55,3 +67,4 @@ public class PassengerFlightRepositoryTests {
         Assertions.assertThat(passengerFlights.get(0).getFlight().getFlightNumber()).isEqualTo("FN123");
     }
 }
+
