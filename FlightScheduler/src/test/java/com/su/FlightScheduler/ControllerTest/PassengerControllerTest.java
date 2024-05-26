@@ -50,13 +50,17 @@ class PassengerControllerTest {
         PassengerEntity passengerEntity = new PassengerEntity();
         passengerEntity.setPassengerId(1);
         UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setId("1");
+        userDataDTO.setUserType("Passenger");
         when(passengerService.findPassengerById(1)).thenReturn(passengerEntity);
-        when(UserDataDTOFactory.create_passenger_data_with_no_flight_from_passenger_entity(passengerEntity)).thenReturn(userDataDTO);
-
         ResponseEntity<Object> response = passengerController.getPassengerWithId(1);
 
+        UserDataDTO returnedDto = (UserDataDTO) response.getBody();
+
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(userDataDTO, response.getBody());
+        assertEquals(userDataDTO.getId(), returnedDto.getId());
+        assertEquals(userDataDTO.getUserType(), returnedDto.getUserType());
     }
 
     @Test
