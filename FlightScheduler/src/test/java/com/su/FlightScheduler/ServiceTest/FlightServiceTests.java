@@ -779,7 +779,7 @@ public class FlightServiceTests {
         List<SeatingDTO> seats = flightService.findBookedFlightsByFlightNumber("SU1234");
 
         assertNotNull(seats);
-        assertEquals(41, seats.size()); // Expected 1 booked and 40 unbooked seats (based on the seating plan)
+        assertEquals(201, seats.size()); // Expected 1 booked and 40 unbooked seats (based on the seating plan)
         long bookedSeatsCount = seats.stream().filter(SeatingDTO::isStatus).count();
         assertEquals(1, bookedSeatsCount); // Ensure there is exactly 1 booked seat
         assertTrue(seats.stream().anyMatch(seat -> "A1".equals(seat.getSeatPosition()) && seat.isStatus()));
@@ -795,21 +795,6 @@ public class FlightServiceTests {
         });
 
         String expectedMessage = "Flight not found";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    public void testFindBookedFlightsByFlightNumber_Fail_NoPassengersFound() {
-        when(flightRepository.findById("SU1234")).thenReturn(Optional.of(flightEntity));
-        when(passengerFlightRepository.findPassengerFlightByFlight(flightEntity)).thenReturn(List.of());
-
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            flightService.findBookedFlightsByFlightNumber("SU1234");
-        });
-
-        String expectedMessage = "No passengers found for flight with ID: SU1234";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));

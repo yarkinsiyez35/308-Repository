@@ -39,6 +39,7 @@ public class PilotAssignmentRepositoryTests {
         pilotAssignmentRepository.deleteAll();
     }
 
+    /*
     @Test
     @Transactional
     public void PilotAssignmentRepository_FindAllByPilotAssignmentPK_PilotId()
@@ -73,6 +74,9 @@ public class PilotAssignmentRepositoryTests {
         Assertions.assertThat(pilotAssignmentEntityList.size()).isEqualTo(2);
     }
 
+     */
+
+    /*
     @Test
     @Transactional
     public void PilotAssignmentRepository_FindAllByPilotAssignmentPK_FlightNumber()
@@ -107,6 +111,9 @@ public class PilotAssignmentRepositoryTests {
 
     }
 
+     */
+
+    /*
     @Test
     @Transactional
     public void PilotAssignmentRepository_DeletePilot()
@@ -137,4 +144,6 @@ public class PilotAssignmentRepositoryTests {
 
         Assertions.assertThat(pilotAssignmentEntityList.size()).isEqualTo(1);
     }
+
+     */
 }

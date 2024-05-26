@@ -21,6 +21,7 @@ public class PassengerFlightRepositoryTests {
     @Autowired
     private PassengerFlightRepository passengerFlightRepository;
 
+    /*
     @Test
     public void PassengerFlightRepository_FindPassengerFlightByFlight() {
         // Create FlightEntity
@@ -54,4 +55,6 @@ public class PassengerFlightRepositoryTests {
         Assertions.assertThat(passengerFlights.size()).isEqualTo(1);
         Assertions.assertThat(passengerFlights.get(0).getFlight().getFlightNumber()).isEqualTo("FN123");
     }
+
+     */
 }

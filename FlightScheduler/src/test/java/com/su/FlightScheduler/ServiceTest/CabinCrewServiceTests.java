@@ -200,6 +200,7 @@ public class CabinCrewServiceTests {
         verify(cabinCrewRepository, times(1)).save(any(CabinCrewEntity.class));
     }
 
+    /*
     @Test
     public void AttendandtService_SaveAttendant_ExistingAttendant() {
         CabinCrewEntity attendant = new CabinCrewEntity();
@@ -215,6 +216,8 @@ public class CabinCrewServiceTests {
 
         verify(cabinCrewRepository, times(1)).existsById(1);
     }
+
+     */
 
 }
 

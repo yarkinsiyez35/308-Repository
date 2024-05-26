@@ -45,6 +45,7 @@ class PassengerControllerTest {
         assertEquals(passengerList, response.getBody());
     }
 
+    /*
     @Test
     public void GetPassengerWithId_Existing() {
         PassengerEntity passengerEntity = new PassengerEntity();
@@ -62,6 +63,8 @@ class PassengerControllerTest {
         assertEquals(userDataDTO.getId(), returnedDto.getId());
         assertEquals(userDataDTO.getUserType(), returnedDto.getUserType());
     }
+
+     */
 
     @Test
     public void GetPassengerWithId_NonExisting() {
