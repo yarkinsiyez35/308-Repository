@@ -95,7 +95,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/main/flight/{flightId}/getPassengers").hasAnyRole("Admin","CabinCrew","Passenger");
                     auth.requestMatchers("/main/passenger/{passengerId}/getFlights").hasAnyRole("Admin","Passenger");
                     auth.requestMatchers("/main/passenger/{passengerId}/cancelBooking/{bookingId}").hasRole("Passenger");
-
+                    auth.requestMatchers("/main/passenger/{passengerId}/bookFlight/{flightNumber}/{isParent}").hasRole("Passenger");
+                    auth.requestMatchers("/main/passenger/{passengerId}/bookFlightAuto/{flightNumber}/{isParent}/{isEconomy}").hasRole("Passenger");
                     auth.requestMatchers("test/**").permitAll();        //this will be deleted later on
                     auth.anyRequest().authenticated();
                 });
