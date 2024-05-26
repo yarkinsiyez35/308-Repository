@@ -471,23 +471,12 @@ public class FlightServiceImp implements FlightService {
         return flightRepository.save(flight);
     }
 
-    // This method will not be used, but it is here to show how to update an object
-    @Override
-    public FlightEntity updateFlightByFlightObject(FlightEntity flight) {
-        return flightRepository.save(flight);
-    }
-
-    @Transactional
     @Override
     public FlightEntity updateFlightByFlightDTO(FlightDataDTO flight, int adminId) {
         FlightEntity existingFlight = getFlightOrThrow(flight.getFlightId());
         if (existingFlight.getAdmin().getAdminId() != adminId) {
             throw new RuntimeException("Admins do not match!");
         }
-
-        flightEntity = updateFlight(flight, flightEntity.getAdmin().getAdminId());
-        return saveFlightObj(flightEntity);
-    }
 
         // Update existing flight details instead of creating a new one
         existingFlight.setFlightInfo("Regular flight");
