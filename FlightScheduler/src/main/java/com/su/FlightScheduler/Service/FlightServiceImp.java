@@ -150,7 +150,7 @@ public class FlightServiceImp implements FlightService {
         LocalDateTime departureDateTime = flightDataDTO.getDepartureTime();
         LocalDateTime landingDateTime = flightDataDTO.getLandingTime();
 
-        if (departureDateTime.isBefore(now)) {
+        if (departureDateTime.isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Departure time cannot be in the past");
         }
 
@@ -189,6 +189,8 @@ public class FlightServiceImp implements FlightService {
         return flightRepository.save(flightEntity);
     }
 
+
+    // This has no usage, but it is here to show how to create a flight object
     @Override
     public FlightEntity saveFlightObj(FlightEntity flight) {
         return flightRepository.save(flight);
@@ -390,16 +392,32 @@ public class FlightServiceImp implements FlightService {
         return flightRepository.save(flight);
     }
 
+    @Transactional
     @Override
-    public FlightEntity updateFlightByFlightDTO(FlightDataDTO flight, int adminId){
-        FlightEntity flightEntity = getFlightOrThrow(flight.getFlightId());
-        if(flightEntity.getAdmin().getAdminId() != adminId){
+    public FlightEntity updateFlightByFlightDTO(FlightDataDTO flight, int adminId) {
+        FlightEntity existingFlight = getFlightOrThrow(flight.getFlightId());
+        if (existingFlight.getAdmin().getAdminId() != adminId) {
             throw new RuntimeException("Admins do not match!");
         }
-        flightEntity = createFlight(flight, flightEntity.getAdmin().getAdminId());
-        return saveFlightObj(flightEntity);
-    }
 
+        // Update existing flight details instead of creating a new one
+        existingFlight.setFlightInfo("Regular flight");
+        existingFlight.setSourceAirport(airportRepository.findAirportEntityByAirportCode(flight.getDepartureAirport()).orElseThrow(() -> new RuntimeException("Could not create flight, airports are wrong!")));
+        existingFlight.setDestinationAirport(airportRepository.findAirportEntityByAirportCode(flight.getLandingAirport()).orElseThrow(() -> new RuntimeException("Could not create flight, airports are wrong!")));
+        existingFlight.setPlane(planeRepository.findById(flight.getPlaneId()).orElseThrow(() -> new RuntimeException("Could not create flight, plane id does not exist!")));
+        existingFlight.setDepartureDateTime(flight.getDepartureTime());
+        existingFlight.setLandingDateTime(flight.getLandingTime());
+        existingFlight.setSharedFlight(!flight.getAirlineCompany().equals("No shared flight"));
+        if (existingFlight.isSharedFlight()) {
+            existingFlight.setSharedFlightCompany(companyRepository.findById(flight.getAirlineCompany()).orElseThrow(() -> new RuntimeException("Could not create flight, the company does not exist!")));
+        } else {
+            existingFlight.setSharedFlightCompany(null);
+        }
+        existingFlight.setFlightRange(getRange(existingFlight.getSourceAirport().getCity(), existingFlight.getDestinationAirport().getCity()));
+        existingFlight.setStandardMenu("Standard menu");
+
+        return saveFlightObj(existingFlight);
+    }
 
     @Override
     public FlightEntity updateSourceAirport(String flightNumber, AirportEntity sourceAirport) {
@@ -571,8 +589,6 @@ public class FlightServiceImp implements FlightService {
 
 
     // The method for obtaining the SeatingPlan
-
-
     @Override
     public List<SeatingTypeDTO> decodeSeatingPlan(String flightNumber) {
         // Get the VehicleTypeEntity from the flight number

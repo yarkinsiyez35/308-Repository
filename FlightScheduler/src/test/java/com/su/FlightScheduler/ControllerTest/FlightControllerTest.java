@@ -9,6 +9,7 @@ import com.su.FlightScheduler.Entity.FlightEntitites.*;
 import com.su.FlightScheduler.Entity.*;
 import com.su.FlightScheduler.Service.FlightService;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -530,4 +531,115 @@ public class FlightControllerTest {
         assertEquals("Flight not found", response.getBody());
     }
 
+    @Test
+    public void testFindFlightsByDepartureAirportAndDepartureDateTime_Success() {
+        LocalDateTime departureDateTime = LocalDateTime.now().plusHours(2);
+        when(flightService.findFlightsByDepartureAirportAndDepartureDateTime("IST", departureDateTime)).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureAirportAndDepartureDateTime("IST", departureDateTime);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
+    }
+
+    @Test
+    public void testFindFlightsByDestinationAirportAndLandingDateTime_Success() {
+        LocalDateTime landingDateTime = LocalDateTime.now().plusHours(5);
+        when(flightService.findFlightsByDestinationAirportAndLandingDateTime("ESB", landingDateTime)).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDestinationAirportAndLandingDateTime("ESB", landingDateTime);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
+    }
+
+    @Test
+    public void testFindFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime_Success() {
+        LocalDateTime departureDateTime = LocalDateTime.now().plusHours(2);
+        LocalDateTime landingDateTime = LocalDateTime.now().plusHours(5);
+        when(flightService.findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime("IST", "ESB", departureDateTime, landingDateTime)).thenReturn(List.of(flightDataDTO));
+
+        ResponseEntity<List<FlightDataDTO>> response = flightController.findFlightsByDepartureAndDestinationAirportAndDepartureAndLandingDateTime("IST", "ESB", departureDateTime, landingDateTime);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<FlightDataDTO> flights = response.getBody();
+        assertNotNull(flights);
+        assertEquals(1, flights.size());
+        assertEquals("SU1234", flights.get(0).getFlightId());
+    }
+
+    @Test
+    public void testUpdateFlightInfo_NullFlightInfo() {
+        Exception exception = assertThrows(FlightController.BadRequestException.class, () -> {
+            flightController.updateFlightInfo("SU1234", null);
+        });
+
+        assertEquals("Flight info cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateSourceAirport_NullSourceAirport() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightController.updateSourceAirport("SU1234", null);
+        });
+
+        assertEquals("Source airport cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateDestinationAirport_NullDestinationAirport() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightController.updateDestinationAirport("SU1234", null);
+        });
+
+        assertEquals("Destination airport cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdatePlane_NullPlane() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightController.updatePlane("SU1234", null);
+        });
+
+        assertEquals("Plane cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateDepartureDateTime_PastDateTime() {
+        LocalDateTime pastDateTime = LocalDateTime.now().minusHours(1);
+        Exception exception = assertThrows(FlightController.BadRequestException.class, () -> {
+            flightController.updateDepartureDateTime("SU1234", pastDateTime.toString());
+        });
+
+        assertEquals("Departure time cannot be in the past", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateLandingDateTime_BeforeDepartureTime() {
+        LocalDateTime departureDateTime = LocalDateTime.now().plusHours(2);
+        LocalDateTime landingDateTime = LocalDateTime.now().plusHours(1);
+        when(flightService.getFlightOrThrow("SU1234")).thenReturn(flightEntity);
+        flightEntity.setDepartureDateTime(departureDateTime);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            flightController.updateLandingDateTime("SU1234", landingDateTime.toString());
+        });
+
+        assertEquals("Landing time cannot be before departure time", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateSharedFlightCompany_NullCompany() {
+        Exception exception = assertThrows(FlightController.BadRequestException.class, () -> {
+            flightController.updateSharedFlightCompany("SU1234", null);
+        });
+
+        assertEquals("Shared flight company cannot be null", exception.getMessage());
+    }
 }
