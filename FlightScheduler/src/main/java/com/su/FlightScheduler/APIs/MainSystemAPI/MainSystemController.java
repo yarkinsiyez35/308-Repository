@@ -184,7 +184,6 @@ public class MainSystemController {
         }
     }
 
-
     @DeleteMapping("/attendant/{attendantId}/removeFromFlight/{flightNumber}")
     public ResponseEntity<Object> removeAttendantFromFlight(@PathVariable int attendantId, @PathVariable String flightNumber)
     {
