@@ -87,7 +87,7 @@ public class CabinCrewEntity implements Serializable {
         this.seniority = cabin.getSeniority();
     }
 
-    public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) { // ata created this for controller error
+    public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO) {
     }
 
     public CabinCrewEntity(AttendantWithLanguagesDTO attendantWithLanguagesDTO, boolean idIsPresent){
