@@ -115,7 +115,7 @@ public class CabinCrewController {
 
             attendantWithLanguagesDTO.setAttendantId(attendantId);
 
-            CabinCrewEntity cabinCrewEntity = new CabinCrewEntity(attendantWithLanguagesDTO);
+            CabinCrewEntity cabinCrewEntity = new CabinCrewEntity(attendantWithLanguagesDTO, true);
 
             CabinCrewEntity updatedAttendant = attendantService.updateCabin(cabinCrewEntity);
 

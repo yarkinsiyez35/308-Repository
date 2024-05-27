@@ -106,8 +106,9 @@ class PassengerControllerTest {
         updatedPassengerEntity.setPassengerId(1);
         when(passengerService.findPassengerById(1)).thenReturn(passengerEntity);
         when(passengerService.updatePassenger(passengerEntity)).thenReturn(updatedPassengerEntity);
+        UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_no_flight_from_passenger_entity(passengerEntity);
 
-        ResponseEntity<Object> response = passengerController.updatePassengerWithId(1, passengerEntity);
+        ResponseEntity<Object> response = passengerController.updatePassengerWithId(1, userDataDTO);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedPassengerEntity, response.getBody());
@@ -117,9 +118,10 @@ class PassengerControllerTest {
     public void UpdatePassengerWithId_NonExisting() {
         PassengerEntity passengerEntity = new PassengerEntity();
         passengerEntity.setPassengerId(1);
+        UserDataDTO userDataDTO = UserDataDTOFactory.create_passenger_data_with_no_flight_from_passenger_entity(passengerEntity);
         when(passengerService.findPassengerById(1)).thenThrow(new RuntimeException("Passenger not found"));
 
-        ResponseEntity<Object> response = passengerController.updatePassengerWithId(1, passengerEntity);
+        ResponseEntity<Object> response = passengerController.updatePassengerWithId(1, userDataDTO);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Passenger not found", response.getBody());
