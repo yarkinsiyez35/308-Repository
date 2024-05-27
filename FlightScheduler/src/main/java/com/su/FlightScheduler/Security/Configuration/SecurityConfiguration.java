@@ -68,13 +68,13 @@ public class SecurityConfiguration {
                     //request matchers for pilot controller
                     auth.requestMatchers("/api/pilots/createPilot").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.POST, "/api/pilots/{pilotId}").hasRole("Admin");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/pilots/{pilotId}").hasAnyRole("Admin", "PilotCrew");
                     auth.requestMatchers("/api/pilots/**").hasAnyRole("Admin", "PilotCrew");
 
                     //request matcher for attendant controller
                     auth.requestMatchers("/api/attendants/createAttendant").hasRole("Admin");
                     auth.requestMatchers(HttpMethod.POST, "/api/attendants/{attendantId}").hasRole("Admin");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasRole("Admin");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/attendants/{attendantId}").hasAnyRole("Admin", "CabinCrew");
                     auth.requestMatchers("/api/attendants/**").hasAnyRole("Admin", "CabinCrew");
 
                     //request matcher for passenger controller

@@ -1,5 +1,6 @@
 package com.su.FlightScheduler.Entity;
 
+import com.su.FlightScheduler.DTO.FrontEndDTOs.UserDataDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -54,7 +55,6 @@ public class PassengerEntity implements Serializable {
 
     public PassengerEntity(String email, String password,
                            String firstName, String surname, int age, String gender, String nationality) {
-
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -62,6 +62,18 @@ public class PassengerEntity implements Serializable {
         this.age = age;
         this.gender = gender;
         this.nationality = nationality;
+    }
+
+
+    public PassengerEntity (UserDataDTO userDataDTO)
+    {
+        this.email = userDataDTO.getEmail();
+        this.password = userDataDTO.getPassword();
+        this.firstName = userDataDTO.getName();
+        this.surname = userDataDTO.getSurname();
+        this.age = userDataDTO.getAge();
+        this.gender = userDataDTO.getGender();
+        this.nationality = userDataDTO.getNationality();
     }
 
     public PassengerEntity(int passengerId, String email, String password,
