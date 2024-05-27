@@ -61,7 +61,7 @@ public class FlightServiceImp implements FlightService {
 
     public String crateFlightNumber()
     {
-        String companyLetters = "SU";
+        String companyLetters = "CS";
         String flightNumber = "";
         flightNumber += companyLetters;
         int flightCode;

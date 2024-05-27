@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import com.su.FlightScheduler.Entity.FlightEntitites.FlightEntity;
 
-class MainSystemControllerTest {
+class MainSystemControllerTests {
 
     @Mock
     private PilotFlightAssignmentService pilotFlightAssignmentService;

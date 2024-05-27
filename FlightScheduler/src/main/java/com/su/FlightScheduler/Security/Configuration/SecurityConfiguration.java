@@ -81,6 +81,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/passengers/**").hasAnyRole("Admin", "Passenger");
 
                     //request matcher for flight controller
+                    auth.requestMatchers("/api/flights/createFlight/{adminId}").hasRole("Admin");
+                    auth.requestMatchers("/api/flights/updateFlight/{adminId}").hasRole("Admin");
                     auth.requestMatchers("/api/flights/**").hasAnyRole("Admin","Passenger", "PilotCrew", "CabinCrew");  //FIX THIS
 
                     //request matchers for main controller
