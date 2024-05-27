@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
 //TESTING: this controller should be tested, but not now
 @RestController
 @RequestMapping("/api/passengers")
+@CrossOrigin(value = "http://127.0.0.1:5500", allowCredentials = "true")
 public class PassengerController {
 
     private final PassengerService passengerService;
@@ -70,8 +71,8 @@ public class PassengerController {
 
     @PutMapping("/update/{passengerId}")
     public ResponseEntity<Object> updatePassengerWithId(@PathVariable int passengerId, @RequestBody UserDataDTO userData) {
-        try{
 
+        try{
             PassengerEntity updatedPassenger = new PassengerEntity(userData);
             PassengerEntity passengerEntity = passengerService.findPassengerById(passengerId);
             updatedPassenger.setPassengerId(passengerId); // Ensure the ID is set correctly
