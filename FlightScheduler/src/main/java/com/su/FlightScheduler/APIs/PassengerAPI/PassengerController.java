@@ -69,10 +69,10 @@ public class PassengerController {
     }
 
     @PutMapping("/update/{passengerId}")
-    public ResponseEntity<Object> updatePassengerWithId(@PathVariable int passengerId, @RequestBody UserDataDTO userDataDTO) {
+    public ResponseEntity<Object> updatePassengerWithId(@PathVariable int passengerId, @RequestBody UserDataDTO userData) {
         try{
 
-            PassengerEntity updatedPassenger = new PassengerEntity(userDataDTO);
+            PassengerEntity updatedPassenger = new PassengerEntity(userData);
             PassengerEntity passengerEntity = passengerService.findPassengerById(passengerId);
             updatedPassenger.setPassengerId(passengerId); // Ensure the ID is set correctly
             updatedPassenger.setPassengerFlights(passengerEntity.getPassengerFlights());
